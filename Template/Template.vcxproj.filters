@@ -22,4 +22,15 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="tvec.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="view.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="algorithm.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
