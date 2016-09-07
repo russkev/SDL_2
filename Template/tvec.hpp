@@ -156,5 +156,18 @@ namespace graphics {
         template <typename T> auto xy   (const tvec3<T>& p) { return tvec2<T> (p.x, p.y); }
 
     }
+	
+	template <typename T0, typename T1>
+	auto make_tvec (T0 x, T1 y) {
+		return tvec2<std::common_type_t<T0, T1>> (x, y);
+	}
+	template <typename T0, typename T1, typename T2>
+	auto make_tvec (T0 x, T1 y, T2 z) {
+		return tvec2<std::common_type_t<T0, T1, T2>> (x, y, z);
+	}
+	template <typename T0, typename T1, typename T2, typename T3>
+	auto make_tvec (T0 x, T1 y, T2 z, T3 w) {
+		return tvec2<std::common_type_t<T0, T1, T2, T3>> (x, y, z, w);
+	}
 
 }

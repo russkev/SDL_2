@@ -12,11 +12,11 @@ namespace graphics {
     struct view1d {        
         typedef _Element element_type;
 
-        view1d (void* s_elements, std::size_t s_length):
+        view1d (void* s_elements, std::int64_t s_length):
             view1d ((element_type*)s_elements, s_length)
         {}
 
-        view1d (element_type* s_elements, std::size_t s_length):
+        view1d (element_type* s_elements, std::int64_t s_length):
             m_elements (s_elements),
             m_length (s_length)
         {}
@@ -29,22 +29,24 @@ namespace graphics {
             return m_elements [i];
         }
 
-        auto width () const { return m_length; }
+		auto size () const { return max () - min (); }
+		auto min () const { return 0; }
+		auto max () const { return m_length; }
 
     private:
         element_type* m_elements;
-        std::size_t   m_length;
+        std::int64_t m_length;
     };
 
     template <typename _Element>
     struct view2d {
         typedef _Element element_type;
 
-        view2d (void* s_elements, std::size_t s_horizontal, std::size_t s_vertical):
+        view2d (void* s_elements, std::int64_t s_horizontal, std::int64_t s_vertical):
             view2d ((element_type*)s_elements, s_horizontal, s_vertical)
         {}
 
-        view2d (element_type* s_elements, std::size_t s_horizontal, std::size_t s_vertical):
+        view2d (element_type* s_elements, std::int64_t s_horizontal, std::int64_t s_vertical):
             m_elements (s_elements),
             m_horizontal (s_horizontal),
             m_vertical (s_vertical)
@@ -63,12 +65,13 @@ namespace graphics {
             return (*this) [s_index.y] [s_index.x];
         }
 
-        auto height () const { return m_vertical; }
-        auto width () const { return m_horizontal; }
+		auto size () const { return max () - min () ; }
+		auto min () const { return tvec2<std::size_t> (0, 0); }
+		auto max () const { return tvec2<std::size_t> (m_horizontal, m_vertical); }
 
     private:
         element_type* m_elements;
-        std::size_t m_horizontal, m_vertical;
+		std::int64_t m_horizontal, m_vertical;
     };    
 
 }
