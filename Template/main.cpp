@@ -1,4 +1,11 @@
-#include <SDL.h>
+#if __has_include (<SDL2/SDL.h>)
+	#include <SDL2/SDL.h>
+#endif
+
+#if __has_include (<SDL.h>)
+	#include <SDL.h>
+#endif
+
 #include <cstdlib>
 #include <iostream>
 
@@ -58,5 +65,8 @@ int main (int, char**) try {
 }
 catch (const std::exception& ex) {
     std::cout << ex.what () << "\n";
+
+#ifdef _MSC_VER
     __debugbreak ();
+#endif
 }

@@ -24,7 +24,7 @@ namespace graphics {
         template <typename _Vtype, std::enable_if_t<std::is_integral<_Vtype>::value, int> = 0>
         auto&& operator [] (_Vtype i) const {            
             if (i >= m_length || i < 0) {
-                throw std::out_of_range (__FUNCSIG__);                
+                throw std::out_of_range (__PRETTY_FUNCTION__);
             }
             return m_elements [i];
         }
@@ -53,7 +53,7 @@ namespace graphics {
         template <typename _Vtype, std::enable_if_t<std::is_integral<_Vtype>::value, int> = 0>
         auto operator [] (_Vtype i) const {            
             if (i >= m_vertical || i < 0) {
-                throw std::out_of_range (__FUNCSIG__);                
+                throw std::out_of_range (__PRETTY_FUNCTION__);
             } 
             return view1d<_Element> (&m_elements [m_horizontal * i], m_horizontal);
         }
