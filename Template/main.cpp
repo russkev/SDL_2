@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include <cstdlib>
+#include <iostream>
 
 #include "tvec.hpp"
 #include "view.hpp"
@@ -9,20 +10,19 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
     using namespace graphics;
     typedef tvec4<std::uint8_t> rgba_color_type;
     typedef tvec2<int> coord_type;
-    view2d<rgba_color_type> s_view (s_surface.pixels, s_surface.w, s_surface.h);
-    
-    const auto s_center = coord_type (s_surface.w >> 2, s_surface.h >> 2);
+    view2d<rgba_color_type> s_view (s_surface.pixels, s_surface.w, s_surface.h);    
+    const auto s_center = coord_type (s_surface.w >> 1, s_surface.h >> 1);
     const auto s_radius = int (min (s_center.x, s_center.y) * 0.75);
-    for (auto i = 0; i < 18; ++i) {
-        auto fi = i * pi<float> () * 2.0f / 18.0f;
+    for (auto i = 0; i < 32; ++i) {
+        auto fi = i * pi<float> () * 2.0f / 32.0f + s_absolute_time * pi<float> () * 0.06125;
         auto pt = coord_type (int (+sin (fi) * s_radius), 
                               int (-cos (fi) * s_radius));
-        line (s_view, s_center, pt, rgba_color_type (255, 0, 0));
+        line (s_view, s_center, s_center + pt, rgba_color_type (255, 0, 0));
     }
 
 }
 
-int main (int, char**) {
+int main (int, char**) try {
     SDL_Init (SDL_INIT_EVERYTHING);
     std::atexit (&SDL_Quit);
 
@@ -55,4 +55,8 @@ int main (int, char**) {
 
     SDL_DestroyWindow (s_window);
     return 0;
+}
+catch (const std::exception& ex) {
+    std::cout << ex.what () << "\n";
+    __debugbreak ();
 }

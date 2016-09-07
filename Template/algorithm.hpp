@@ -11,14 +11,14 @@ namespace graphics {
 
     // return the larger value
     template <typename _Atype, typename _Btype>
-    const auto& max (const _Atype& a, const _Btype& b) {
+    auto max (const _Atype& a, const _Btype& b) {
         return a > b ? a : b;
     }
 
     // return the smaller value
     template <typename _Atype, typename _Btype>
-    const auto& min (const _Atype& a, const _Btype& b) {
-        return a > b ? a : b;
+    auto min (const _Atype& a, const _Btype& b) {
+        return a < b ? a : b;
     }
 
     // return absolute value
@@ -49,7 +49,7 @@ namespace graphics {
 
     // force s_value into range of s_min and s_max, preventing it from going above or below the limits
     template <typename _Atype, typename _Btype, typename _Xtype>
-    const auto& clamp (const _Xtype& s_value, const _Atype& s_min, const _Btype& s_max) {
+    auto clamp (const _Xtype& s_value, const _Atype& s_min, const _Btype& s_max) {
         return min (max (s_value, s_min), s_max);
     }
 
@@ -71,7 +71,8 @@ namespace graphics {
     // Draw vertical line
     template <typename _View, typename _Point, typename _Length, typename _Color>
     void line_vertical (_View& s_view, const _Point& s_point, const _Length& s_length, const _Color& s_color) {
-        for (auto i = 0; i < s_length; ++i) {
+        const auto di = clamp (s_length, -1, 1);
+        for (auto i = 0; i != s_length; i += di) {
             blend_element (s_view, s_point + _Point (0, i), s_color);
         }
     }
@@ -79,7 +80,8 @@ namespace graphics {
     // Draw horizontal line
     template <typename _View, typename _Point, typename _Length, typename _Color>
     void line_horizontal (_View& s_view, const _Point& s_point, const _Length& s_length, const _Color& s_color) {
-        for (auto i = 0; i < s_length; ++i) {
+        const auto di = clamp (s_length, -1, 1);
+        for (auto i = 0; i != s_length; i += di) {
             blend_element (s_view, s_point + _Point (i, 0), s_color);
         }
     }
@@ -87,23 +89,30 @@ namespace graphics {
     // Draw a line between s_point0 and s_point1 of color s_color onto view s_view
     template <typename _View, typename _Point, typename _Color>
     auto line (_View& s_view, const _Point& s_point0, const _Point& s_point1, const _Color& s_color) {
+        typedef decltype(s_point0.x) coord_type;
 
         auto s_delta = s_point1 - s_point0;
         if (!s_delta.x && !s_delta.y) return blend_element (s_view, s_point0, s_color);        
         if (!s_delta.y) return line_horizontal (s_view, s_point0, s_delta.x, s_color);
         if (!s_delta.x) return line_vertical (s_view, s_point0, s_delta.y, s_color);
 
-        auto s_error = -1.0f;
-        auto s_delta_error = abs (1.0f * s_delta.x / s_delta.y);
-
-        auto y = s_point0.y;
-        auto dx = clamp (s_point0.x - s_point1.x, -1, 1);
-        for (auto x = s_point0.x; x < s_point1.x; x += dx) {
-            blend_element (s_view, _Point (x, y), s_color);
-            s_error += s_delta_error;
-            if (s_error >= 0.0f) {
-                s_error -= 1.0f;
-                ++y;
+        
+        if (abs (s_delta.x) > abs (s_delta.y)) {
+            const auto dx = clamp (s_delta.x, -1, 1);
+            const auto dy = clamp (s_delta.x, -1, 1) * abs (1.0f * s_delta.y / s_delta.x);
+            auto y = 1.0f * s_point0.y;            
+            for (auto x = s_point0.x; x != s_point1.x; x += dx) {
+                blend_element (s_view, _Point (coord_type (x), coord_type (y)), s_color);
+                y += dy;
+            }
+        }
+        else {
+            const auto dy = clamp (s_delta.y, -1, 1);
+            const auto dx = clamp (s_delta.x, -1, 1) * abs (1.0f * s_delta.x / s_delta.y);
+            auto x = 1.0f * s_point0.x;
+            for (auto y = s_point0.y; y != s_point1.y; y += dy) {
+                blend_element (s_view, _Point (coord_type (x), coord_type (y)), s_color);
+                x += dx;
             }
         }
     }

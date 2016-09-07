@@ -21,8 +21,9 @@ namespace graphics {
             m_length (s_length)
         {}
 
-        auto&& operator [] (std::size_t i) const {
-            if (i >= m_length) {
+        template <typename _Vtype, std::enable_if_t<std::is_integral<_Vtype>::value, int> = 0>
+        auto&& operator [] (_Vtype i) const {            
+            if (i >= m_length || i < 0) {
                 throw std::out_of_range (__FUNCSIG__);                
             }
             return m_elements [i];
@@ -49,18 +50,16 @@ namespace graphics {
             m_vertical (s_vertical)
         {}
 
-        auto operator [] (std::size_t i) const {
-            if (i >= m_horizontal) {
+        template <typename _Vtype, std::enable_if_t<std::is_integral<_Vtype>::value, int> = 0>
+        auto operator [] (_Vtype i) const {            
+            if (i >= m_vertical || i < 0) {
                 throw std::out_of_range (__FUNCSIG__);                
             } 
             return view1d<_Element> (&m_elements [m_horizontal * i], m_horizontal);
         }
 
-        auto&& operator [] (const tvec2<int>& s_index) const {
-            if (s_index.x >= m_horizontal) 
-                throw std::out_of_range (__FUNCSIG__);
-            if (s_index.y >= m_vertical)   
-                throw std::out_of_range (__FUNCSIG__);
+        template <typename _Vtype, std::enable_if_t<std::is_integral<_Vtype>::value, int> = 0>
+        auto&& operator [] (const tvec2<_Vtype>& s_index) const {
             return (*this) [s_index.y] [s_index.x];
         }
 
