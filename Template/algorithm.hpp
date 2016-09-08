@@ -29,26 +29,6 @@ namespace graphics {
         return a < 0 ? -a : a;
     }
 
-    // compare and swap if a is greater then b
-    template <typename _Vtype>
-    bool swap_if_more (_Vtype& a, _Vtype& b) {
-        if (a > b) {
-            std::swap (a, b);
-            return true;
-        }
-        return false;
-    }
-
-    // compare and swap if a is less then b
-    template <typename _Vtype>
-    bool swap_if_less (_Vtype& a, _Vtype& b) {
-        if (a < b) {
-            std::swap (a, b);
-            return true;
-        }
-        return false;
-    }
-
     // force s_value into range of s_min and s_max, preventing it from going above or below the limits
     template <typename _Atype, typename _Btype, typename _Xtype>
     auto clamp (const _Xtype& s_value, const _Atype& s_min, const _Btype& s_max) {
@@ -56,6 +36,7 @@ namespace graphics {
     }
 
     // Interpolate between two values A and B determined by Q 
+    // Sometimes this is also refered to as Mix instead of Lerp
     template <typename _Atype, typename _Btype, typename _Qtype>
     auto lerp (const _Atype& a, const _Btype& b, _Qtype q) {
         return std::common_type_t<_Atype, _Btype> (round (a*(_Qtype (1) - q) + q*b));
@@ -71,7 +52,7 @@ namespace graphics {
         typedef typename _View::element_type element_type;
         typedef tvec2<_Coord> point_type;
         using namespace swizzle;
-        auto& s_destination = s_view [s_point];                          // multiplying by 1/255
+        auto& s_destination = s_view [s_point];                                 // multiplying by 1/255
         s_destination = element_type (lerp (xyz (s_destination), xyz (s_source), w (s_source) * 0.00392156862f), 255);
     }
 
@@ -106,72 +87,17 @@ namespace graphics {
     template <typename _Coord0, typename _Coord1,
               typename _Coord2, typename _Coord3>
     auto clip_line (
-        tvec2<_Coord0>& s_pt0,
-        tvec2<_Coord1>& s_pt1,
-        const tvec2<_Coord2>& s_min,
-        const tvec2<_Coord3>& s_max)
+        tvec2<_Coord0>& s_pt0,          // In/Out first point of the line
+        tvec2<_Coord1>& s_pt1,          // In/Out second point of the line
+        const tvec2<_Coord2>& s_min,    // Clip rectangle upper left
+        const tvec2<_Coord3>& s_max)    //                lower right
     {
         typedef std::common_type_t<_Coord0, _Coord1, _Coord2, _Coord3> coord_type;
 
-        static_assert (std::is_signed<coord_type>::value 
-                    || std::is_floating_point<coord_type>::value
-                     , "Must be a signed type or floating point");
+        // TODO #1 : implement clipping algorithm
+        // Possible candidate https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm
 
-        enum bound_mask_type : uint32_t {
-            inside      = 0,
-            clip_left   = 1,
-            clip_right  = 2,
-            clip_bottom = 4,
-            clip_top    = 8
-        };	
-
-        const auto bound_check = [&s_min, &s_max] (const auto& s_pt) {
-            auto s_result = std::uint32_t (inside);
-            if (s_pt.x < s_min.x) s_result |= clip_left;
-            if (s_pt.x > s_max.x) s_result |= clip_right;
-            if (s_pt.y < s_min.y) s_result |= clip_bottom;
-            if (s_pt.y > s_max.y) s_result |= clip_top;
-            return s_result;
-        };
-        
-        auto s_result0 = bound_check (s_pt0);
-        auto s_result1 = bound_check (s_pt1);
-        
-        while (true) {
-            if (!(s_result0 | s_result1)) {
-                return true;
-            }
-            else if (s_result0 & s_result1) {
-                return false;
-            }
-            
-            auto s_result = s_result0 ? s_result0 : s_result1 ;
-            auto s_tempv = tvec2<coord_type> ();
-
-            if (s_result & clip_top) {
-                s_tempv.x = s_pt0.x + (s_max.y - s_pt0.y) * (s_pt1.x - s_pt0.x) / (s_pt1.y - s_pt0.y);
-                s_tempv.y = s_max.y;
-            } else if (s_result & clip_bottom) {
-                s_tempv.x = s_pt0.x + (s_min.y - s_pt0.y) * (s_pt1.x - s_pt0.x) / (s_pt1.y - s_pt0.y);
-                s_tempv.y = s_min.y;
-            } else if (s_result & clip_right) {
-                s_tempv.y = s_pt0.y + (s_max.x - s_pt0.x) * (s_pt1.y - s_pt0.y) / (s_pt1.x - s_pt0.x);
-                s_tempv.x = s_max.x;
-            } else if (s_result & clip_left) {
-                s_tempv.y = s_pt0.y + (s_min.x - s_pt0.x) * (s_pt1.y - s_pt0.y) / (s_pt1.x - s_pt0.x);
-                s_tempv.x = s_min.x;
-            }
-            
-            if (s_result == s_result0) {
-                s_pt0 = s_tempv;
-                s_result0 = bound_check (s_pt0);
-            }
-            else {
-                s_pt1 = s_tempv;
-                s_result1 = bound_check (s_pt1);
-            }
-        }
-        
+        return false; // Returns true if line intersects clip rect , false otherwise
     }
     
     // Draw a line between s_point0 and s_point1 of color s_color onto view s_view
@@ -234,21 +160,8 @@ namespace graphics {
         const tvec2<_Coord2>& s_pt2,       
         const typename _View::element_type s_color) 
     {
-        auto s_last = s_pt0;
-        const auto s_length = length (s_pt1 - s_pt0) + length (s_pt2 - s_pt1);
-        const auto s_deltaq = max (int (s_length / 20), 1);
-
-        for (auto q = 0; q < s_length; q += s_deltaq) {
-            auto qq = (q/s_length);
-            auto s_pta = lerp (s_pt0, s_pt1, qq);
-            auto s_ptb = lerp (s_pt1, s_pt2, qq);
-            auto s_ptc = lerp (s_pta, s_ptb, qq);
-            line (s_view, s_last, s_ptc, s_color);
-            s_last = s_ptc;
-        }
-
-        line (s_view, s_last, s_pt2, s_color);
-
+        // TODO (optional) : implement quadric bezier drawing
+        // can start by looking at https://en.wikipedia.org/wiki/B%C3%A9zier_curve
     }
 
     // Cubic bezier curve
@@ -260,21 +173,7 @@ namespace graphics {
         const tvec2<_Coord2>& s_pt3,
         const typename _View::element_type s_color) 
     {
-        auto s_last = s_pt0;
-        const auto s_length = (length (s_pt1 - s_pt0) + length (s_pt2 - s_pt1) + length (s_pt3 - s_pt2));
-        const auto s_deltaq = max (int (s_length / 20), 1);
-
-        for (auto q = 0; q < s_length; q += s_deltaq) {
-            auto qq = (q/s_length);
-            auto s_pta = lerp (s_pt0, s_pt1, qq);
-            auto s_ptb = lerp (s_pt1, s_pt2, qq);
-            auto s_ptc = lerp (s_pt2, s_pt3, qq);
-            auto s_ptd = lerp (s_pta, s_ptb, qq);
-            auto s_pte = lerp (s_ptb, s_ptc, qq);
-            auto s_ptf = lerp (s_ptd, s_pte, qq);
-            line (s_view, s_last, s_ptf, s_color);
-            s_last = s_ptf;
-        }        
-        line (s_view, s_last, s_pt3, s_color);
+        // TODO #2 : implement cubic bezier drawing
+        // can start by looking at https://en.wikipedia.org/wiki/B%C3%A9zier_curve
     }
 }

@@ -26,12 +26,18 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
     view_type s_view (s_surface.pixels, s_surface.w, s_surface.h);
     canvas<view_type, point_type> s_canvas (s_view);    
 
+    // Pushes the picture so it is centered at (0, 0)
     s_canvas.pre_translate (point_type (-462.4624365f, -272.7413815f));
+    // Animate the scale
     s_canvas.scale (point_type (1) - std::sin ((float)s_absolute_time)*0.75f);
+    // Scale it further down to half size
     s_canvas.scale (0.5f);
+    // Animate rotatation
     s_canvas.rotate (pi<float> () * (float)s_absolute_time * 0.5f);
+    // Push the processed picture back to the center of the screen
     s_canvas.post_translate (0.5f*point_type ((float)s_surface.w, (float)s_surface.h));
 
+    // Draw the picture
     s_canvas.stroke_color (bgra_color_type (255, 0, 0, 128));
     s_canvas.move_to_abs  (point_type (409.57131f, 69.491383f));
     s_canvas.curve_to_abs (point_type (434.06031f, 118.46738f), point_type ( 435.94631f, 116.58518f), point_type (435.94631f, 116.58518f));
@@ -48,6 +54,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
     s_canvas.curve_to_abs (point_type (183.51456f, 207.00708f), point_type ( 418.99131f, 323.78938f), point_type (409.57131f, 69.491383f));
     s_canvas.close_path ();
 
+    // Draw the corsshair
     s_canvas.reset_transform ();
     s_canvas.stroke_color (bgra_color_type (0, 0, 255, 255));
     s_canvas.move_to_abs (s_center);
