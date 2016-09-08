@@ -5,9 +5,12 @@
 #include <stdexcept>
 #include "tvec.hpp"
 
+#ifndef __PRETTY_FUNCTION__
+    #define __PRETTY_FUNCTION__ __FUNCSIG__
+#endif
+
 namespace graphics {
     
-
     template <typename _Element>
     struct view1d {        
         typedef _Element element_type;
@@ -40,7 +43,7 @@ namespace graphics {
 
     template <typename _Element>
     struct view2d {
-        typedef _Element element_type;
+        typedef _Element element_type;        
 
         view2d (void* s_elements, std::int64_t s_horizontal, std::int64_t s_vertical):
             view2d ((element_type*)s_elements, s_horizontal, s_vertical)
@@ -66,8 +69,8 @@ namespace graphics {
         }
 
 		auto size () const { return max () - min () ; }
-		auto min () const { return tvec2<std::size_t> (0, 0); }
-		auto max () const { return tvec2<std::size_t> (m_horizontal, m_vertical); }
+		auto min () const { return tvec2<std::int64_t> (0, 0); }
+		auto max () const { return tvec2<std::int64_t> (m_horizontal, m_vertical); }
 
     private:
         element_type* m_elements;

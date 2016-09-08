@@ -1,34 +1,78 @@
-#if __has_include (<SDL2/SDL.h>)
-	#include <SDL2/SDL.h>
-#endif
-
-#if __has_include (<SDL.h>)
-	#include <SDL.h>
+#if defined(__has_include)
+    #if __has_include(<SDL2/SDL.h>)
+    	#include <SDL2/SDL.h>
+    #endif
+    
+    #if __has_include(<SDL.h>)
+    	#include <SDL.h>
+    #endif
+#else 
+    #include <SDL.h>
 #endif
 
 #include <cstdlib>
 #include <iostream>
 #include <typeinfo>
+#include <sstream>
 
 #include "tvec.hpp"
 #include "view.hpp"
 #include "algorithm.hpp"
-
+#include "canvas.hpp"
 
 void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, double s_delta_time) {
     using namespace graphics;
-    typedef tvec4<std::uint8_t> rgba_color_type;
-    typedef tvec2<int> coord_type;
-    view2d<rgba_color_type> s_view (s_surface.pixels, s_surface.w, s_surface.h);    
-    const auto s_center = coord_type (s_surface.w >> 1, s_surface.h >> 1);
-    const auto s_radius = int (min (s_center.x, s_center.y) * 0.75f);
-	const auto s_nlines = 128;
-    for (auto i = 0; i < s_nlines; ++i) {
-        auto fi = i * pi<double> () * 2.0 / s_nlines + s_absolute_time * pi<double> () * (1.0 / 16.0);
-        auto pt = coord_type ((int)round (+sin (fi) * s_radius),
-                              (int)round (-cos (fi) * s_radius));
-        line (s_view, s_center, s_center + pt, rgba_color_type (int (255.0f* i/s_nlines), int (255.0f - 255.0f * i/s_nlines), 0, 255));
+    typedef tvec4<std::uint8_t> bgra_color_type;
+    typedef tvec2<float> point_type;
+    typedef view2d<bgra_color_type> view_type;
+
+    view_type s_view (s_surface.pixels, s_surface.w, s_surface.h);
+
+    const auto w = 2;
+    const auto s_divider = (w * 2 + 1) * (w * 2 + 1);
+    for (auto j = w; j < s_surface.h-w; ++j) {
+        for (auto i = w; i < s_surface.w-w; ++i) {
+            //auto p = tvec4<unsigned> ();
+            //for (auto l = -w; l <= w; ++l) {
+            //    for (auto k = -w; k <= w; ++k) {
+            //        p = p + s_view [j + l] [i + k];
+            //    }
+            //}
+            //s_view [j] [i] = p / s_divider;
+            s_view [j] [i] = lerp (s_view [j] [i], bgra_color_type (), 0.001f);
+        }
     }
+
+    canvas<view_type, point_type> s_canvas (s_view);    
+
+    s_canvas.pre_translate (point_type (-462.4624365f, -272.7413815f));
+    s_canvas.scale (point_type (1) - std::sin ((float)s_absolute_time)*0.75f);
+    s_canvas.scale (0.5f);
+    s_canvas.rotate (pi<float> () * (float)s_absolute_time * 0.125f);
+    s_canvas.post_translate (0.5*point_type (s_surface.w, s_surface.h));
+
+    s_canvas.stroke_color (bgra_color_type (255, 0, 0, 128));
+    s_canvas.move_to_abs  (point_type (409.57131f, 69.491383f));
+    s_canvas.curve_to_abs (point_type (434.06031f, 118.46738f), point_type ( 435.94631f, 116.58518f), point_type (435.94631f, 116.58518f));
+    s_canvas.line_to_abs  (point_type (462.29006f, 118.08518f));
+    s_canvas.line_to_abs  (point_type (488.97756f, 116.58518f));
+    s_canvas.curve_to_abs (point_type (488.97756f, 116.58518f), point_type ( 490.86456f, 118.46838f), point_type (515.35256f, 69.491383f));
+    s_canvas.curve_to_abs (point_type (505.93256f, 323.79038f), point_type ( 741.40931f, 207.00808f), point_type (641.57131f, 88.335183f));
+    s_canvas.curve_to_abs (point_type (995.70831f, 199.47318f), point_type ( 897.75082f, 427.40318f), point_type (709.38381f, 466.96018f));
+    s_canvas.curve_to_abs (point_type (780.96581f, 353.93918f), point_type ( 666.05104f, 352.05578f), point_type (609.54006f, 406.67888f));
+    s_canvas.curve_to_abs (point_type (547.38006f, 299.30788f), point_type ( 462.29006f, 475.99138f), point_type (462.29006f, 475.99138f));
+    s_canvas.curve_to_abs (point_type (462.29006f, 475.99138f), point_type ( 377.54581f, 299.30778f), point_type (315.38381f, 406.67888f));
+    s_canvas.curve_to_abs (point_type (258.87281f, 352.04988f), point_type ( 143.95907f, 353.93918f), point_type (215.54006f, 466.96018f));
+    s_canvas.curve_to_abs (point_type (27.171063f, 427.40308f), point_type (-70.783437f, 199.47318f), point_type (283.35256f, 88.335183f));
+    s_canvas.curve_to_abs (point_type (183.51456f, 207.00708f), point_type ( 418.99131f, 323.78938f), point_type (409.57131f, 69.491383f));
+    s_canvas.close_path ();
+
+    auto s_center = tvec2<int> (s_surface.w, s_surface.h) / 2;
+    line_horizontal (s_view, s_center,  20, bgra_color_type (0, 0, 255, 255));
+    line_horizontal (s_view, s_center, -20, bgra_color_type (0, 0, 255, 255));
+      line_vertical (s_view, s_center,  20, bgra_color_type (0, 0, 255, 255));
+      line_vertical (s_view, s_center, -20, bgra_color_type (0, 0, 255, 255));
+
 
 }
 
@@ -36,7 +80,7 @@ int main (int, char**) try {
     SDL_Init (SDL_INIT_EVERYTHING);
     std::atexit (&SDL_Quit);
 
-    auto s_window = SDL_CreateWindow ("Pretty little lines", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1920, 1080, SDL_WINDOW_ALLOW_HIGHDPI);
+    auto s_window = SDL_CreateWindow ("Pretty little lines", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_ALLOW_HIGHDPI);
     auto s_surface = SDL_GetWindowSurface (s_window);
 
     // High precision clock interval
@@ -52,7 +96,7 @@ int main (int, char**) try {
             continue;
         }
 
-        SDL_FillRect (s_surface, nullptr, 0xFFFFFF);
+        
         SDL_LockSurface (s_surface);
         
         s_time1 = s_freq_multiplier * SDL_GetPerformanceCounter ();

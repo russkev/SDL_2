@@ -32,5 +32,8 @@
     <ClInclude Include="algorithm.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="canvas.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

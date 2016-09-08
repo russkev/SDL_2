@@ -6,15 +6,13 @@ namespace graphics {
 
     template <typename T>
     struct tvec2 {
+        typedef T value_type;
 
-        #pragma warning (push)
-        #pragma warning (disable : 4244)
         template <typename I>
         tvec2 (const tvec2<I>& a): 
-        tvec2 (static_cast<I>(a.x), 
-               static_cast<I>(a.y))
+        tvec2 (static_cast<T>(a.x), 
+               static_cast<T>(a.y))
         {}
-        #pragma warning (pop)
 
         tvec2 (T x, T y): x (x), y (y) {}        
         tvec2 (T x): tvec2 (x, x) {}
@@ -22,7 +20,7 @@ namespace graphics {
 
         union {
             struct { T x, y; };
-            struct { T g, a; }; // gray and alpha
+            struct { T g, a; };
         };
     };
 
@@ -43,15 +41,14 @@ namespace graphics {
 
     template <typename T>
     struct tvec3 {
-        #pragma warning (push)
-        #pragma warning (disable : 4244)
+        typedef T value_type;
+
         template <typename I>
         tvec3 (const tvec3<I>& a): 
-        tvec3 (static_cast<I>(a.x), 
-               static_cast<I>(a.y), 
-               static_cast<I>(a.z))
+        tvec3 (static_cast<T>(a.x), 
+               static_cast<T>(a.y), 
+               static_cast<T>(a.z))
         {}
-        #pragma warning (pop)
 
         tvec3 (const tvec2<T>& p, T z): tvec3 (p.x, p.y, z) {}
         tvec3 (T x, const tvec2<T>& p): tvec3 (x, p.x, p.y) {}
@@ -63,7 +60,7 @@ namespace graphics {
 
         union {
             struct { T x, y, z; };
-            struct { T r, g, b; }; // red green blue
+            struct { T b, g, r; }; 
         };
     };
 
@@ -84,17 +81,15 @@ namespace graphics {
 
     template <typename T>
     struct tvec4 {
-        // Type conversion/casting constructor
-        #pragma warning (push)
-        #pragma warning (disable : 4244)
+        typedef T value_type;
+
         template <typename I>
         tvec4 (const tvec4<I>& a): 
-        tvec4 (static_cast<I>(a.x), 
-               static_cast<I>(a.y), 
-               static_cast<I>(a.z), 
-               static_cast<I>(a.w)) 
+        tvec4 (static_cast<T>(a.x), 
+               static_cast<T>(a.y), 
+               static_cast<T>(a.z), 
+               static_cast<T>(a.w)) 
         {}
-        #pragma warning (pop)
 
         tvec4 (const tvec3<T>& p, T w): tvec4 (p.x, p.y, p.z, w) {}
         tvec4 (T x, const tvec3<T>& p): tvec4 (x, p.x, p.y, p.z) {}
@@ -111,7 +106,7 @@ namespace graphics {
 
         union {
             struct { T x, y, z, w; };
-            struct { T r, g, b, a; };            
+            struct { T b, g, r, a; };            
         };
     };
 
@@ -159,15 +154,47 @@ namespace graphics {
 	
 	template <typename T0, typename T1>
 	auto make_tvec (T0 x, T1 y) {
-		return tvec2<std::common_type_t<T0, T1>> (x, y);
+        typedef std::common_type_t<T0, T1> value_type;
+		return tvec2<value_type> (static_cast<value_type> (x), 
+                                  static_cast<value_type> (y));
 	}
+
 	template <typename T0, typename T1, typename T2>
 	auto make_tvec (T0 x, T1 y, T2 z) {
-		return tvec2<std::common_type_t<T0, T1, T2>> (x, y, z);
+        typedef std::common_type_t<T0, T1, T2> value_type;
+		return tvec3<value_type> (static_cast<value_type> (x), 
+                                  static_cast<value_type> (y),
+                                  static_cast<value_type> (z));
 	}
+
 	template <typename T0, typename T1, typename T2, typename T3>
 	auto make_tvec (T0 x, T1 y, T2 z, T3 w) {
-		return tvec2<std::common_type_t<T0, T1, T2, T3>> (x, y, z, w);
+        typedef std::common_type_t<T0, T1, T2, T3> value_type;
+		return tvec4<value_type> (static_cast<value_type> (x), 
+                                  static_cast<value_type> (y),
+                                  static_cast<value_type> (z),
+                                  static_cast<value_type> (w));
 	}
+
+    template <typename T> auto dot (tvec2<T>& a, tvec2<T>& b) { return a.x * b.x + a.y * b.y; }
+    template <typename T> auto dot (tvec3<T>& a, tvec3<T>& b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
+    template <typename T> auto dot (tvec4<T>& a, tvec4<T>& b) { return a.x * b.x + a.y * b.y + a.z * b.z +  a.w * b.w; }
+
+    template <typename T> auto magnitude_squared (tvec4<T>& a) { return dot (a, a); }
+    template <typename T> auto magnitude_squared (tvec3<T>& a) { return dot (a, a); }
+    template <typename T> auto magnitude_squared (tvec2<T>& a) { return dot (a, a); }
+
+    template <typename T> auto magnitude (tvec4<T>& a) { return sqrt (magnitude_squared (a)); }
+    template <typename T> auto magnitude (tvec3<T>& a) { return sqrt (magnitude_squared (a)); }
+    template <typename T> auto magnitude (tvec2<T>& a) { return sqrt (magnitude_squared (a)); }
+
+    template <typename T> auto length (tvec4<T>& a) { return magnitude (a); }
+    template <typename T> auto length (tvec3<T>& a) { return magnitude (a); }
+    template <typename T> auto length (tvec2<T>& a) { return magnitude (a); }
+
+
+    template <typename T> auto round (tvec4<T>& a) { return tvec4<T> (round (a.x), round (a.y), round (a.z), round (a.w)); }
+    template <typename T> auto round (tvec3<T>& a) { return tvec3<T> (round (a.x), round (a.y), round (a.z)); }
+    template <typename T> auto round (tvec2<T>& a) { return tvec2<T> (round (a.x), round (a.y)); }
 
 }
