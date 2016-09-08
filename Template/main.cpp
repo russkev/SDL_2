@@ -1,14 +1,9 @@
-#if defined(__has_include)
-    #if __has_include(<SDL2/SDL.h>)
-    	#include <SDL2/SDL.h>
-    #endif
-    
-    #if __has_include(<SDL.h>)
-    	#include <SDL.h>
-    #endif
-#else 
-    #include <SDL.h>
+#if defined(__clang__)
+	#include <SDL2/SDL.h>
+#else
+	#include <SDL.h>
 #endif
+
 
 #include <cstdlib>
 #include <iostream>
@@ -28,8 +23,8 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 
     view_type s_view (s_surface.pixels, s_surface.w, s_surface.h);
 
-    const auto w = 2;
-    const auto s_divider = (w * 2 + 1) * (w * 2 + 1);
+    const auto w = 0;
+    //const auto s_divider = (w * 2 + 1) * (w * 2 + 1);
     for (auto j = w; j < s_surface.h-w; ++j) {
         for (auto i = w; i < s_surface.w-w; ++i) {
             //auto p = tvec4<unsigned> ();

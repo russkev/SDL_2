@@ -5,8 +5,10 @@
 #include <stdexcept>
 #include "tvec.hpp"
 
+#if !defined(__clang__)
 #ifndef __PRETTY_FUNCTION__
     #define __PRETTY_FUNCTION__ __FUNCSIG__
+#endif
 #endif
 
 namespace graphics {

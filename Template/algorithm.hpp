@@ -1,6 +1,8 @@
 #pragma once
 
+#include "tvec.hpp"
 #include <type_traits>
+#include <cmath>
 
 namespace graphics {
 

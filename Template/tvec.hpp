@@ -176,25 +176,24 @@ namespace graphics {
                                   static_cast<value_type> (w));
 	}
 
-    template <typename T> auto dot (tvec2<T>& a, tvec2<T>& b) { return a.x * b.x + a.y * b.y; }
-    template <typename T> auto dot (tvec3<T>& a, tvec3<T>& b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
-    template <typename T> auto dot (tvec4<T>& a, tvec4<T>& b) { return a.x * b.x + a.y * b.y + a.z * b.z +  a.w * b.w; }
+    template <typename T> auto dot (const tvec2<T>& a, const tvec2<T>& b) { return a.x * b.x + a.y * b.y; }
+    template <typename T> auto dot (const tvec3<T>& a, const tvec3<T>& b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
+    template <typename T> auto dot (const tvec4<T>& a, const tvec4<T>& b) { return a.x * b.x + a.y * b.y + a.z * b.z +  a.w * b.w; }
 
-    template <typename T> auto magnitude_squared (tvec4<T>& a) { return dot (a, a); }
-    template <typename T> auto magnitude_squared (tvec3<T>& a) { return dot (a, a); }
-    template <typename T> auto magnitude_squared (tvec2<T>& a) { return dot (a, a); }
+    template <typename T> auto magnitude_squared (const tvec4<T>& a) { return dot (a, a); }
+    template <typename T> auto magnitude_squared (const tvec3<T>& a) { return dot (a, a); }
+    template <typename T> auto magnitude_squared (const tvec2<T>& a) { return dot (a, a); }
 
-    template <typename T> auto magnitude (tvec4<T>& a) { return sqrt (magnitude_squared (a)); }
-    template <typename T> auto magnitude (tvec3<T>& a) { return sqrt (magnitude_squared (a)); }
-    template <typename T> auto magnitude (tvec2<T>& a) { return sqrt (magnitude_squared (a)); }
+    template <typename T> auto magnitude (const tvec4<T>& a) { return sqrt (magnitude_squared (a)); }
+    template <typename T> auto magnitude (const tvec3<T>& a) { return sqrt (magnitude_squared (a)); }
+    template <typename T> auto magnitude (const tvec2<T>& a) { return sqrt (magnitude_squared (a)); }
 
-    template <typename T> auto length (tvec4<T>& a) { return magnitude (a); }
-    template <typename T> auto length (tvec3<T>& a) { return magnitude (a); }
-    template <typename T> auto length (tvec2<T>& a) { return magnitude (a); }
+    template <typename T> auto length (const tvec4<T>& a) { return magnitude (a); }
+    template <typename T> auto length (const tvec3<T>& a) { return magnitude (a); }
+    template <typename T> auto length (const tvec2<T>& a) { return magnitude (a); }
 
-
-    template <typename T> auto round (tvec4<T>& a) { return tvec4<T> (round (a.x), round (a.y), round (a.z), round (a.w)); }
-    template <typename T> auto round (tvec3<T>& a) { return tvec3<T> (round (a.x), round (a.y), round (a.z)); }
-    template <typename T> auto round (tvec2<T>& a) { return tvec2<T> (round (a.x), round (a.y)); }
+    template <typename T> auto round (const tvec4<T>& a) { return tvec4<T> (round (a.x), round (a.y), round (a.z), round (a.w)); }
+    template <typename T> auto round (const tvec3<T>& a) { return tvec3<T> (round (a.x), round (a.y), round (a.z)); }
+    template <typename T> auto round (const tvec2<T>& a) { return tvec2<T> (round (a.x), round (a.y)); }
 
 }
