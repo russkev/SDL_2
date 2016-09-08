@@ -1,7 +1,7 @@
 #if defined(__clang__)
-	#include <SDL2/SDL.h>
+    #include <SDL2/SDL.h>
 #else
-	#include <SDL.h>
+    #include <SDL.h>
 #endif
 
 
@@ -98,7 +98,7 @@ int main (int, char**) try {
     return 0;
 }
 catch (const std::exception& ex) {
-	std::cout << "Uncaught exception : " << typeid (ex).name () << "\n";
+    std::cout << "Uncaught exception : " << typeid (ex).name () << "\n";
     std::cout << ex.what () << "\n";
 
 #ifdef _MSC_VER

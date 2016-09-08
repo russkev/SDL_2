@@ -153,30 +153,30 @@ namespace graphics {
         template <typename T> auto xy   (const tvec3<T>& p) { return tvec2<T> (p.x, p.y); }
 
     }
-	
-	template <typename T0, typename T1>
-	auto make_tvec (T0 x, T1 y) {
+    
+    template <typename T0, typename T1>
+    auto make_tvec (T0 x, T1 y) {
         typedef std::common_type_t<T0, T1> value_type;
-		return tvec2<value_type> (static_cast<value_type> (x), 
+        return tvec2<value_type> (static_cast<value_type> (x), 
                                   static_cast<value_type> (y));
-	}
+    }
 
-	template <typename T0, typename T1, typename T2>
-	auto make_tvec (T0 x, T1 y, T2 z) {
+    template <typename T0, typename T1, typename T2>
+    auto make_tvec (T0 x, T1 y, T2 z) {
         typedef std::common_type_t<T0, T1, T2> value_type;
-		return tvec3<value_type> (static_cast<value_type> (x), 
+        return tvec3<value_type> (static_cast<value_type> (x), 
                                   static_cast<value_type> (y),
                                   static_cast<value_type> (z));
-	}
+    }
 
-	template <typename T0, typename T1, typename T2, typename T3>
-	auto make_tvec (T0 x, T1 y, T2 z, T3 w) {
+    template <typename T0, typename T1, typename T2, typename T3>
+    auto make_tvec (T0 x, T1 y, T2 z, T3 w) {
         typedef std::common_type_t<T0, T1, T2, T3> value_type;
-		return tvec4<value_type> (static_cast<value_type> (x), 
+        return tvec4<value_type> (static_cast<value_type> (x), 
                                   static_cast<value_type> (y),
                                   static_cast<value_type> (z),
                                   static_cast<value_type> (w));
-	}
+    }
 
     template <typename T> auto dot (const tvec2<T>& a, const tvec2<T>& b) { return a.x * b.x + a.y * b.y; }
     template <typename T> auto dot (const tvec3<T>& a, const tvec3<T>& b) { return a.x * b.x + a.y * b.y + a.z * b.z; }

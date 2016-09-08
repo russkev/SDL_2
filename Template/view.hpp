@@ -34,9 +34,9 @@ namespace graphics {
             return m_elements [i];
         }
 
-		auto size () const { return max () - min (); }
-		auto min () const { return 0; }
-		auto max () const { return m_length; }
+        auto size () const { return max () - min (); }
+        auto min () const { return 0; }
+        auto max () const { return m_length; }
 
     private:
         element_type* m_elements;
@@ -70,13 +70,13 @@ namespace graphics {
             return (*this) [s_index.y] [s_index.x];
         }
 
-		auto size () const { return max () - min () ; }
-		auto min () const { return tvec2<std::int64_t> (0, 0); }
-		auto max () const { return tvec2<std::int64_t> (m_horizontal, m_vertical); }
+        auto size () const { return max () - min () ; }
+        auto min () const { return tvec2<std::int64_t> (0, 0); }
+        auto max () const { return tvec2<std::int64_t> (m_horizontal, m_vertical); }
 
     private:
         element_type* m_elements;
-		std::int64_t m_horizontal, m_vertical;
+        std::int64_t m_horizontal, m_vertical;
     };    
 
 }
