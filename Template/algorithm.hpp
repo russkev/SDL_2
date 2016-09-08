@@ -58,7 +58,7 @@ namespace graphics {
     // Interpolate between two values A and B determined by Q 
     template <typename _Atype, typename _Btype, typename _Qtype>
     auto lerp (const _Atype& a, const _Btype& b, _Qtype q) {
-        return std::common_type_t<_Atype, _Btype> (a*(_Qtype (1) - q) + q*b);
+        return std::common_type_t<_Atype, _Btype> (round (a*(_Qtype (1) - q) + q*b));
     }
 
     // Blend source element with destination element depending on source element alpha channel
@@ -235,15 +235,14 @@ namespace graphics {
         const typename _View::element_type s_color) 
     {
         auto s_last = s_pt0;
-        // Approximate length
         const auto s_length = length (s_pt1 - s_pt0) + length (s_pt2 - s_pt1);
-        // Approximate a good-ish value for q increment
-        const auto s_deltaq = std::pow (1.0f / s_length, 2.0f/3.0f);
+        const auto s_deltaq = max (int (s_length / 20), 1);
 
-        for (auto q = s_deltaq; q < 1.0f; q += s_deltaq) {
-            auto s_pta = lerp (s_pt0, s_pt1, q);
-            auto s_ptb = lerp (s_pt1, s_pt2, q);
-            auto s_ptc = lerp (s_pta, s_ptb, q);
+        for (auto q = 0; q < s_length; q += s_deltaq) {
+            auto qq = (q/s_length);
+            auto s_pta = lerp (s_pt0, s_pt1, qq);
+            auto s_ptb = lerp (s_pt1, s_pt2, qq);
+            auto s_ptc = lerp (s_pta, s_ptb, qq);
             line (s_view, s_last, s_ptc, s_color);
             s_last = s_ptc;
         }
@@ -262,22 +261,20 @@ namespace graphics {
         const typename _View::element_type s_color) 
     {
         auto s_last = s_pt0;
-        // Approximate length
-        const auto s_length = length (s_pt1 - s_pt0) + length (s_pt2 - s_pt1) + length (s_pt3 - s_pt2);
-        // Approximate a good-ish value for q increment
-        const auto s_deltaq = std::pow (1.0f / s_length, 1.0f/2.0f);
+        const auto s_length = (length (s_pt1 - s_pt0) + length (s_pt2 - s_pt1) + length (s_pt3 - s_pt2));
+        const auto s_deltaq = max (int (s_length / 20), 1);
 
-        for (auto q = s_deltaq; q < 1.0f; q += s_deltaq) {
-            auto s_pta = lerp (s_pt0, s_pt1, q);
-            auto s_ptb = lerp (s_pt1, s_pt2, q);
-            auto s_ptc = lerp (s_pt2, s_pt3, q);
-            auto s_ptd = lerp (s_pta, s_ptb, q);
-            auto s_pte = lerp (s_ptb, s_ptc, q);
-            auto s_ptf = lerp (s_ptd, s_pte, q);
+        for (auto q = 0; q < s_length; q += s_deltaq) {
+            auto qq = (q/s_length);
+            auto s_pta = lerp (s_pt0, s_pt1, qq);
+            auto s_ptb = lerp (s_pt1, s_pt2, qq);
+            auto s_ptc = lerp (s_pt2, s_pt3, qq);
+            auto s_ptd = lerp (s_pta, s_ptb, qq);
+            auto s_pte = lerp (s_ptb, s_ptc, qq);
+            auto s_ptf = lerp (s_ptd, s_pte, qq);
             line (s_view, s_last, s_ptf, s_color);
             s_last = s_ptf;
-        }
+        }        
         line (s_view, s_last, s_pt3, s_color);
-        
     }
 }

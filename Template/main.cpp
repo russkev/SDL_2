@@ -21,30 +21,16 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
     typedef tvec2<float> point_type;
     typedef view2d<bgra_color_type> view_type;
 
+    auto s_center = tvec2<int> (s_surface.w, s_surface.h) / 2;
+
     view_type s_view (s_surface.pixels, s_surface.w, s_surface.h);
-
-    const auto w = 0;
-    //const auto s_divider = (w * 2 + 1) * (w * 2 + 1);
-    for (auto j = w; j < s_surface.h-w; ++j) {
-        for (auto i = w; i < s_surface.w-w; ++i) {
-            //auto p = tvec4<unsigned> ();
-            //for (auto l = -w; l <= w; ++l) {
-            //    for (auto k = -w; k <= w; ++k) {
-            //        p = p + s_view [j + l] [i + k];
-            //    }
-            //}
-            //s_view [j] [i] = p / s_divider;
-            s_view [j] [i] = lerp (s_view [j] [i], bgra_color_type (), 0.001f);
-        }
-    }
-
     canvas<view_type, point_type> s_canvas (s_view);    
 
     s_canvas.pre_translate (point_type (-462.4624365f, -272.7413815f));
     s_canvas.scale (point_type (1) - std::sin ((float)s_absolute_time)*0.75f);
     s_canvas.scale (0.5f);
-    s_canvas.rotate (pi<float> () * (float)s_absolute_time * 0.125f);
-    s_canvas.post_translate (0.5*point_type (s_surface.w, s_surface.h));
+    s_canvas.rotate (pi<float> () * (float)s_absolute_time * 0.5f);
+    s_canvas.post_translate (0.5f*point_type ((float)s_surface.w, (float)s_surface.h));
 
     s_canvas.stroke_color (bgra_color_type (255, 0, 0, 128));
     s_canvas.move_to_abs  (point_type (409.57131f, 69.491383f));
@@ -62,11 +48,17 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
     s_canvas.curve_to_abs (point_type (183.51456f, 207.00708f), point_type ( 418.99131f, 323.78938f), point_type (409.57131f, 69.491383f));
     s_canvas.close_path ();
 
-    auto s_center = tvec2<int> (s_surface.w, s_surface.h) / 2;
-    line_horizontal (s_view, s_center,  20, bgra_color_type (0, 0, 255, 255));
-    line_horizontal (s_view, s_center, -20, bgra_color_type (0, 0, 255, 255));
-      line_vertical (s_view, s_center,  20, bgra_color_type (0, 0, 255, 255));
-      line_vertical (s_view, s_center, -20, bgra_color_type (0, 0, 255, 255));
+    s_canvas.reset_transform ();
+    s_canvas.stroke_color (bgra_color_type (0, 0, 255, 255));
+    s_canvas.move_to_abs (s_center);
+    s_canvas.line_to_abs (s_center + point_type (+10, 0));
+    s_canvas.move_to_abs (s_center);
+    s_canvas.line_to_abs (s_center + point_type (-10, 0));
+    s_canvas.move_to_abs (s_center);
+    s_canvas.line_to_abs (s_center + point_type (0, +10));
+    s_canvas.move_to_abs (s_center);
+    s_canvas.line_to_abs (s_center + point_type (0, -10));
+
 
 
 }
@@ -91,7 +83,7 @@ int main (int, char**) try {
             continue;
         }
 
-        
+        SDL_FillRect (s_surface, nullptr, 0xFFFFFFFF);
         SDL_LockSurface (s_surface);
         
         s_time1 = s_freq_multiplier * SDL_GetPerformanceCounter ();

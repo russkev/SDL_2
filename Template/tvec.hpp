@@ -1,8 +1,10 @@
 #pragma once
 
 #include <type_traits>
+#include <cmath>
 
 namespace graphics {
+    using std::round;
 
     template <typename T>
     struct tvec2 {
