@@ -84,17 +84,20 @@ namespace graphics {
         }
     }
 
+	enum {
+		pointInside = 0,
+		pointTop = 8,
+		pointBottom = 4,
+		pointLeft = 2,
+		pointRight = 1
+	};
+
 	template <typename _Coord0, typename _Coord1, typename _Coord2>
 	int clip_code(
 		tvec2<_Coord0> testCoord, 
 		const tvec2<_Coord1>& s_min,
 		const tvec2<_Coord2>& s_max) 
 	{
-		const int pointInside = 0; // 0000
-		const int pointTop = 8; // 0001
-		const int pointBottom = 4; // 0100
-		const int pointLeft = 2; // 0010
-		const int pointRight = 1; // 0001
 		int code = pointInside; // Initilaize to 0000
 
 		if (testCoord.x < s_min.x) code |= pointLeft;
@@ -121,6 +124,11 @@ namespace graphics {
 		auto code0 = clip_code(s_pt0, s_min, s_max);
 		auto code1 = clip_code(s_pt1, s_min, s_max);
 
+		// // TEST
+		int AAtestCode = pointLeft;
+		return false;
+
+		// // END TEST
 
 		while (true) {
 			if (!(code0 | code1)) {
@@ -130,26 +138,29 @@ namespace graphics {
 				return false; // Line completely outside of screen, trivially reject
 			}
 			else {
-				tvec2<int> n_pt;
+				tvec2<float> n_pt;
 				int codeOut;
+
 
 				//Find the first endpoint that lies outside the screen:
 				codeOut = code0 ? code0 : code1;
 
-				if (codeOut & 8) { //Point is above screen
-					n_pt.x = s_pt0.x + ((s_pt1.x - s_pt0.x) / (s_pt1.y - s_pt0.y)) * (s_min.y - s_pt0.y);
+				if (codeOut & pointTop) { //Point is above screen
+					n_pt.x = s_pt0.x + ((s_pt1.x - s_pt0.x) / (float(s_pt1.y - s_pt0.y))) * (s_min.y - s_pt0.y);
+					// // Other way of doing same thing:
+					//n_pt.x = s_pt0.x + (s_pt1.x - s_pt0.x)*(s_min.y - s_pt0.y) / (s_pt1.y - s_pt0.y);
 					n_pt.y = s_min.y;
 				}
-				else if (codeOut & 4) { //Point is below screen
-					n_pt.x = s_pt0.x + ((s_pt1.x - s_pt0.x) / (s_pt1.y - s_pt0.y)) * (s_max.y - s_pt0.y);
+				else if (codeOut & pointBottom) { //Point is below screen
+					n_pt.x = s_pt0.x + ((s_pt1.x - s_pt0.x) / (float(s_pt1.y - s_pt0.y))) * (s_max.y - s_pt0.y);
 					n_pt.y = s_max.y;
 				}
-				else if (codeOut & 2) { //Point is left of screen
-					n_pt.y = s_pt0.y + ((s_pt1.y - s_pt0.y) / (s_pt1.x - s_pt0.x)) * (s_min.x - s_pt0.x);
+				else if (codeOut & pointLeft) { //Point is left of screen
+					n_pt.y = s_pt0.y + ((s_pt1.y - s_pt0.y) / float(s_pt1.x - s_pt0.x)) * (s_min.x - s_pt0.x);
 					n_pt.x = s_min.x;
 				}
-				else if (codeOut & 1) { //Point is right of screen
-					n_pt.y = s_pt0.y + ((s_pt1.y - s_pt0.y) / (s_pt1.x - s_pt0.x)) * (s_max.x - s_pt0.x);
+				else if (codeOut & pointRight) { //Point is right of screen
+					n_pt.y = s_pt0.y + ((s_pt1.y - s_pt0.y) / (float(s_pt1.x - s_pt0.x))) * (s_max.x - s_pt0.x);
 					n_pt.x = s_max.x;
 				}
 				if (codeOut == code0) {
