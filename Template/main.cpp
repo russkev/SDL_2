@@ -76,11 +76,11 @@ int main (int, char**) try {
 
 
 	// // TEST AREA // //-----------------------------
-	graphics::tvec2<int> in(100, 50), tl(-50, -50), t(50, -50), tr(550, -50), l(-50, 50), r(550, 50), bl(-50, 550), b(50, 550), br(550, 550);
+	graphics::tvec2<int> in(5, 3), tl(-2, -2), t(3, -3), tr(550, -50), l(-50, 50), r(550, 50), bl(-50, 550), b(50, 550), br(550, 550);
 
 	graphics::tvec2<int> min(0, 0);
 	graphics::tvec2<int> max(500, 500);
-	int answer = graphics::clip_line(tl, in, min, max);
+	int answer = graphics::clip_line(t, in, min, max);
 
 	// // TEST AREA END // //-------------------------
 

@@ -137,25 +137,25 @@ namespace graphics {
 				codeOut = code0 ? code0 : code1;
 
 				if (codeOut & 8) { //Point is above screen
-					n_pt.x = s_pt0.x + (s_pt1.x - s_pt0.x) / (s_pt1.y - s_pt0.y) * (s_min.y - s_pt0.y);
+					n_pt.x = s_pt0.x + ((s_pt1.x - s_pt0.x) / (s_pt1.y - s_pt0.y)) * (s_min.y - s_pt0.y);
 					n_pt.y = s_min.y;
 				}
 				else if (codeOut & 4) { //Point is below screen
-					n_pt.x = s_pt0.x + (s_pt1.x - s_pt0.x) / (s_pt1.y - s_pt0.y) * (s_max.y - s_pt0.y);
+					n_pt.x = s_pt0.x + ((s_pt1.x - s_pt0.x) / (s_pt1.y - s_pt0.y)) * (s_max.y - s_pt0.y);
 					n_pt.y = s_max.y;
 				}
 				else if (codeOut & 2) { //Point is left of screen
-					n_pt.y = s_pt0.y + (s_pt1.y - s_pt0.y) / (s_pt1.x - s_pt0.x) * (s_min.x - s_pt0.x);
+					n_pt.y = s_pt0.y + ((s_pt1.y - s_pt0.y) / (s_pt1.x - s_pt0.x)) * (s_min.x - s_pt0.x);
 					n_pt.x = s_min.x;
 				}
 				else if (codeOut & 1) { //Point is right of screen
-					n_pt.y = s_pt0.y + (s_pt1.y - s_pt0.y) / (s_pt1.x - s_pt0.x) * (s_max.x - s_pt0.x);
+					n_pt.y = s_pt0.y + ((s_pt1.y - s_pt0.y) / (s_pt1.x - s_pt0.x)) * (s_max.x - s_pt0.x);
 					n_pt.x = s_max.x;
 				}
 				if (codeOut == code0) {
 					s_pt0.x = n_pt.x;
 					s_pt0.y = n_pt.y;
-						code0 = clip_code(s_pt0, s_min, s_max);
+					code0 = clip_code(s_pt0, s_min, s_max);
 				}
 				else {
 					s_pt1.x = n_pt.x;
