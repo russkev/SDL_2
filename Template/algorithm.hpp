@@ -84,9 +84,30 @@ namespace graphics {
         }
     }
 
-    template <typename _Coord0, typename _Coord1,
+	template <typename _Coord0, typename _Coord1, typename _Coord2>
+	int clip_code(
+		tvec2<_Coord0> testCoord, 
+		const tvec2<_Coord1>& s_min,
+		const tvec2<_Coord2>& s_max) 
+	{
+		const int pointInside = 0; // 0000
+		const int pointTop = 8; // 0001
+		const int pointBottom = 4; // 0100
+		const int pointLeft = 2; // 0010
+		const int pointRight = 1; // 0001
+		int code = pointInside; // Initilaize to 0000
+
+		if (testCoord.x < s_min.x) code |= pointLeft;
+		if (testCoord.x > s_max.x) code |= pointRight;
+		if (testCoord.y < s_min.y) code |= pointTop;
+		if (testCoord.y > s_max.y) code |= pointBottom;
+
+		return code;
+	}
+
+	template <typename _Coord0, typename _Coord1,
               typename _Coord2, typename _Coord3>
-    auto clip_line (
+   auto clip_line (
         tvec2<_Coord0>& s_pt0,          // In/Out first point of the line
         tvec2<_Coord1>& s_pt1,          // In/Out second point of the line
         const tvec2<_Coord2>& s_min,    // Clip rectangle upper left
@@ -96,6 +117,54 @@ namespace graphics {
 
         // TODO #1 : implement clipping algorithm
         // Possible candidate https://en.wikipedia.org/wiki/Cohen%E2%80%93Sutherland_algorithm
+
+		auto code0 = clip_code(s_pt0, s_min, s_max);
+		auto code1 = clip_code(s_pt1, s_min, s_max);
+
+
+		while (true) {
+			if (!(code0 | code1)) {
+				return true; // Both ends inside screen so trivially accept
+			}
+			else if (code0 & code1) {
+				return false; // Line completely outside of screen, trivially reject
+			}
+			else {
+				tvec2<int> n_pt;
+				int codeOut;
+
+				//Find the first endpoint that lies outside the screen:
+				codeOut = code0 ? code0 : code1;
+
+				if (codeOut & 8) { //Point is above screen
+					n_pt.x = s_pt0.x + (s_pt1.x - s_pt0.x) / (s_pt1.y - s_pt0.y) * (s_min.y - s_pt0.y);
+					n_pt.y = s_min.y;
+				}
+				else if (codeOut & 4) { //Point is below screen
+					n_pt.x = s_pt0.x + (s_pt1.x - s_pt0.x) / (s_pt1.y - s_pt0.y) * (s_max.y - s_pt0.y);
+					n_pt.y = s_max.y;
+				}
+				else if (codeOut & 2) { //Point is left of screen
+					n_pt.y = s_pt0.y + (s_pt1.y - s_pt0.y) / (s_pt1.x - s_pt0.x) * (s_min.x - s_pt0.x);
+					n_pt.x = s_min.x;
+				}
+				else if (codeOut & 1) { //Point is right of screen
+					n_pt.y = s_pt0.y + (s_pt1.y - s_pt0.y) / (s_pt1.x - s_pt0.x) * (s_max.x - s_pt0.x);
+					n_pt.x = s_max.x;
+				}
+				if (codeOut == code0) {
+					s_pt0.x = n_pt.x;
+					s_pt0.y = n_pt.y;
+						code0 = clip_code(s_pt0, s_min, s_max);
+				}
+				else {
+					s_pt1.x = n_pt.x;
+					s_pt1.y = n_pt.y;
+					code1 = clip_code(s_pt1, s_min, s_max);
+				}
+			}
+		}
+
 
         return false; // Returns true if line intersects clip rect , false otherwise
     }

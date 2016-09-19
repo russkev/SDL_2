@@ -74,6 +74,17 @@ int main (int, char**) try {
     SDL_Init (SDL_INIT_EVERYTHING);
     std::atexit (&SDL_Quit);
 
+
+	// // TEST AREA // //-----------------------------
+	graphics::tvec2<int> in(100, 50), tl(-50, -50), t(50, -50), tr(550, -50), l(-50, 50), r(550, 50), bl(-50, 550), b(50, 550), br(550, 550);
+
+	graphics::tvec2<int> min(0, 0);
+	graphics::tvec2<int> max(500, 500);
+	int answer = graphics::clip_line(tl, in, min, max);
+
+	// // TEST AREA END // //-------------------------
+
+
     auto s_window = SDL_CreateWindow ("Pretty little lines", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_ALLOW_HIGHDPI);
     auto s_surface = SDL_GetWindowSurface (s_window);
 
