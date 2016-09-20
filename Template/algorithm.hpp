@@ -242,6 +242,14 @@ namespace graphics {
     {
         // TODO (optional) : implement quadric bezier drawing
         // can start by looking at https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+		tvec2<int> pixel;
+
+
+		for (float t = 0; t <= 1; t = t + 0.01) {
+			pixel.x = s_pt0.x*((1 - t)*(1 - t)) + 2 * (1 - t)*t*s_pt1.x + t*t*s_pt2.x;
+			pixel.y = s_pt0.y*((1 - t)*(1 - t)) + 2 * (1 - t)*t*s_pt1.y + t*t*s_pt2.y;
+			
+		}
     }
 
     // Cubic bezier curve

@@ -66,6 +66,17 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
     s_canvas.move_to_abs (s_center);
     s_canvas.line_to_abs (s_center + point_type (0, -10));
 
+	// // TEST // // ------------
+	tvec2<int> p0(100, 500), p1(600, 200), p2(1000, 400);
+
+	bgra_color_type lineColour = { 0, 0, 0, 255 };
+
+	//line(s_surface, p0, p1, { 0,0,0,255 });
+	line(s_surface, p0, p1, lineColour);
+
+
+	// // END TEST // // --------
+
 
 
 }
@@ -76,11 +87,11 @@ int main (int, char**) try {
 
 
 	// // TEST AREA // //-----------------------------
-	graphics::tvec2<int> in(50, 30), tl(-20, -20), t(30, -30), tr(550, -50), l(-50, 50), r(550, 50), bl(-50, 550), b(50, 550), br(550, 550);
+	graphics::tvec2<int> in(50, 30), tl(-20, -20), t(30, -30), tr(550, -50), l(-50, 50), r(550, 50), bl(-50, 550), b(50, 550), br(550, 550), 
+		p0(100, 500), p1(600, 200), p2(1000, 400);
 
 	graphics::tvec2<int> min(0, 0);
 	graphics::tvec2<int> max(500, 500);
-	int answer = graphics::clip_line(t, in, min, max);
 
 	// // TEST AREA END // //-------------------------
 
