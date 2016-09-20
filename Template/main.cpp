@@ -72,7 +72,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	bgra_color_type lineColour = { 0, 0, 0, 255 };
 
 	//line(s_surface, p0, p1, { 0,0,0,255 });
-	line(s_surface, p0, p1, lineColour);
+	//line(s_surface, p0, p1, lineColour);
 
 
 	// // END TEST // // --------

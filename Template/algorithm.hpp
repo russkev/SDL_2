@@ -124,12 +124,6 @@ namespace graphics {
 		auto code0 = clip_code(s_pt0, s_min, s_max);
 		auto code1 = clip_code(s_pt1, s_min, s_max);
 
-		// // TEST
-		int AAtestCode = pointLeft;
-		return false;
-
-		// // END TEST
-
 		while (true) {
 			if (!(code0 | code1)) {
 				return true; // Both ends inside screen so trivially accept
