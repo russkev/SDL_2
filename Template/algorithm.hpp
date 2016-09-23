@@ -44,7 +44,7 @@ namespace graphics {
 
     // Blend source element with destination element depending on source element alpha channel
     template <typename _View, typename _Coord>
-    auto blend_element (
+    auto blend_element ( // Takes view, pixel coordinate and color
         _View& s_view, 
         const tvec2<_Coord>& s_point,						
         const typename _View::element_type& s_source)
@@ -239,9 +239,10 @@ namespace graphics {
 		tvec2<int> pixel;
 
 
-		for (float t = 0; t <= 1; t = t + 0.01) {
+		for (float t = 0; t <= 1; t = t + 0.001) {
 			pixel.x = s_pt0.x*((1 - t)*(1 - t)) + 2 * (1 - t)*t*s_pt1.x + t*t*s_pt2.x;
 			pixel.y = s_pt0.y*((1 - t)*(1 - t)) + 2 * (1 - t)*t*s_pt1.y + t*t*s_pt2.y;
+			blend_element(s_view, pixel, s_color);
 			
 		}
     }

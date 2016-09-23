@@ -69,10 +69,12 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	// // TEST // // ------------
 	tvec2<int> p0(100, 500), p1(600, 200), p2(1000, 400);
 
-	bgra_color_type lineColour = { 0, 0, 0, 255 };
+	bgra_color_type lineColour =  bgra_color_type(0, 0, 0, 255);
 
 	//line(s_surface, p0, p1, { 0,0,0,255 });
-	//line(s_surface, p0, p1, lineColour);
+	line(s_view, p0, p1, lineColour);
+	line(s_view, p1, p2, lineColour);
+	bezier_curve(s_view, p0, p1, p2, lineColour);
 
 
 	// // END TEST // // --------
