@@ -236,16 +236,42 @@ namespace graphics {
     {
         // TODO (optional) : implement quadric bezier drawing
         // can start by looking at https://en.wikipedia.org/wiki/B%C3%A9zier_curve
-		tvec2<int> pixel;
+		tvec2<int> startCoord = s_pt0, endCoord = s_pt0;
 
-
-		for (float t = 0; t <= 1; t = t + 0.001) {
-			pixel.x = s_pt0.x*((1 - t)*(1 - t)) + 2 * (1 - t)*t*s_pt1.x + t*t*s_pt2.x;
-			pixel.y = s_pt0.y*((1 - t)*(1 - t)) + 2 * (1 - t)*t*s_pt1.y + t*t*s_pt2.y;
-			blend_element(s_view, pixel, s_color);
+		for (float t = 0; t <= 1; t = t + 0.3333) {
+			endCoord.x = s_pt0.x*((1 - t)*(1 - t)) + 2 * (1 - t)*t*s_pt1.x + t*t*s_pt2.x;
+			endCoord.y = s_pt0.y*((1 - t)*(1 - t)) + 2 * (1 - t)*t*s_pt1.y + t*t*s_pt2.y;
+			line(s_view, startCoord, endCoord, s_color);
+			startCoord = endCoord;
 			
 		}
     }
+
+	// Check if curve is flat
+	template <typename _Coord0, typename _Coord1, typename _Coord2, typename _Coord4>
+	bool curve_is_flat(
+		const tvec2<_Coord0>& s_pt0,
+		const tvec2<_Coord1>& s_pt1,
+		const tvec2<_Coord2>& s_pt2,
+		const tvec2<_Coord4>& s_pt3) 
+	{
+		tvec2<int> d;
+		float d2, d3, d4, distance_tolerance = 1;
+
+		d = s_pt3 - s_pt0;
+
+		d2 = fabs(((s_pt1.x - s_pt3.x) * d.y - (s_pt1.y - s_pt3.y) * d.x));
+		d3 = fabs(((s_pt2.x - s_pt3.x) * d.y - (s_pt2.y - s_pt3.y) * d.x));
+
+		d4 = (d2 + d3)*(d2 + d3);
+		distance_tolerance = distance_tolerance * (d.x*d.x + d.y*d.y);
+
+		if (d4 < distance_tolerance) {
+			return true;
+		}
+		return false;
+
+	}
 
     // Cubic bezier curve
     template <typename _View, typename _Coord0, typename _Coord1, typename _Coord2>
@@ -258,5 +284,42 @@ namespace graphics {
     {
         // TODO #2 : implement cubic bezier drawing
         // can start by looking at https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+		//tvec2<_Coord0> s_pt01, s_pt12, s_pt23, s_pt012, s_pt123, s_pt0123;
+
+		tvec4<std::uint8_t> colRed(0, 0, 255, 255);
+		tvec4<std::uint8_t> colPurple(127, 0, 127, 255);
+		tvec4<std::uint8_t> colBlue(255, 0, 0, 255);
+		tvec4<std::uint8_t> colAqua(127, 127, 0, 255);
+
+		auto s_pt01 = s_pt0 + (s_pt1 - s_pt0) * 0.5f;
+		auto s_pt12 = s_pt1 + (s_pt2 - s_pt1) * 0.5f;
+		auto s_pt23 = s_pt2 + (s_pt3 - s_pt2) * 0.5f;
+		
+		auto s_pt012 = s_pt01 + (s_pt12 - s_pt01) * 0.5f;
+		auto s_pt123 = s_pt12 + (s_pt23 - s_pt12) * 0.5f;
+		auto s_pt0123 = s_pt012 + (s_pt123 - s_pt012) * 0.5f;
+		
+		line(s_view, s_pt0, s_pt1, colRed);
+		//line(s_view, s_pt1, s_pt2, colRed);
+		//line(s_view, s_pt2, s_pt3, colRed);
+		//line(s_view, s_pt01, s_pt12, colPurple);
+		//line(s_view, s_pt12, s_pt23, colPurple);
+		//line(s_view, s_pt012, s_pt123, colBlue);
+		//line(s_view, s_pt0, s_pt0123, colAqua);
+		//line(s_view, s_pt0123, s_pt3, colAqua);
+
+		//if (!curve_is_flat(s_pt0, s_pt1, s_pt2, s_pt3)) {
+		//	bezier_curve(s_view, s_pt0, s_pt01, s_pt012, s_pt0123, s_color);
+		//	bezier_curve(s_view, s_pt0123, s_pt123, s_pt23, s_pt3, s_color);
+		//	//return;
+		//}
+		//else {
+		//	//line(s_view, s_pt0, s_pt3, s_color);
+		//	line(s_view, tvec2<int>(s_pt0.x + 10, s_pt0.y), tvec2<int>(s_pt0.x - 10, s_pt0.y), colRed);
+		//	line(s_view, tvec2<int>(s_pt0.x, s_pt0.y + 10), tvec2<int>(s_pt0.x, s_pt0.y - 10), colRed);
+		//	//return;
+		//}
+
+		return;
     }
 }
