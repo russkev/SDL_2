@@ -67,7 +67,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
     s_canvas.line_to_abs (s_center + point_type (0, -10));
 
 	// // TEST // // ------------
-	tvec2<float> p0(100, 500), p1(200, 300), p2(600, 200), p3(1000, 400);
+	tvec2<float> p0(100, 500), p1(100, 200), p2(200, 200), p3(200, 500);
 
 	bgra_color_type lineColour =  bgra_color_type(0, 0, 0, 255);
 
