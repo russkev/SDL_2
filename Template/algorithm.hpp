@@ -273,6 +273,28 @@ namespace graphics {
 
 	}
 
+	// Check if points are near
+	template <typename _Coord0, typename _Coord1>
+	bool points_are_near(
+		const tvec2<_Coord0>& s_pt0,
+		const tvec2<_Coord1>& s_pt1)
+	{
+		float tolerance = 1.5;
+		return (fabs(s_pt0.x - s_pt1.x) < tolerance && fabs(s_pt0.y - s_pt1.y) < tolerance);
+	}
+
+	// Draw crosshair
+	template <typename _View, typename _Coord0>
+	void crosshair(
+		_View& s_view,
+		const tvec2<_Coord0>& s_pt0,
+		const typename _View::element_type s_color)
+	{
+		int size = 5;
+		line(s_view, tvec2<int>(s_pt0.x + size, s_pt0.y), tvec2<int>(s_pt0.x - size, s_pt0.y), s_color);
+		line(s_view, tvec2<int>(s_pt0.x, s_pt0.y + size), tvec2<int>(s_pt0.x, s_pt0.y - size), s_color);
+	}
+	int count = 0;
     // Cubic bezier curve
     template <typename _View, typename _Coord0, typename _Coord1, typename _Coord2>
     void bezier_curve (_View& s_view,
@@ -291,6 +313,8 @@ namespace graphics {
 		tvec4<std::uint8_t> colBlue(255, 0, 0, 255);
 		tvec4<std::uint8_t> colAqua(127, 127, 0, 255);
 
+		++count;
+
 		auto s_pt01 = s_pt0 + (s_pt1 - s_pt0) * 0.5f;
 		auto s_pt12 = s_pt1 + (s_pt2 - s_pt1) * 0.5f;
 		auto s_pt23 = s_pt2 + (s_pt3 - s_pt2) * 0.5f;
@@ -298,27 +322,18 @@ namespace graphics {
 		auto s_pt012 = s_pt01 + (s_pt12 - s_pt01) * 0.5f;
 		auto s_pt123 = s_pt12 + (s_pt23 - s_pt12) * 0.5f;
 		auto s_pt0123 = s_pt012 + (s_pt123 - s_pt012) * 0.5f;
-		
-		line(s_view, s_pt0, s_pt1, colRed);
-		//line(s_view, s_pt1, s_pt2, colRed);
-		//line(s_view, s_pt2, s_pt3, colRed);
-		//line(s_view, s_pt01, s_pt12, colPurple);
-		//line(s_view, s_pt12, s_pt23, colPurple);
-		//line(s_view, s_pt012, s_pt123, colBlue);
-		//line(s_view, s_pt0, s_pt0123, colAqua);
-		//line(s_view, s_pt0123, s_pt3, colAqua);
 
-		//if (!curve_is_flat(s_pt0, s_pt1, s_pt2, s_pt3)) {
-		//	bezier_curve(s_view, s_pt0, s_pt01, s_pt012, s_pt0123, s_color);
-		//	bezier_curve(s_view, s_pt0123, s_pt123, s_pt23, s_pt3, s_color);
-		//	//return;
-		//}
-		//else {
-		//	//line(s_view, s_pt0, s_pt3, s_color);
-		//	line(s_view, tvec2<int>(s_pt0.x + 10, s_pt0.y), tvec2<int>(s_pt0.x - 10, s_pt0.y), colRed);
-		//	line(s_view, tvec2<int>(s_pt0.x, s_pt0.y + 10), tvec2<int>(s_pt0.x, s_pt0.y - 10), colRed);
-		//	//return;
-		//}
+		if (curve_is_flat(s_pt0, s_pt1, s_pt2, s_pt3) || 
+			(points_are_near(s_pt0, s_pt1) && points_are_near(s_pt1, s_pt2) && points_are_near(s_pt2, s_pt3))) //Prevent stack overflow
+		{
+			line(s_view, tvec2<int>(s_pt0), tvec2<int>(s_pt3), s_color);
+			//crosshair(s_view, s_pt0, colRed);
+			//crosshair(s_view, s_pt3, colRed);
+		}
+		else {
+			bezier_curve(s_view, tvec2<int>(s_pt0), tvec2<int>(s_pt01), tvec2<int>(s_pt012), tvec2<int>(s_pt0123), s_color);
+			bezier_curve(s_view, tvec2<int>(s_pt0123), tvec2<int>(s_pt123), tvec2<int>(s_pt23), tvec2<int>(s_pt3), s_color);
+		}
 
 		return;
     }
