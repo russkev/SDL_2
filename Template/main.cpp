@@ -55,16 +55,16 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
     s_canvas.close_path ();
 
     // Draw the corsshair
-    //s_canvas.reset_transform ();
-    //s_canvas.stroke_color (bgra_color_type (0, 0, 255, 255));
-    //s_canvas.move_to_abs (s_center);
-    //s_canvas.line_to_abs (s_center + point_type (+10, 0));
-    //s_canvas.move_to_abs (s_center);
-    //s_canvas.line_to_abs (s_center + point_type (-10, 0));
-    //s_canvas.move_to_abs (s_center);
-    //s_canvas.line_to_abs (s_center + point_type (0, +10));
-    //s_canvas.move_to_abs (s_center);
-    //s_canvas.line_to_abs (s_center + point_type (0, -10));
+    s_canvas.reset_transform ();
+    s_canvas.stroke_color (bgra_color_type (0, 0, 255, 255));
+    s_canvas.move_to_abs (s_center);
+    s_canvas.line_to_abs (s_center + point_type (+10, 0));
+    s_canvas.move_to_abs (s_center);
+    s_canvas.line_to_abs (s_center + point_type (-10, 0));
+    s_canvas.move_to_abs (s_center);
+    s_canvas.line_to_abs (s_center + point_type (0, +10));
+    s_canvas.move_to_abs (s_center);
+    s_canvas.line_to_abs (s_center + point_type (0, -10));
 
 	// // TEST // // ------------
 	//tvec2<float> p0(20, 20), p1(100, 159), p2(50, 200), p3(200, 20);

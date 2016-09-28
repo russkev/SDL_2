@@ -294,7 +294,7 @@ namespace graphics {
 		line(s_view, tvec2<int>(s_pt0.x + size, s_pt0.y), tvec2<int>(s_pt0.x - size, s_pt0.y), s_color);
 		line(s_view, tvec2<int>(s_pt0.x, s_pt0.y + size), tvec2<int>(s_pt0.x, s_pt0.y - size), s_color);
 	}
-	int count = 0;
+
     // Cubic bezier curve
     template <typename _View, typename _Coord0, typename _Coord1, typename _Coord2>
     void bezier_curve (_View& s_view,
@@ -309,11 +309,6 @@ namespace graphics {
 		//tvec2<_Coord0> s_pt01, s_pt12, s_pt23, s_pt012, s_pt123, s_pt0123;
 
 		tvec4<std::uint8_t> colRed(0, 0, 255, 255);
-		tvec4<std::uint8_t> colPurple(127, 0, 127, 255);
-		tvec4<std::uint8_t> colBlue(255, 0, 0, 255);
-		tvec4<std::uint8_t> colAqua(127, 127, 0, 255);
-
-		++count;
 
 		auto s_pt01 = s_pt0 + (s_pt1 - s_pt0) * 0.5f;
 		auto s_pt12 = s_pt1 + (s_pt2 - s_pt1) * 0.5f;

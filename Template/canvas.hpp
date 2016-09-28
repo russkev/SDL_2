@@ -87,13 +87,21 @@ namespace graphics {
 		}
 	private:
 		auto transform (const point_type& s_pt0) const {
-            auto p = s_pt0;
             /* TODO #3 : transform p here
                 1) pre-translate https://en.wikipedia.org/wiki/Translation_(geometry) , though this looks alot more complicated then it actually is
+			
+
+
                 2) rotate https://en.wikipedia.org/wiki/Rotation_matrix
                 3) scale https://en.wikipedia.org/wiki/Scaling_(geometry)
                 4) post-translate (same as 1)
             */
+
+			auto p = s_pt0 + m_pre_translate;
+			p.x = p.x*cos(m_rotate) - p.y*sin(m_rotate);
+			p.y = p.x*sin(m_rotate) + p.y*cos(m_rotate);
+			p = p * m_scale;
+			p = p + m_post_translate;
 			return p;
 		}
 
