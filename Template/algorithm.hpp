@@ -39,7 +39,16 @@ namespace graphics {
     // Sometimes this is also refered to as Mix instead of Lerp
     template <typename _Atype, typename _Btype, typename _Qtype>
     auto lerp (const _Atype& a, const _Btype& b, _Qtype q) {
-        return std::common_type_t<_Atype, _Btype> (round (a*(_Qtype (1) - q) + q*b));
+		bool gammaCorrectOn = true;
+		float gamma_i = 1/2.2;
+		float q1 = q;
+		float q2 = 1 - q;
+		if (gammaCorrectOn) {
+			q1 = pow(q, (gamma_i));
+			q2 = pow((1 - q), (gamma_i));
+		}
+        std::common_type_t<_Atype, _Btype> out_value (round (a*q2 + q1*b));
+		return out_value;
     }
 
     // Blend source element with destination element depending on source element alpha channel
@@ -49,6 +58,7 @@ namespace graphics {
         const tvec2<_Coord>& s_point,						
         const typename _View::element_type& s_source)
     {
+
         typedef typename _View::element_type element_type;
         typedef tvec2<_Coord> point_type;
         using namespace swizzle;
@@ -143,28 +153,28 @@ namespace graphics {
 					n_pt.x = s_pt0.x + ((s_pt1.x - s_pt0.x) / (float(s_pt1.y - s_pt0.y))) * (s_min.y - s_pt0.y);
 					// // Other way of doing same thing:
 					//n_pt.x = s_pt0.x + (s_pt1.x - s_pt0.x)*(s_min.y - s_pt0.y) / (s_pt1.y - s_pt0.y);
-					n_pt.y = float(s_min.y);
+					n_pt.y = s_min.y;
 				}
 				else if (codeOut & pointBottom) { //Point is below screen
 					n_pt.x = s_pt0.x + ((s_pt1.x - s_pt0.x) / (float(s_pt1.y - s_pt0.y))) * (s_max.y - s_pt0.y);
-					n_pt.y = float(s_max.y);
+					n_pt.y = s_max.y;
 				}
 				else if (codeOut & pointLeft) { //Point is left of screen
 					n_pt.y = s_pt0.y + ((s_pt1.y - s_pt0.y) / float(s_pt1.x - s_pt0.x)) * (s_min.x - s_pt0.x);
-					n_pt.x = float(s_min.x);
+					n_pt.x = s_min.x;
 				}
 				else if (codeOut & pointRight) { //Point is right of screen
 					n_pt.y = s_pt0.y + ((s_pt1.y - s_pt0.y) / (float(s_pt1.x - s_pt0.x))) * (s_max.x - s_pt0.x);
-					n_pt.x = float(s_max.x);
+					n_pt.x = s_max.x;
 				}
 				if (codeOut == code0) {
-					s_pt0.x = int(n_pt.x);
-					s_pt0.y = int(n_pt.y);
+					s_pt0.x = n_pt.x;
+					s_pt0.y = n_pt.y;
 					code0 = clip_code(s_pt0, s_min, s_max);
 				}
 				else {
-					s_pt1.x = int(n_pt.x);
-					s_pt1.y = int(n_pt.y);
+					s_pt1.x = n_pt.x;
+					s_pt1.y = n_pt.y;
 					code1 = clip_code(s_pt1, s_min, s_max);
 				}
 			}
@@ -204,10 +214,15 @@ namespace graphics {
             auto y = one * s_pt0.y;
             for (auto x = s_pt0.x; x != s_pt1.x; x += dx) {		
                 const auto s = y - floor (y);
-                blend_element (s_view, point_type (coord_type (x), coord_type (ceil (y))),
-                               element_type (xyz (s_color), color_type (w (s_color) * (s))));
-                blend_element (s_view, point_type (coord_type (x), coord_type (floor (y))),
-                               element_type (xyz (s_color), color_type (w (s_color) * (one - s))));
+				const auto rs = one - s;
+                blend_element (
+					s_view, //view
+					point_type (coord_type (x), coord_type (ceil (y))), //pixel coordinate
+					element_type (xyz (s_color), color_type (w (s_color) * (s)))); //colour
+                blend_element (
+					s_view, 
+					point_type (coord_type (x), coord_type (floor (y))),
+					element_type (xyz (s_color), color_type (w (s_color) * (rs))));
                 y += dy;
             }
         }
@@ -256,7 +271,7 @@ namespace graphics {
 		const tvec2<_Coord4>& s_pt3) 
 	{
 		tvec2<int> d;
-		float d2, d3, d4, distance_tolerance = 0.25;
+		float d2, d3, d4, distance_tolerance = 1;
 
 		d = s_pt3 - s_pt0;
 
@@ -273,6 +288,28 @@ namespace graphics {
 
 	}
 
+	// Check if points are near
+	template <typename _Coord0, typename _Coord1>
+	bool points_are_near(
+		const tvec2<_Coord0>& s_pt0,
+		const tvec2<_Coord1>& s_pt1)
+	{
+		float tolerance = 1.5;
+		return (fabs(s_pt0.x - s_pt1.x) < tolerance && fabs(s_pt0.y - s_pt1.y) < tolerance);
+	}
+
+	// Draw crosshair
+	template <typename _View, typename _Coord0>
+	void crosshair(
+		_View& s_view,
+		const tvec2<_Coord0>& s_pt0,
+		const typename _View::element_type s_color)
+	{
+		int size = 5;
+		line(s_view, tvec2<int>(s_pt0.x + size, s_pt0.y), tvec2<int>(s_pt0.x - size, s_pt0.y), s_color);
+		line(s_view, tvec2<int>(s_pt0.x, s_pt0.y + size), tvec2<int>(s_pt0.x, s_pt0.y - size), s_color);
+	}
+
     // Cubic bezier curve
     template <typename _View, typename _Coord0, typename _Coord1, typename _Coord2>
     void bezier_curve (_View& s_view,
@@ -287,10 +324,6 @@ namespace graphics {
 		//tvec2<_Coord0> s_pt01, s_pt12, s_pt23, s_pt012, s_pt123, s_pt0123;
 
 		tvec4<std::uint8_t> colRed(0, 0, 255, 255);
-		tvec4<std::uint8_t> colPurple(127, 0, 127, 255);
-		tvec4<std::uint8_t> colBlue(255, 0, 0, 255);
-		tvec4<std::uint8_t> colAqua(127, 127, 0, 255);
-		int cross_hair_size = 2;
 
 		auto s_pt01 = s_pt0 + (s_pt1 - s_pt0) * 0.5f;
 		auto s_pt12 = s_pt1 + (s_pt2 - s_pt1) * 0.5f;
@@ -299,29 +332,18 @@ namespace graphics {
 		auto s_pt012 = s_pt01 + (s_pt12 - s_pt01) * 0.5f;
 		auto s_pt123 = s_pt12 + (s_pt23 - s_pt12) * 0.5f;
 		auto s_pt0123 = s_pt012 + (s_pt123 - s_pt012) * 0.5f;
-		
 
-
-		if (!curve_is_flat(s_pt0, s_pt1, s_pt2, s_pt3)) {
-			bezier_curve(s_view, tvec2<int>(s_pt0), tvec2<int>(s_pt01), tvec2<int>(s_pt012), tvec2<int>(s_pt0123), s_color);
-			bezier_curve(s_view, tvec2<int>(s_pt0123), tvec2<int>(s_pt123), tvec2<int>(s_pt23), tvec2<int>(s_pt3), s_color);
-			//return;
+		if (curve_is_flat(s_pt0, s_pt1, s_pt2, s_pt3) || 
+			(points_are_near(s_pt0, s_pt1) && points_are_near(s_pt1, s_pt2) && points_are_near(s_pt2, s_pt3))) //Prevent stack overflow
+		{
+			line(s_view, tvec2<int>(s_pt0), tvec2<int>(s_pt3), s_color);
+			//crosshair(s_view, s_pt0, colRed);
+			//crosshair(s_view, s_pt3, colRed);
 		}
 		else {
-			line(s_view, tvec2<int>(int(s_pt0.x) + cross_hair_size, int(s_pt0.y)), tvec2<int>(int(s_pt0.x) - cross_hair_size, int(s_pt0.y)), colRed);
-			line(s_view, tvec2<int>(int(s_pt0.x), int(s_pt0.y) + cross_hair_size), tvec2<int>(int(s_pt0.x), int(s_pt0.y) - cross_hair_size), colRed);
-			line(s_view, tvec2<int>(s_pt0), tvec2<int>(s_pt3), s_color);
-			//return;
+			bezier_curve(s_view, tvec2<int>(s_pt0), tvec2<int>(s_pt01), tvec2<int>(s_pt012), tvec2<int>(s_pt0123), s_color);
+			bezier_curve(s_view, tvec2<int>(s_pt0123), tvec2<int>(s_pt123), tvec2<int>(s_pt23), tvec2<int>(s_pt3), s_color);
 		}
-
-		//line(s_view, tvec2<int>(s_pt0),    tvec2<int>(s_pt1), colRed);
-		//line(s_view, tvec2<int>(s_pt1),    tvec2<int>(s_pt2), colRed);
-		//line(s_view, tvec2<int>(s_pt2),    tvec2<int>(s_pt3), colRed);
-		//line(s_view, tvec2<int>(s_pt01),   tvec2<int>(s_pt12), colPurple);
-		//line(s_view, tvec2<int>(s_pt12),   tvec2<int>(s_pt23), colPurple);
-		//line(s_view, tvec2<int>(s_pt012),  tvec2<int>(s_pt123), colBlue);
-		//line(s_view, tvec2<int>(s_pt0),    tvec2<int>(s_pt0123), colAqua);
-		//line(s_view, tvec2<int>(s_pt0123), tvec2<int>(s_pt3), colAqua);
 
 		return;
     }
