@@ -39,7 +39,16 @@ namespace graphics {
     // Sometimes this is also refered to as Mix instead of Lerp
     template <typename _Atype, typename _Btype, typename _Qtype>
     auto lerp (const _Atype& a, const _Btype& b, _Qtype q) {
-        return std::common_type_t<_Atype, _Btype> (round (a*(_Qtype (1) - q) + q*b));
+		bool gammaCorrectOn = true;
+		float gamma_i = 1/2.2;
+		float q1 = q;
+		float q2 = 1 - q;
+		if (gammaCorrectOn) {
+			q1 = pow(q, (gamma_i));
+			q2 = pow((1 - q), (gamma_i));
+		}
+        std::common_type_t<_Atype, _Btype> out_value (round (a*q2 + q1*b));
+		return out_value;
     }
 
     // Blend source element with destination element depending on source element alpha channel
@@ -49,6 +58,7 @@ namespace graphics {
         const tvec2<_Coord>& s_point,						
         const typename _View::element_type& s_source)
     {
+
         typedef typename _View::element_type element_type;
         typedef tvec2<_Coord> point_type;
         using namespace swizzle;
@@ -204,10 +214,15 @@ namespace graphics {
             auto y = one * s_pt0.y;
             for (auto x = s_pt0.x; x != s_pt1.x; x += dx) {		
                 const auto s = y - floor (y);
-                blend_element (s_view, point_type (coord_type (x), coord_type (ceil (y))),
-                               element_type (xyz (s_color), color_type (w (s_color) * (s))));
-                blend_element (s_view, point_type (coord_type (x), coord_type (floor (y))),
-                               element_type (xyz (s_color), color_type (w (s_color) * (one - s))));
+				const auto rs = one - s;
+                blend_element (
+					s_view, //view
+					point_type (coord_type (x), coord_type (ceil (y))), //pixel coordinate
+					element_type (xyz (s_color), color_type (w (s_color) * (s)))); //colour
+                blend_element (
+					s_view, 
+					point_type (coord_type (x), coord_type (floor (y))),
+					element_type (xyz (s_color), color_type (w (s_color) * (rs))));
                 y += dy;
             }
         }

@@ -38,7 +38,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
     s_canvas.post_translate (0.5f*point_type ((float)s_surface.w, (float)s_surface.h));
 
     // Draw the picture
-    s_canvas.stroke_color (bgra_color_type (255, 0, 0, 128));
+    s_canvas.stroke_color (bgra_color_type (0, 0, 255, 255));
     s_canvas.move_to_abs  (point_type (409.57131f, 69.491383f));
     s_canvas.curve_to_abs (point_type (434.06031f, 118.46738f), point_type ( 435.94631f, 116.58518f), point_type (435.94631f, 116.58518f));
     s_canvas.line_to_abs  (point_type (462.29006f, 118.08518f));
@@ -70,6 +70,8 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	//tvec2<float> p0(20, 20), p1(100, 159), p2(50, 200), p3(200, 20);
 	//bgra_color_type lineColour =  bgra_color_type(0, 0, 0, 255);
 	//bezier_curve(s_view, p0, p1, p2, p3, lineColour);
+
+	//float lerpTest50 = lerp(255, 0, 0.5);
 	// // END TEST // // --------
 
 
@@ -97,7 +99,7 @@ int main (int, char**) try {
             continue;
         }
 
-        SDL_FillRect (s_surface, nullptr, 0xFFFFFFFF);
+        SDL_FillRect (s_surface, nullptr, 0x0000FF00);
         SDL_LockSurface (s_surface);
         
         s_time1 = s_freq_multiplier * SDL_GetPerformanceCounter ();
