@@ -28,12 +28,12 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	
     // Pushes the picture so it is centered at (0, 0)
     s_canvas.pre_translate (point_type (-462.4624365f, -272.7413815f));
-    // Animate the scale
-    s_canvas.scale (point_type (1) - std::sin ((float)s_absolute_time)*0.75f);
-    // Scale it further down to half size
-    s_canvas.scale (0.5f);
-    // Animate rotatation
-    s_canvas.rotate (pi<float> () * (float)s_absolute_time * 0.5f);
+    //// Animate the scale
+    //s_canvas.scale (point_type (1) - std::sin ((float)s_absolute_time)*0.75f);
+    //// Scale it further down to half size
+    //s_canvas.scale (0.5f);
+    //// Animate rotatation
+    //s_canvas.rotate (pi<float> () * (float)s_absolute_time * 0.5f);
     // Push the processed picture back to the center of the screen
     s_canvas.post_translate (0.5f*point_type ((float)s_surface.w, (float)s_surface.h));
 
@@ -99,7 +99,7 @@ int main (int, char**) try {
             continue;
         }
 
-        SDL_FillRect (s_surface, nullptr, 0x0000FF00);
+        SDL_FillRect (s_surface, nullptr, 0xFFFFFFFF);
         SDL_LockSurface (s_surface);
         
         s_time1 = s_freq_multiplier * SDL_GetPerformanceCounter ();

@@ -48,6 +48,12 @@ namespace graphics {
 			q2 = pow((1 - q), (gamma_i));
 		}
         std::common_type_t<_Atype, _Btype> out_value (round (a*q2 + q1*b));
+		//tvec4<tvec3<float> > out_value(round(a*q2 + q1*b));
+		//outValue.b = clamp(outValue.b, 0, 255);
+		//outValue.g = clamp(outValue.g, 0, 255);
+		//outValue.r = clamp(outValue.r, 0, 255);
+		
+		
 		return out_value;
     }
 
