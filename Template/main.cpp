@@ -99,7 +99,7 @@ int main (int, char**) try {
             continue;
         }
 
-        SDL_FillRect (s_surface, nullptr, 0xFFFFFFFF);
+        SDL_FillRect (s_surface, nullptr, 0xFFFFFFFF); //0xAARRGGBB
         SDL_LockSurface (s_surface);
         
         s_time1 = s_freq_multiplier * SDL_GetPerformanceCounter ();
