@@ -60,35 +60,10 @@ namespace graphics {
 		a_b = pow(a_b, gamma_i);
 		a_g = pow(a_g, gamma_i);
 		a_r = pow(a_r, gamma_i);
-
 		
 		out_value.b = a_b * 255;
 		out_value.g = a_g * 255;
-		out_value.r = a_r * 255;
-
-
-
-
-		//float q1 = q;
-		//float q2 = 1 - q;
-		//if (gammaCorrectOn) {
-		//	q1 = pow(q, (gamma_i));
-		//	q2 = pow((1 - q), (gamma_i));
-		//}
-
-		//int out_b = clamp(round(a.b*q2 + q1 * b.b), 0, 255);
-		//int out_g = clamp(round(a.g*q2 + q1 * b.g), 0, 255);
-		//int out_r = clamp(round(a.r*q2 + q1 * b.r), 0, 255);
-		
-		//std::common_type_t<_Atype, _Btype> out_value;// (round(a*q2 + q1*b));
-		//tvec4<tvec3<float> > out_value(round(a*q2 + q1*b));
-		//out_value.b = out_b;
-		//out_value.g = out_g;
-		//out_value.r = out_r;
-		//out_value.g = clamp(out_value.g, 0, 255);
-		//out_value.r = clamp(out_value.r, 0, 255);
-		//clamp(out_value, 0, 255);
-		
+		out_value.r = a_r * 255;		
 		
 		return out_value;
     }
