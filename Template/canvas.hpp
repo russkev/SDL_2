@@ -75,7 +75,16 @@ namespace graphics {
 				m_color);
 			m_current = s_pt1;
 			return *this;
-		}        
+		}
+
+		canvas<_View, _Point>& point_to_abs(const point_type& s_pt1) {
+			blend_element(m_view,
+				ipoint_type(transform(s_pt1)),
+				m_color);
+			return *this;
+		}
+
+
 
 		canvas<_View, _Point>& close_path () {
 			line (m_view,
@@ -99,8 +108,6 @@ namespace graphics {
 
 			auto p = s_pt0 + m_pre_translate;
 			p = tvec2<double>(p.x*cos(m_rotate) - p.y*sin(m_rotate), p.x*sin(m_rotate) + p.y*cos(m_rotate));
-			//p.x = p.x*cos(m_rotate) - p.y*sin(m_rotate);
-			//p.y = p.x*sin(m_rotate) + p.y*cos(m_rotate);
 			p = p * m_scale;
 			p = p + m_post_translate;
 			return p;
