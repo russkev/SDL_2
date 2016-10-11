@@ -44,7 +44,7 @@ int main (int, char**) try {
     auto s_surface = SDL_GetWindowSurface (s_window);
 
 	// // Initialize starfield
-	starfield stars_3d(20000, 0.5f, 3.7f, 2.5f);
+	starfield stars_3d(20000, 0.5f, 3.7f, 3.0f, 130.0f);
 
     // High precision clock interval
     static const auto s_freq_multiplier = 1.0 / SDL_GetPerformanceFrequency (); 
