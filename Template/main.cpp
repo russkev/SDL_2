@@ -35,6 +35,10 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	s_canvas.point_to_abs(tvec2<float>(1.0f, 1.0f));
 
 	renderContext<view_type> s_render (s_view);
+	for (int j = 100; j < 200; ++j) {
+		s_render.draw_scan_buffer(j, 300 - j, 300 + j);
+	}
+	s_render.fill_shape(100, 200);
 
 	//stars_3d.render_stars(s_view, s_delta_time);
 }
@@ -50,6 +54,8 @@ int main (int, char**) try {
 
 	// // Initialize starfield
 	starfield stars_3d(20000, 0.5f, 3.7f, 3.0f, 130.0f);
+
+	// // Initialize scan buffer
 
     // High precision clock interval
     static const auto s_freq_multiplier = 1.0 / SDL_GetPerformanceFrequency (); 
