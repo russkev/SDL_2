@@ -15,6 +15,7 @@
 #include "algorithm.hpp"
 #include "canvas.hpp"
 #include "starfield.hpp"
+#include "rendercontext.hpp"
 
 void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, double s_delta_time, graphics::starfield& stars_3d) {
     using namespace graphics;
@@ -25,13 +26,17 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
     auto s_center = tvec2<int> (s_surface.w, s_surface.h) / 2;
 
     view_type s_view (s_surface.pixels, s_surface.w, s_surface.h);
+	//same as:
+	// view2d<tvec4<std::uint8_t> > s_view... 
     canvas<view_type, point_type> s_canvas (s_view);  
 
 	s_canvas.stroke_color(bgra_color_type(0, 0, 255, 255));
 
 	s_canvas.point_to_abs(tvec2<float>(1.0f, 1.0f));
 
-	stars_3d.render_stars(s_view, s_delta_time);
+	renderContext<view_type> s_render (s_view);
+
+	//stars_3d.render_stars(s_view, s_delta_time);
 }
 
 int main (int, char**) try {
