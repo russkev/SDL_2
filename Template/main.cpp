@@ -35,10 +35,17 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	s_canvas.point_to_abs(tvec2<float>(1.0f, 1.0f));
 
 	renderContext<view_type> s_render (s_view);
-	for (int j = 100; j < 200; ++j) {
-		s_render.draw_scan_buffer(j, 300 - j, 300 + j);
-	}
-	s_render.fill_shape(100, 200);
+	point_type min_y_vert(100, 100);
+	point_type mid_y_vert(150, 200);
+	point_type max_y_vert(80, 300);
+
+	//s_canvas.line_to_abs(min_y_vert);
+	//s_canvas.line_to_abs(mid_y_vert);
+	//s_canvas.line_to_abs(max_y_vert);
+
+	s_render.scan_convert_triangle(min_y_vert, mid_y_vert, max_y_vert, 0);
+	s_render.fill_shape(100, 300);
+
 
 	//stars_3d.render_stars(s_view, s_delta_time);
 }

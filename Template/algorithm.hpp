@@ -40,7 +40,7 @@ namespace graphics {
     template <typename _Atype, typename _Btype, typename _Qtype>
     auto lerp (const _Atype& a, const _Btype& b, _Qtype q) {
 		bool gammaCorrectOn = true;
-		float gamma = 2.2;
+		float gamma = 2.2f;
 		float gamma_i = 1/gamma;
 
 		//std::common_type_t<_Atype, _Btype> a_temp, b_temp;
@@ -61,9 +61,9 @@ namespace graphics {
 		a_g = pow(a_g, gamma_i);
 		a_r = pow(a_r, gamma_i);
 		
-		out_value.b = a_b * 255;
-		out_value.g = a_g * 255;
-		out_value.r = a_r * 255;		
+		out_value.b = a_b * 255.0f;
+		out_value.g = a_g * 255.0f;
+		out_value.r = a_r * 255.0f;		
 		
 		return out_value;
     }
