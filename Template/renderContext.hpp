@@ -35,36 +35,62 @@ namespace graphics {
 			}
 		}
 
-		void scan_convert_triangle(point_type min_y_vert, point_type mid_y_vert, point_type max_y_vert, int handedness) {
+		void fill_triangle(const point_type& p1, const point_type& p2, const point_type& p3) {
+			auto min_y_vert = p1;
+			auto mid_y_vert = p2;
+			auto max_y_vert = p3;
+			
+			// // Sort points so min, mid and max contain the correct values.
+			if (max_y_vert.y < min_y_vert.y) {
+				auto temp = min_y_vert;
+				min_y_vert = max_y_vert;
+				max_y_vert = temp;
+			}
+
+			if (mid_y_vert.y < min_y_vert.y) {
+				auto temp = min_y_vert;
+				min_y_vert = mid_y_vert;
+				mid_y_vert = temp;
+			}
+
+			if (mid_y_vert.y > max_y_vert.y) {
+				auto temp = max_y_vert;
+				max_y_vert = mid_y_vert;
+				mid_y_vert = temp;
+			}
+
+			// If area of triangle is negative, handedness is 0.
+			int handedness = (triangle_area(min_y_vert, mid_y_vert, max_y_vert) >= 0 ? 1 : 0);
+			scan_convert_triangle(min_y_vert, mid_y_vert, max_y_vert, handedness);
+			fill_shape(int(min_y_vert.y), int(max_y_vert.y));
+		}
+
+		void scan_convert_triangle(const point_type& min_y_vert, const point_type& mid_y_vert, const point_type& max_y_vert, int handedness) {
 			scan_convert_line(min_y_vert, max_y_vert, 0 + handedness);
 			scan_convert_line(min_y_vert, mid_y_vert, 1 - handedness);
 			scan_convert_line(mid_y_vert, max_y_vert, 1 - handedness);
 		}
 
-	private:
-		void scan_convert_line(point_type min_y_vert, point_type max_y_vert, int which_side) {
-			int y_start = int(round(min_y_vert.y));
-			int y_end   = int(round(max_y_vert.y));
-			int x_start = int(round(min_y_vert.x));
-			int x_end   = int(round(max_y_vert.x));
 
-			int y_dist = y_end - y_start;
-			int x_dist = x_end - x_start;
+	private:
+		void scan_convert_line(const point_type& min_y_vert, const point_type& max_y_vert, int which_side) {
+			const auto y_start = int(round(min_y_vert.y));
+			const auto y_end   = int(round(max_y_vert.y));
+			const auto x_start = int(round(min_y_vert.x));
+			const auto x_end   = int(round(max_y_vert.x));
+
+			const auto y_dist = y_end - y_start;
+			const auto x_dist = x_end - x_start;
 
 			if (y_dist <= 0) {
 				return;
 			}
 
-			float x_step = float(x_dist) / float(y_dist);
-			float cur_x = float(x_start);
+			const auto x_step = float(x_dist) / float(y_dist);
+			auto cur_x = float(x_start);
 
 			for (int j = y_start; j < y_end; ++j) {
-				if (which_side == 0) {
-					m_scan_buffer[j].first = int(round(cur_x));
-				}
-				else {
-					m_scan_buffer[j].second = int(round(cur_x));
-				}
+				(which_side == 0 ? m_scan_buffer[j].first = int(round(cur_x)) : m_scan_buffer[j].second = int(round(cur_x)));
 				cur_x += x_step;
 				
 			}

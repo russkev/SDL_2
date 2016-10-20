@@ -17,7 +17,7 @@
 #include "starfield.hpp"
 #include "rendercontext.hpp"
 
-void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, double s_delta_time, graphics::starfield& stars_3d) {
+void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, double s_delta_time) {
     using namespace graphics;
     typedef tvec4<std::uint8_t> bgra_color_type;
     typedef tvec2<float> point_type;
@@ -36,18 +36,12 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 
 	renderContext<view_type> s_render (s_view);
 	point_type min_y_vert(100, 100);
-	point_type mid_y_vert(150, 200);
+	point_type mid_y_vert(0, 200);
 	point_type max_y_vert(80, 300);
 
-	//s_canvas.line_to_abs(min_y_vert);
-	//s_canvas.line_to_abs(mid_y_vert);
-	//s_canvas.line_to_abs(max_y_vert);
+	s_render.fill_triangle(max_y_vert, mid_y_vert, min_y_vert);
 
-	s_render.scan_convert_triangle(min_y_vert, mid_y_vert, max_y_vert, 0);
-	s_render.fill_shape(100, 300);
-
-
-	//stars_3d.render_stars(s_view, s_delta_time);
+	point_type temp = mid_y_vert - min_y_vert;
 }
 
 int main (int, char**) try {
@@ -55,14 +49,19 @@ int main (int, char**) try {
     SDL_Init (SDL_INIT_EVERYTHING);
     std::atexit (&SDL_Quit);
 
+	// // TEST // //
+	tvec2<float> a(8,6);
+	tvec2<float> b(4,11);
+	tvec2<float> c(6, 14);
+
+	auto answer = triangle_area(a, b, c);
+
+
+	// // END TEST // // 
+
 
     auto s_window = SDL_CreateWindow ("Pretty little lines", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_ALLOW_HIGHDPI);
     auto s_surface = SDL_GetWindowSurface (s_window);
-
-	// // Initialize starfield
-	starfield stars_3d(20000, 0.5f, 3.7f, 3.0f, 130.0f);
-
-	// // Initialize scan buffer
 
     // High precision clock interval
     static const auto s_freq_multiplier = 1.0 / SDL_GetPerformanceFrequency (); 
@@ -81,7 +80,7 @@ int main (int, char**) try {
         SDL_LockSurface (s_surface);
         
         s_time1 = s_freq_multiplier * SDL_GetPerformanceCounter ();
-        draw_animation_frame (s_surface [0], s_time1, s_time1 - s_time0, stars_3d);
+        draw_animation_frame (s_surface [0], s_time1, s_time1 - s_time0);
         s_time0 = s_time1;
 
         SDL_UnlockSurface (s_surface);
