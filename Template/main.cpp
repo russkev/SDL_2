@@ -9,8 +9,10 @@
 #include <iostream>
 #include <typeinfo>
 #include <sstream>
+#include <array>
 
 #include "tvec.hpp"
+#include "tmat.hpp"
 #include "view.hpp"
 #include "algorithm.hpp"
 #include "canvas.hpp"
@@ -50,12 +52,9 @@ int main (int, char**) try {
     std::atexit (&SDL_Quit);
 
 	// // TEST // //
-	tvec2<float> a(8,6);
-	tvec2<float> b(4,11);
-	tvec2<float> c(6, 14);
-
-	auto answer = triangle_area(a, b, c);
-
+	
+	tmat<float> matrix_test;
+	matrix_test.init_identity();
 
 	// // END TEST // // 
 
