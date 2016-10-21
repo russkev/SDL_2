@@ -52,7 +52,14 @@ int main (int, char**) try {
     std::atexit (&SDL_Quit);
 
 	// // TEST // //
-	
+	std::array<std::array<int, 4>, 4> matrix_a = {
+		{1,2,3,4},
+		{4,5,6,7},
+		{8,9,0,1},
+		{2,3,4,5}
+	};
+
+
 	tmat<float> matrix_test;
 	matrix_test.init_identity();
 
