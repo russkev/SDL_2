@@ -52,17 +52,36 @@ int main (int, char**) try {
     std::atexit (&SDL_Quit);
 
 	// // TEST // //
-	std::array<std::array<int, 4>, 4> matrix_a = {
-		{1,2,3,4},
-		{4,5,6,7},
-		{8,9,0,1},
-		{2,3,4,5}
+	std::array<std::array<int, 4>, 4> matrix_a = { {
+		{1, 2, 3, 4},
+		{5, 6, 7, 8},
+		{9, 0, 1, 2},
+		{3, 4, 5, 6} }
 	};
 
+	std::array<std::array<int, 4>, 4> matrix_b = { {
+		{ 7, 8, 9, 0 },
+		{ 1, 2, 3, 4 },
+		{ 5, 6, 7, 8 },
+		{ 9, 0, 1, 2 } }
+	};
 
-	tmat<float> matrix_test;
-	matrix_test.init_identity();
+	
 
+	tmat<int> tmat_a;
+	tmat_a.set_m4(matrix_a);
+
+	
+
+	tmat<int> tmat_b;
+	tmat_b.set_m4(matrix_b);
+
+	tmat<int> tmat_c;
+	tmat_c = tmat_a.mult(tmat_b);
+
+	int answer = tmat_a.get(1, 2);
+
+	 
 	// // END TEST // // 
 
 

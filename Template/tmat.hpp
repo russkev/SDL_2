@@ -20,13 +20,13 @@ namespace graphics {
 
 		// // Getter
 		matrix4_type get_m4() { return m4 };
-		value_type get(int x, int y) { return m4[x][y]; }
+		value_type get(int x, int y) { return m4[y][x]; }
 		
 
 
 		// // Setter
-		void set_m4(matrix4_type set_m4){m4 = set_m4}
-		void set(int x, int y, value_type value) { m4[x].int_to_lox(y) = value; }
+		void set_m4(matrix4_type set_m4) { m4 = set_m4; }
+		void set(int x, int y, value_type value) { m4[y][x] = value; }
 
 		// // Create identity matrix
 		void init_identity() {
@@ -37,22 +37,25 @@ namespace graphics {
 		}
 
 		// // Multiply two matrixes
-		matrix4_type mult(marix4_type r) {
-			matrix4_type m4_out = {
-				{ dot(row_to_vec(m4, 0),col_to_vec(r,0)), dot(row_to_vec(m4, 0),col_to_vec(r,1)), dot(row_to_vec(m4, 0),col_to_vec(r,2)), dot(row_to_vec(m4, 0),col_to_vec(r,3)) },
-				{ dot(row_to_vec(m4, 1),col_to_vec(r,0)), dot(row_to_vec(m4, 1),col_to_vec(r,1)), dot(row_to_vec(m4, 1),col_to_vec(r,2)), dot(row_to_vec(m4, 1),col_to_vec(r,3)) },
-				{ dot(row_to_vec(m4, 2),col_to_vec(r,0)), dot(row_to_vec(m4, 2),col_to_vec(r,1)), dot(row_to_vec(m4, 2),col_to_vec(r,2)), dot(row_to_vec(m4, 2),col_to_vec(r,3)) },
-				{ dot(row_to_vec(m4, 3),col_to_vec(r,0)), dot(row_to_vec(m4, 3),col_to_vec(r,1)), dot(row_to_vec(m4, 3),col_to_vec(r,2)), dot(row_to_vec(m4, 3),col_to_vec(r,3)) },
-			};
+		tmat mult(tmat r) {
+			tmat m4_out;
+			for (int j = 0; j < 4; ++j) {
+				for (int i = 0; i < 4; ++i) {
+					tvec4<value_type> vec_1 = row_to_vec(m4, i);
+					tvec4<value_type> vec_2 = col_to_vec(r, j);
+					value_type value = dot(vec_1, vec_2);
+					m4_out.set(i, j, value);
+				}
+			}
 			return m4_out;
 		}
 
-		tvec4<value_type> row_to_vec(tvec4<value_type> r, int row) {
-			return tvec4<value_type>(m4[0][row], m4[1][row], m4[2][row], m4[3][row]);
+		tvec4<value_type> row_to_vec(matrix4_type r, int row) {
+			return tvec4<value_type>(r[row][0], r[row][1], r[row][2], r[row][3]);
 		}
 
-		tvec4<value_type> col_to_vec(tvec4<value_type> r, int row) {
-			return tvec4<value_type>(m4[col][0], m4[col][1], m4[col][2], m4[col][3]);
+		tvec4<value_type> col_to_vec(tmat r, int col) {
+			return tvec4<value_type>(r.get(col, 0), r.get(col, 1), r.get(col, 2), r.get(col, 3));
 		}
 
 
