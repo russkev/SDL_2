@@ -182,6 +182,8 @@ namespace graphics {
     template <typename T> auto dot (const tvec3<T>& a, const tvec3<T>& b) { return a.x * b.x + a.y * b.y + a.z * b.z; }
     template <typename T> auto dot (const tvec4<T>& a, const tvec4<T>& b) { return a.x * b.x + a.y * b.y + a.z * b.z +  a.w * b.w; }
 
+	template <typename T> auto cross(const tvec2<T>& a, const tvec2<T>& b) { return a.x * b.y - a.y * b.x; }
+
     template <typename T> auto magnitude_squared (const tvec4<T>& a) { return dot (a, a); }
     template <typename T> auto magnitude_squared (const tvec3<T>& a) { return dot (a, a); }
     template <typename T> auto magnitude_squared (const tvec2<T>& a) { return dot (a, a); }
