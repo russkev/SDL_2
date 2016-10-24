@@ -366,10 +366,10 @@ namespace graphics {
     }
 
 	template <typename T>
-	float triangle_area(tvec2<T> min_y, tvec2<T> mid_y, tvec2<T> max_y) {
+	//float triangle_area(tvec2<T> min_y, tvec2<T> mid_y, tvec2<T> max_y) {
 
-		tvec2<T> long_vec = max_y - min_y;
-		tvec2<T> short_vec = mid_y - min_y;
-		return cross(long_vec, short_vec)*0.5;
-	}
+	//	tvec2<T> long_vec = max_y - min_y;
+	//	tvec2<T> short_vec = mid_y - min_y;
+	//	return cross(long_vec, short_vec)*0.5;
+	//}
 }
