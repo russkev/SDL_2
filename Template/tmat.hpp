@@ -41,7 +41,9 @@ namespace graphics {
 			tmat m4_out;
 			for (int j = 0; j < 4; ++j) {
 				for (int i = 0; i < 4; ++i) {
-					value_type value = dot(row_to_vec(m4, j), col_to_vec(r, i));
+					tvec4<value_type> vec_1 = row_to_vec(m4, i);
+					tvec4<value_type> vec_2 = col_to_vec(r, j);
+					value_type value = dot(vec_1, vec_2);
 					m4_out.set(i, j, value);
 				}
 			}
