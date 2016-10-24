@@ -3,11 +3,15 @@
 namespace graphics {
 
 	template<typename T>
-	struct vertex :public tvec4<T> {
-		vertex(T x, T y, T z, T w) :x(x), y(y), z(z), w(w) {};
+	struct vertex{
+	private:
+		tvec4<T> m_pos;
 
-		T get_xy() {
-			return x*y;
-		}
+	public:
+		vertex(T x, T y, T z) : m_pos(tvec4<T>(x,y,z,T(1))) {};
+
+		//T get_xy() {
+		//	return m_pos.x*m_pos.y;
+		//}
 	};
 }

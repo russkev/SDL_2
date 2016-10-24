@@ -11,22 +11,25 @@
 #include <sstream>
 #include <array>
 
-#include "tvec.hpp"
-#include "tmat.hpp"
+#include <glm/glm.hpp>
+
+//#include "tvec.hpp"
+//#include "tmat.hpp"
 #include "view.hpp"
 #include "algorithm.hpp"
 #include "canvas.hpp"
 #include "starfield.hpp"
 #include "rendercontext.hpp"
-#include "vertex.hpp"
+//#include "vertex.hpp"
+#include "math.hpp"
 
 void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, double s_delta_time) {
     using namespace graphics;
-    typedef tvec4<std::uint8_t> bgra_color_type;
-    typedef tvec2<float> point_type;
+    typedef glm::u8vec4 bgra_color_type;
+    typedef glm::vec2 point_type;
     typedef view2d<bgra_color_type> view_type;
 
-    auto s_center = tvec2<int> (s_surface.w, s_surface.h) / 2;
+    auto s_center = glm::ivec (s_surface.w, s_surface.h) / 2;
 
     view_type s_view (s_surface.pixels, s_surface.w, s_surface.h);
 	//same as:
@@ -35,14 +38,14 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 
 	s_canvas.stroke_color(bgra_color_type(0, 0, 255, 255));
 
-	s_canvas.point_to_abs(tvec2<float>(1.0f, 1.0f));
+	s_canvas.point_to_abs(glm::vec2(1.0f, 1.0f));
 
 	renderContext<view_type> s_render (s_view);
 	point_type min_y_vert(100, 100);
 	point_type mid_y_vert(0, 200);
 	point_type max_y_vert(80, 300);
 
-	s_render.fill_triangle(max_y_vert, mid_y_vert, min_y_vert);
+	//s_render.fill_triangle(max_y_vert, mid_y_vert, min_y_vert);
 
 	point_type temp = mid_y_vert - min_y_vert;
 }
@@ -53,36 +56,22 @@ int main (int, char**) try {
     std::atexit (&SDL_Quit);
 
 	// // TEST // //
-	std::array<std::array<int, 4>, 4> matrix_a = { {
-		{1, 2, 3, 4},
-		{5, 6, 7, 8},
-		{9, 0, 1, 2},
-		{3, 4, 5, 6} }
-	};
 
-	std::array<std::array<int, 4>, 4> matrix_b = { {
-		{ 7, 8, 9, 0 },
-		{ 1, 2, 3, 4 },
-		{ 5, 6, 7, 8 },
-		{ 9, 0, 1, 2 } }
-	};
+	const auto matrix_a = 
+		glm::transpose(glm::mat4x4(
+		glm::vec4(1, 2, 3, 4),
+		glm::vec4(5, 6, 7, 8),
+		glm::vec4(9, 0, 1, 2),
+		glm::vec4(3, 4, 5, 6)));
 
-	
+	const auto matrix_b =
+		glm::transpose(glm::mat4x4(
+			glm::vec4(7, 8, 9, 0),
+			glm::vec4(1, 2, 3, 4),
+			glm::vec4(5, 6, 7, 8),
+			glm::vec4(9, 0, 1, 2)));
 
-	tmat<int> tmat_a;
-	tmat_a.set_m4(matrix_a);
-
-	
-
-	tmat<int> tmat_b;
-	tmat_b.set_m4(matrix_b);
-
-	tmat<int> tmat_c;
-	tmat_c = tmat_a.mult(tmat_b);
-
-	int answer = tmat_a.get(1, 2);
-
-	vertex<int> vertex_a(2, 4, 6, 8);
+	const auto matrix_c = matrix_a * matrix_b;
 
 	 
 	// // END TEST // // 

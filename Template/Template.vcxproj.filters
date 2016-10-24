@@ -35,5 +35,17 @@
     <ClInclude Include="canvas.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="tmat.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vertex.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="renderContext.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="math.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,6 +1,9 @@
 #pragma once
 
+#include<glm/glm.hpp>
+
 #include "tvec.hpp"
+#include "math.hpp"
 #include <type_traits>
 #include <cmath>
 

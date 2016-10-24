@@ -37,7 +37,7 @@ namespace graphics {
 		tvec3<float> star(
 			distribution(generator) * m_spread,					//x start position
 			distribution(generator) * m_spread,					//y start position
-			(distribution(generator)+1.000001)*0.5*m_spread);	//z start posotion
+			(distribution(generator)+1.000001f)*0.5f*float(m_spread));	//z start posotion
 
 		return star;
 	}
