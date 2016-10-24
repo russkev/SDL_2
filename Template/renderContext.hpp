@@ -1,8 +1,6 @@
 #include <vector>
-#include <glm/glm.hpp>
 
 #include "view.hpp"
-#include "vertex.hpp"
 
 namespace graphics {
 	template<typename _View>
@@ -10,8 +8,7 @@ namespace graphics {
 		typedef _View view_type;
 		typedef std::vector<std::pair<int, int> > buffer_type;
 		typedef tvec4<std::uint8_t> bgra_color_type;
-		//typedef tvec2<float> point_type;
-		typedef vertex<float> point_type;
+		typedef tvec2<float> point_type;
 
 		renderContext(view_type& s_view) :
 			m_view(s_view), 
@@ -44,19 +41,19 @@ namespace graphics {
 			auto max_y_vert = p3;
 			
 			// // Sort points so min, mid and max contain the correct values.
-			if (max_y_vert.get_y() < min_y_vert.get_y()) {
+			if (max_y_vert.y < min_y_vert.y) {
 				auto temp = min_y_vert;
 				min_y_vert = max_y_vert;
 				max_y_vert = temp;
 			}
 
-			if (mid_y_vert.get_y() < min_y_vert.get_y()) {
+			if (mid_y_vert.y < min_y_vert.y) {
 				auto temp = min_y_vert;
 				min_y_vert = mid_y_vert;
 				mid_y_vert = temp;
 			}
 
-			if (mid_y_vert.get_y() > max_y_vert.get_y()) {
+			if (mid_y_vert.y > max_y_vert.y) {
 				auto temp = max_y_vert;
 				max_y_vert = mid_y_vert;
 				mid_y_vert = temp;
@@ -65,7 +62,7 @@ namespace graphics {
 			// If area of triangle is negative, handedness is 0.
 			int handedness = (triangle_area(min_y_vert, mid_y_vert, max_y_vert) >= 0 ? 1 : 0);
 			scan_convert_triangle(min_y_vert, mid_y_vert, max_y_vert, handedness);
-			fill_shape(int(min_y_vert.get_y()), int(max_y_vert.get_y()));
+			fill_shape(int(min_y_vert.y), int(max_y_vert.y));
 		}
 
 		void scan_convert_triangle(const point_type& min_y_vert, const point_type& mid_y_vert, const point_type& max_y_vert, int handedness) {
@@ -77,10 +74,10 @@ namespace graphics {
 
 	private:
 		void scan_convert_line(const point_type& min_y_vert, const point_type& max_y_vert, int which_side) {
-			const auto y_start = int(round(min_y_vert.get_y()));
-			const auto y_end   = int(round(max_y_vert.get_y()));
-			const auto x_start = int(round(min_y_vert.get_x()));
-			const auto x_end   = int(round(max_y_vert.get_x()));
+			const auto y_start = int(round(min_y_vert.y));
+			const auto y_end   = int(round(max_y_vert.y));
+			const auto x_start = int(round(min_y_vert.x));
+			const auto x_end   = int(round(max_y_vert.x));
 
 			const auto y_dist = y_end - y_start;
 			const auto x_dist = x_end - x_start;

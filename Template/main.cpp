@@ -11,8 +11,6 @@
 #include <sstream>
 #include <array>
 
-#include <glm/glm.hpp>
-
 #include "tvec.hpp"
 #include "tmat.hpp"
 #include "view.hpp"
@@ -20,13 +18,11 @@
 #include "canvas.hpp"
 #include "starfield.hpp"
 #include "rendercontext.hpp"
-#include "vertex.hpp"
 
 void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, double s_delta_time) {
     using namespace graphics;
     typedef tvec4<std::uint8_t> bgra_color_type;
     typedef tvec2<float> point_type;
-	//typedef vertex<float> vertex_type;
     typedef view2d<bgra_color_type> view_type;
 
     auto s_center = tvec2<int> (s_surface.w, s_surface.h) / 2;
@@ -38,16 +34,16 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 
 	s_canvas.stroke_color(bgra_color_type(0, 0, 255, 255));
 
-	/*s_canvas.point_to_abs(tvec2<float>(1.0f, 1.0f));
+	s_canvas.point_to_abs(tvec2<float>(1.0f, 1.0f));
 
 	renderContext<view_type> s_render (s_view);
-	vertex_type min_y_vert(100, 100, 0);
-	vertex_type mid_y_vert(0, 200, 0);
-	vertex_type max_y_vert(80, 300, 0);
+	point_type min_y_vert(100, 100);
+	point_type mid_y_vert(0, 200);
+	point_type max_y_vert(80, 300);
 
-	s_render.fill_triangle(max_y_vert, mid_y_vert, min_y_vert);*/
+	s_render.fill_triangle(max_y_vert, mid_y_vert, min_y_vert);
 
-	//point_type temp = mid_y_vert - min_y_vert;
+	point_type temp = mid_y_vert - min_y_vert;
 }
 
 int main (int, char**) try {
@@ -56,10 +52,35 @@ int main (int, char**) try {
     std::atexit (&SDL_Quit);
 
 	// // TEST // //
+	std::array<std::array<int, 4>, 4> matrix_a = { {
+		{1, 2, 3, 4},
+		{5, 6, 7, 8},
+		{9, 0, 1, 2},
+		{3, 4, 5, 6} }
+	};
 
-	vertex<float> test_vertex(1.0f, 2.5f, 3.3f);
+	std::array<std::array<int, 4>, 4> matrix_b = { {
+		{ 7, 8, 9, 0 },
+		{ 1, 2, 3, 4 },
+		{ 5, 6, 7, 8 },
+		{ 9, 0, 1, 2 } }
+	};
 
 	
+
+	tmat<int> tmat_a;
+	tmat_a.set_m4(matrix_a);
+
+	
+
+	tmat<int> tmat_b;
+	tmat_b.set_m4(matrix_b);
+
+	tmat<int> tmat_c;
+	tmat_c = tmat_a.mult(tmat_b);
+
+	int answer = tmat_a.get(1, 2);
+
 	 
 	// // END TEST // // 
 
