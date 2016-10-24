@@ -18,6 +18,7 @@
 #include "canvas.hpp"
 #include "starfield.hpp"
 #include "rendercontext.hpp"
+#include "vertex.hpp"
 
 void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, double s_delta_time) {
     using namespace graphics;
@@ -80,6 +81,8 @@ int main (int, char**) try {
 	tmat_c = tmat_a.mult(tmat_b);
 
 	int answer = tmat_a.get(1, 2);
+
+	vertex<int> vertex_a(2, 4, 6, 8);
 
 	 
 	// // END TEST // // 
