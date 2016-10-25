@@ -9,18 +9,10 @@
 #include <iostream>
 #include <typeinfo>
 #include <sstream>
-//#include <array>
-//
-//#include <glm/glm.hpp>
-//
-////#include "tvec.hpp"
-////#include "tmat.hpp"
 #include "view.hpp"
 #include "algorithm.hpp"
 #include "canvas.hpp"
-//#include "starfield.hpp"
 #include "rendercontext.hpp"
-////#include "vertex.hpp"
 #include "math.hpp"
 
 void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, double s_delta_time) {

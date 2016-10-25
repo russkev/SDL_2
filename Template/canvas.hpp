@@ -1,7 +1,5 @@
 #pragma once
 
-#include <glm/glm.hpp>
-
 #include "algorithm.hpp"
 #include "math.hpp"
 

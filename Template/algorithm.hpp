@@ -3,9 +3,6 @@
 #include <type_traits>
 #include <cmath>
 
-#include<glm/glm.hpp>
-
-//#include "tvec.hpp"
 #include "math.hpp"
 
 

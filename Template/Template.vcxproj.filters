@@ -23,9 +23,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="tvec.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="view.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -33,12 +30,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="canvas.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tmat.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="vertex.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="renderContext.hpp">

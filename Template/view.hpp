@@ -4,7 +4,6 @@
 #include <cstdint>
 #include <stdexcept>
 #include "math.hpp"
-//#include "tvec.hpp"
 
 #if !defined(__clang__)
 #ifndef __PRETTY_FUNCTION__
