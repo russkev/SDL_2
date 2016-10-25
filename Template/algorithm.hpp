@@ -371,10 +371,23 @@ namespace graphics {
     }
 
 	template <typename T>
-	float triangle_area(tvec2<T> min_y, tvec2<T> mid_y, tvec2<T> max_y) {
+	float triangle_area(const tvec4<T>& min_y, const tvec4<T>& mid_y, const tvec4<T>& max_y) {
 
-		tvec2<T> long_vec = max_y - min_y;
-		tvec2<T> short_vec = mid_y - min_y;
+		tvec4<T> long_vec = max_y - min_y;
+		tvec4<T> short_vec = mid_y - min_y;
 		return (long_vec.x*short_vec.y - long_vec.y*short_vec.x)*0.5;
+	}
+
+	
+	mat4 init_screen_space_transform(float w, float h) {
+		w = w*0.5f;
+		h = h*0.5f;
+		const auto out_mat =
+			transpose(mat4(
+				vec4(w,  0,  0,  w ),
+				vec4(0, -h,  0,  h ),
+				vec4(0,  0,  1,  0 ),
+				vec4(0,  0,  0,  1 )));
+		return out_mat;
 	}
 }

@@ -18,26 +18,22 @@
 void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, double s_delta_time) {
     using namespace graphics;
     typedef u8vec4 bgra_color_type;
-    typedef tvec2<float> point_type;
+    typedef vec3 point_type;
     typedef view2d<bgra_color_type> view_type;
 
     auto s_center = glm::ivec2 (s_surface.w, s_surface.h) / 2;
 
     view_type s_view (s_surface.pixels, s_surface.w, s_surface.h);
-	//same as:
-	// view2d<tvec4<std::uint8_t> > s_view... 
     canvas<view_type, point_type> s_canvas (s_view);  
 
 	s_canvas.stroke_color(bgra_color_type(0, 0, 255, 255));
 
-	s_canvas.point_to_abs(vec2(1.0f, 1.0f));
+	//s_canvas.point_to_abs(vec2(1.0f, 1.0f));
 
 	renderContext<view_type> s_render (s_view);
-	point_type min_y_vert(100, 100);
-	point_type mid_y_vert(0, 200);
-	point_type max_y_vert(80, 300);
 
-	s_render.fill_triangle(max_y_vert, mid_y_vert, min_y_vert);
+
+	//s_render.fill_triangle(max_y_vert, mid_y_vert, min_y_vert);
 
 	//point_type temp = mid_y_vert - min_y_vert;
 }
@@ -46,6 +42,7 @@ int main (int, char**) try {
 	using namespace graphics;
     SDL_Init (SDL_INIT_EVERYTHING);
     std::atexit (&SDL_Quit);
+	typedef vec3 point_type;
 
 	// // TEST // //
 
@@ -67,6 +64,15 @@ int main (int, char**) try {
 
 	 
 	// // END TEST // // 
+
+	// // INITIALIZE VECTOR // //
+
+	point_type min_y_vert(-1, -1,  0);
+	point_type mid_y_vert(0,   1,  0);
+	point_type max_y_vert(1,  -1,  0);
+
+	//mat4 projection = 
+
 
 
     auto s_window = SDL_CreateWindow ("Pretty little lines", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_ALLOW_HIGHDPI);

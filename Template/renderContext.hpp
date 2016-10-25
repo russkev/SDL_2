@@ -1,6 +1,12 @@
 #include <vector>
 
+#include <glm/glm.hpp>
+#include <glm/matrix.hpp>
+
+#include "math.hpp"
 #include "view.hpp"
+#include "algorithm.hpp"
+
 
 namespace graphics {
 	template<typename _View>
@@ -8,7 +14,7 @@ namespace graphics {
 		typedef _View view_type;
 		typedef std::vector<std::pair<int, int> > buffer_type;
 		typedef tvec4<std::uint8_t> bgra_color_type;
-		typedef tvec2<float> point_type;
+		typedef vec3 point_type;
 
 		renderContext(view_type& s_view) :
 			m_view(s_view), 
@@ -36,9 +42,17 @@ namespace graphics {
 		}
 
 		void fill_triangle(const point_type& p1, const point_type& p2, const point_type& p3) {
-			auto min_y_vert = p1;
-			auto mid_y_vert = p2;
-			auto max_y_vert = p3;
+
+			mat4 screen_space_transform = init_screen_space_transform(float( m_view.size().x), float(m_view.size().y));
+
+			// // Convert input 3 element vectors to four element vectors for use in matrix multiplication
+			vec4 v1(p1, 1.0f); 
+			vec4 v2(p2, 1.0f); 
+			vec4 v3(p3, 1.0f);
+
+			auto min_y_vert = v1*screen_space_transform / v1.w;
+			auto mid_y_vert = v2*screen_space_transform / v2.w;
+			auto max_y_vert = v3*screen_space_transform / v3.w;
 			
 			// // Sort points so min, mid and max contain the correct values.
 			if (max_y_vert.y < min_y_vert.y) {
@@ -65,7 +79,7 @@ namespace graphics {
 			fill_shape(int(min_y_vert.y), int(max_y_vert.y));
 		}
 
-		void scan_convert_triangle(const point_type& min_y_vert, const point_type& mid_y_vert, const point_type& max_y_vert, int handedness) {
+		void scan_convert_triangle(const vec4& min_y_vert, const vec4& mid_y_vert, const vec4& max_y_vert, int handedness) {
 			scan_convert_line(min_y_vert, max_y_vert, 0 + handedness);
 			scan_convert_line(min_y_vert, mid_y_vert, 1 - handedness);
 			scan_convert_line(mid_y_vert, max_y_vert, 1 - handedness);
@@ -73,7 +87,7 @@ namespace graphics {
 
 
 	private:
-		void scan_convert_line(const point_type& min_y_vert, const point_type& max_y_vert, int which_side) {
+		void scan_convert_line(const vec4& min_y_vert, const vec4& max_y_vert, int which_side) {
 			const auto y_start = int(round(min_y_vert.y));
 			const auto y_end   = int(round(max_y_vert.y));
 			const auto x_start = int(round(min_y_vert.x));
