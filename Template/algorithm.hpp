@@ -1,11 +1,13 @@
 #pragma once
 
-#include<glm/glm.hpp>
-
-#include "tvec.hpp"
-#include "math.hpp"
 #include <type_traits>
 #include <cmath>
+
+#include<glm/glm.hpp>
+
+//#include "tvec.hpp"
+#include "math.hpp"
+
 
 namespace graphics {
 
@@ -81,9 +83,12 @@ namespace graphics {
 
         typedef typename _View::element_type element_type;
         typedef tvec2<_Coord> point_type;
-        using namespace swizzle;
+        //using namespace swizzle;
         auto& s_destination = s_view [s_point];                                 // multiplying by 1/255
-        s_destination = element_type (lerp (xyz (s_destination), xyz (s_source), w (s_source) * 0.00392156862f), 255);
+        s_destination = element_type (lerp (
+			vec3(float(s_destination.x), float(s_destination.y), float(s_destination.z)), 
+			vec3(float(s_source.x), float(s_source.y), float(s_source.z)),
+			s_source.w * 0.00392156862f), 255);
     }
 
     // Draw vertical line
@@ -373,6 +378,6 @@ namespace graphics {
 
 		tvec2<T> long_vec = max_y - min_y;
 		tvec2<T> short_vec = mid_y - min_y;
-		return cross(long_vec, short_vec)*0.5;
+		return (long_vec.x*short_vec.y - long_vec.y*short_vec.x)*0.5;
 	}
 }

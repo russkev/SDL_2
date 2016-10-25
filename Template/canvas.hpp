@@ -1,6 +1,9 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include "algorithm.hpp"
+#include "math.hpp"
 
 namespace graphics {
 	template <typename _View, typename _Point>

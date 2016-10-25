@@ -9,27 +9,27 @@
 #include <iostream>
 #include <typeinfo>
 #include <sstream>
-#include <array>
-
-#include <glm/glm.hpp>
-
-//#include "tvec.hpp"
-//#include "tmat.hpp"
+//#include <array>
+//
+//#include <glm/glm.hpp>
+//
+////#include "tvec.hpp"
+////#include "tmat.hpp"
 #include "view.hpp"
 #include "algorithm.hpp"
 #include "canvas.hpp"
-#include "starfield.hpp"
+//#include "starfield.hpp"
 #include "rendercontext.hpp"
-//#include "vertex.hpp"
+////#include "vertex.hpp"
 #include "math.hpp"
 
 void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, double s_delta_time) {
     using namespace graphics;
-    typedef glm::u8vec4 bgra_color_type;
-    typedef glm::vec2 point_type;
+    typedef u8vec4 bgra_color_type;
+    typedef tvec2<float> point_type;
     typedef view2d<bgra_color_type> view_type;
 
-    auto s_center = glm::ivec (s_surface.w, s_surface.h) / 2;
+    auto s_center = glm::ivec2 (s_surface.w, s_surface.h) / 2;
 
     view_type s_view (s_surface.pixels, s_surface.w, s_surface.h);
 	//same as:
@@ -38,16 +38,16 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 
 	s_canvas.stroke_color(bgra_color_type(0, 0, 255, 255));
 
-	s_canvas.point_to_abs(glm::vec2(1.0f, 1.0f));
+	s_canvas.point_to_abs(vec2(1.0f, 1.0f));
 
 	renderContext<view_type> s_render (s_view);
 	point_type min_y_vert(100, 100);
 	point_type mid_y_vert(0, 200);
 	point_type max_y_vert(80, 300);
 
-	//s_render.fill_triangle(max_y_vert, mid_y_vert, min_y_vert);
+	s_render.fill_triangle(max_y_vert, mid_y_vert, min_y_vert);
 
-	point_type temp = mid_y_vert - min_y_vert;
+	//point_type temp = mid_y_vert - min_y_vert;
 }
 
 int main (int, char**) try {
