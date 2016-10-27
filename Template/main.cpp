@@ -15,10 +15,12 @@
 #include "rendercontext.hpp"
 #include "math.hpp"
 
-void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, double s_delta_time) {
+float rot_counter = 0;
+
+void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, double s_delta_time, const glm::mat4& projection) {
     using namespace graphics;
     typedef u8vec4 bgra_color_type;
-    typedef vec3 point_type;
+    typedef vec4 point_type;
     typedef view2d<bgra_color_type> view_type;
 
     auto s_center = glm::ivec2 (s_surface.w, s_surface.h) / 2;
@@ -28,14 +30,22 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 
 	s_canvas.stroke_color(bgra_color_type(0, 0, 255, 255));
 
-	//s_canvas.point_to_abs(vec2(1.0f, 1.0f));
+	point_type min_y_vert(-1, -1,  0,  1);
+	point_type mid_y_vert( 0,  1,  0,  1);
+	point_type max_y_vert( 1, -1,  0,  1);
 
 	renderContext<view_type> s_render (s_view);
+	rot_counter+= s_delta_time;
 
+	mat4 translation = translate(mat4(), vec3(0.0f, 0.0f, 3.0f));
+	mat4 rotation    = rotate(mat4(), rot_counter, vec3(0.0f, 0.0f, 1.0f));
+	mat4 transform   = projection*(translation*rotation);
 
-	//s_render.fill_triangle(max_y_vert, mid_y_vert, min_y_vert);
+	vec4 test_vec(transform*min_y_vert);
+	std::cout << transform[0][0];
 
-	//point_type temp = mid_y_vert - min_y_vert;
+	s_render.fill_triangle(transform*max_y_vert, transform*mid_y_vert, transform*min_y_vert);
+
 }
 
 int main (int, char**) try {
@@ -46,37 +56,14 @@ int main (int, char**) try {
 
 	// // TEST // //
 
-	const auto matrix_a = 
-		glm::transpose(glm::mat4x4(
-		glm::vec4(1, 2, 3, 4),
-		glm::vec4(5, 6, 7, 8),
-		glm::vec4(9, 0, 1, 2),
-		glm::vec4(3, 4, 5, 6)));
-
-	const auto matrix_b =
-		glm::transpose(glm::mat4x4(
-			glm::vec4(7, 8, 9, 0),
-			glm::vec4(1, 2, 3, 4),
-			glm::vec4(5, 6, 7, 8),
-			glm::vec4(9, 0, 1, 2)));
-
-	const auto matrix_c = matrix_a * matrix_b;
 
 	 
 	// // END TEST // // 
 
-	// // INITIALIZE VECTOR // //
-
-	point_type min_y_vert(-1, -1,  0);
-	point_type mid_y_vert(0,   1,  0);
-	point_type max_y_vert(1,  -1,  0);
-
-	//mat4 projection = 
-
-
-
     auto s_window = SDL_CreateWindow ("Pretty little lines", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_ALLOW_HIGHDPI);
     auto s_surface = SDL_GetWindowSurface (s_window);
+
+	mat4 projection = perspective<float>(deg_to_rad<float>(70.0f), s_surface[0].w / s_surface[0].h, 0.1f, 1000.0f);
 
     // High precision clock interval
     static const auto s_freq_multiplier = 1.0 / SDL_GetPerformanceFrequency (); 
@@ -95,7 +82,7 @@ int main (int, char**) try {
         SDL_LockSurface (s_surface);
         
         s_time1 = s_freq_multiplier * SDL_GetPerformanceCounter ();
-        draw_animation_frame (s_surface [0], s_time1, s_time1 - s_time0);
+        draw_animation_frame (s_surface [0], s_time1, s_time1 - s_time0, projection);
         s_time0 = s_time1;
 
         SDL_UnlockSurface (s_surface);

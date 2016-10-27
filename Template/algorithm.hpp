@@ -370,24 +370,43 @@ namespace graphics {
 		return;
     }
 
-	template <typename T>
-	float triangle_area(const tvec4<T>& min_y, const tvec4<T>& mid_y, const tvec4<T>& max_y) {
+	template<typename T>
+	T deg_to_rad(T deg) {
+		const double halfC = 0.0174532925199432; // pi/180
+		return T(deg*halfC);
+	}
 
-		tvec4<T> long_vec = max_y - min_y;
-		tvec4<T> short_vec = mid_y - min_y;
+	//template <typename T>
+	float triangle_area(const vec4& min_y, const vec4& mid_y, const vec4& max_y) {
+
+		vec4 long_vec = max_y - min_y;
+		vec4 short_vec = mid_y - min_y;
 		return (long_vec.x*short_vec.y - long_vec.y*short_vec.x)*0.5;
 	}
 
 	
 	mat4 init_screen_space_transform(float w, float h) {
-		w = w*0.5f;
-		h = h*0.5f;
+		auto hw = w*0.5f;
+		auto hh = h*0.5f;
 		const auto out_mat =
 			transpose(mat4(
-				vec4(w,  0,  0,  w ),
-				vec4(0, -h,  0,  h ),
-				vec4(0,  0,  1,  0 ),
-				vec4(0,  0,  0,  1 )));
+				vec4(hw,  0,  0,  hw ),
+				vec4(0, -hh,  0,  hh ),
+				vec4(0,  0,   1,  0 ),
+				vec4(0,  0,   0,  1 )));
 		return out_mat;
 	}
+
+	//mat4 init_perspective(float fov, float aspect_ratio, float z_near, float z_far) {
+
+	//	float tan_half_fov = float(tan(fov*0.5));
+	//	float inv_z_range = 1/(z_near - z_far);
+	//	const auto out_mat =
+	//		transpose(mat4(
+	//			vec4(1.0f*(tan_half_fov*aspect_ratio), 0, 0, 0),
+	//			vec4(0, 1.0f / tan_half_fov, 0, 0),
+	//			vec4(0, 0, (-z_near - z_far)*inv_z_range, 2*z_far*z_near*inv_z_range),
+	//			vec4(0, 0, 0, 1)));
+	//	return out_mat;
+	//}
 }

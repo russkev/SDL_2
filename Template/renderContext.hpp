@@ -14,7 +14,7 @@ namespace graphics {
 		typedef _View view_type;
 		typedef std::vector<std::pair<int, int> > buffer_type;
 		typedef tvec4<std::uint8_t> bgra_color_type;
-		typedef vec3 point_type;
+		typedef vec4 point_type;
 
 		renderContext(view_type& s_view) :
 			m_view(s_view), 
@@ -45,14 +45,9 @@ namespace graphics {
 
 			mat4 screen_space_transform = init_screen_space_transform(float( m_view.size().x), float(m_view.size().y));
 
-			// // Convert input 3 element vectors to four element vectors for use in matrix multiplication
-			vec4 v1(p1, 1.0f); 
-			vec4 v2(p2, 1.0f); 
-			vec4 v3(p3, 1.0f);
-
-			auto min_y_vert = v1*screen_space_transform / v1.w;
-			auto mid_y_vert = v2*screen_space_transform / v2.w;
-			auto max_y_vert = v3*screen_space_transform / v3.w;
+			auto min_y_vert = p1*screen_space_transform / p1.w;
+			auto mid_y_vert = p2*screen_space_transform / p2.w;
+			auto max_y_vert = p3*screen_space_transform / p3.w;
 			
 			// // Sort points so min, mid and max contain the correct values.
 			if (max_y_vert.y < min_y_vert.y) {
@@ -73,7 +68,7 @@ namespace graphics {
 				mid_y_vert = temp;
 			}
 
-			// If area of triangle is negative, handedness is 0.
+			// // If area of triangle is negative, handedness is 0. // //
 			int handedness = (triangle_area(min_y_vert, mid_y_vert, max_y_vert) >= 0 ? 1 : 0);
 			scan_convert_triangle(min_y_vert, mid_y_vert, max_y_vert, handedness);
 			fill_shape(int(min_y_vert.y), int(max_y_vert.y));
