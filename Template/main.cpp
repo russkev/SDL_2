@@ -30,19 +30,18 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 
 	s_canvas.stroke_color(bgra_color_type(0, 0, 255, 255));
 
-	point_type min_y_vert(-1, -1,  0,  1);
-	point_type mid_y_vert( 0,  1,  0,  1);
-	point_type max_y_vert( 1, -1,  0,  1);
+	point_type min_y_vert(-3,  3,  0,  1);
+	point_type mid_y_vert( 0, -3,  0,  1);
+	point_type max_y_vert( 3,  3,  0,  1);
 
 	renderContext<view_type> s_render (s_view);
 	rot_counter+= s_delta_time;
 
-	mat4 translation = translate(mat4(), vec3(0.0f, 0.0f, 3.0f));
-	mat4 rotation    = rotate(mat4(), rot_counter, vec3(0.0f, 0.0f, 1.0f));
+	mat4 translation = translate(mat4(), vec3(0.0f, 0.0f, 10.0f));
+	mat4 rotation    = rotate(mat4(), rot_counter*10, vec3(0.0f, 1.0f, 0.0f));
 	mat4 transform   = projection*(translation*rotation);
 
 	vec4 test_vec(transform*min_y_vert);
-	std::cout << transform[0][0];
 
 	s_render.fill_triangle(transform*max_y_vert, transform*mid_y_vert, transform*min_y_vert);
 
