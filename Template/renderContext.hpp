@@ -89,7 +89,15 @@ namespace graphics {
 			const auto x_start = int(round(min_y_vert.x));
 			const auto x_end   = int(round(max_y_vert.x));
 
-			const auto num_threads = 4;
+		    auto num_threads = std::thread::hardware_concurrency();
+			std::vector<std::thread> t_array;
+			t_array.reserve(num_threads);
+			t_array.emplace_back(batch_line,
+				t_start,
+				t_end,
+				cur_x + (t_end - t_start)*i,
+				x_step,
+				which_side);
 
 			const auto y_dist = y_end - y_start;
 			const auto x_dist = x_end - x_start;
@@ -98,10 +106,10 @@ namespace graphics {
 				return;
 			}
 
-			const auto x_step = float(x_dist) / float(y_dist);
+			auto x_step = float(x_dist) / float(y_dist);
 			auto cur_x = float(x_start);
 
-			std::thread * t_array[num_threads];
+			
 
 			for (int i = 0; i < num_threads; ++i) {
 				int t_start = i*y_dist / num_threads;
@@ -109,17 +117,16 @@ namespace graphics {
 				if (i == num_threads - 1) {
 					t_end = y_dist;
 				}
-				t_array[i] = new std::thread(
-					batch_line, 
-					t_start, 
-					t_end, 
-					cur_x + (t_end - t_start)*i, 
-					x_step, 
+				t_array.emplace_back(batch_line,
+					t_start,
+					t_end,
+					cur_x + (t_end - t_start)*i,
+					x_step,
 					which_side);
 			}
 
-			for (int i = 0; i < num_threads; ++i) {
-				t_array[i]->join();
+			for (auto i = t_array.begin(); i < t_array.end(); ++i) {
+				i->join();
 			}
 
 
