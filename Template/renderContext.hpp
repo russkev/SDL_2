@@ -92,12 +92,6 @@ namespace graphics {
 		    auto num_threads = std::thread::hardware_concurrency();
 			std::vector<std::thread> t_array;
 			t_array.reserve(num_threads);
-			t_array.emplace_back(batch_line,
-				t_start,
-				t_end,
-				cur_x + (t_end - t_start)*i,
-				x_step,
-				which_side);
 
 			const auto y_dist = y_end - y_start;
 			const auto x_dist = x_end - x_start;
@@ -117,12 +111,12 @@ namespace graphics {
 				if (i == num_threads - 1) {
 					t_end = y_dist;
 				}
-				t_array.emplace_back(batch_line,
+				t_array.emplace_back(std::thread (batch_line,
 					t_start,
 					t_end,
 					cur_x + (t_end - t_start)*i,
 					x_step,
-					which_side);
+					which_side));
 			}
 
 			for (auto i = t_array.begin(); i < t_array.end(); ++i) {
