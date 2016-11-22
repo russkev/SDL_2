@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClInclude Include="algorithm.hpp" />
     <ClInclude Include="canvas.hpp" />
+    <ClInclude Include="fps.hpp" />
     <ClInclude Include="math.hpp" />
     <ClInclude Include="renderContext.hpp" />
     <ClInclude Include="view.hpp" />

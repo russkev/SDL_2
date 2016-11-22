@@ -381,7 +381,7 @@ namespace graphics {
 
 		vec4 long_vec = max_y - min_y;
 		vec4 short_vec = mid_y - min_y;
-		return (long_vec.x*short_vec.y - long_vec.y*short_vec.x)*0.5;
+		return float((long_vec.x*short_vec.y - long_vec.y*short_vec.x)*0.5);
 	}
 
 	

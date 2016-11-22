@@ -1,5 +1,6 @@
 #include <vector>
 #include <thread>
+#include <future>
 
 #include <glm/glm.hpp>
 #include <glm/matrix.hpp>
@@ -34,7 +35,7 @@ namespace graphics {
 				if (j < 0) { continue; }
 				const auto& s_line = m_scan_buffer[j];
 				for (int i = s_line.first; i < s_line.second; ++i) {
-					if (i < 0) { i = 0; }
+					if (i < 0) i = 0; 
 					blend_element(m_view, tvec2<int>(i, j), bgra_color_type(0, 0, 255, 255));
 				}
 			}
@@ -67,10 +68,41 @@ namespace graphics {
 				mid_y_vert = temp;
 			}
 
+			// // Initialize thread parameters
+			auto s_num_threads = std::thread::hardware_concurrency();
+			auto s_length = int(max_y_vert.y) - int(min_y_vert.y);
+			s_length = (s_length + s_num_threads - 1) / s_num_threads;
+			std::vector<std::thread> s_threads;
+			s_threads.reserve(s_num_threads);
+
+			// // s_bound_fill is a pointer to a function that basically calls the fill_shape function
+			// // auto... args is a list of parameters
+			// // args... is filling the function with the parameters above.
+			auto s_bound_fill = [this](auto... args) { // args is a list of variables
+				fill_shape(args...); 
+			};
+
+			auto s_start = int(min_y_vert.y);
+
+
 			// // If area of triangle is negative, handedness is 0. // //
 			int handedness = (triangle_area(min_y_vert, mid_y_vert, max_y_vert) >= 0 ? 1 : 0);
 			scan_convert_triangle(min_y_vert, mid_y_vert, max_y_vert, handedness);
-			fill_shape(int(min_y_vert.y), int(max_y_vert.y));
+
+			// // Do multi threaded fill shape
+			for (auto i = 0; i < s_num_threads; ++i) {
+				// s_threads.push_back(std::async(std::launch::async, s_bound_fill, s_start, min(s_start + s_length, int(max_y_vert.y))));
+				s_threads.emplace_back(std::thread(s_bound_fill, s_start, min(s_start + s_length, int(max_y_vert.y))));
+				//s_threads.emplace_back(std::thread(fill_shape, s_start, min(s_start + s_length, int(max_y_vert.y))));
+				s_start += s_length;
+			}
+			// // Wait for all threads to finish
+			for (auto & s_thread: s_threads) {
+				//s_thread.get();
+				s_thread.join();
+			}
+
+			//fill_shape(int(min_y_vert.y), int(max_y_vert.y));
 		}
 
 		void scan_convert_triangle(const vec4& min_y_vert, const vec4& mid_y_vert, const vec4& max_y_vert, int handedness) {
@@ -89,9 +121,9 @@ namespace graphics {
 			const auto x_start = int(round(min_y_vert.x));
 			const auto x_end   = int(round(max_y_vert.x));
 
-		    auto num_threads = std::thread::hardware_concurrency();
-			std::vector<std::thread> t_array;
-			t_array.reserve(num_threads);
+		 //   auto num_threads = std::thread::hardware_concurrency();
+			//std::vector<std::thread> t_array;
+			//t_array.reserve(num_threads);
 
 			const auto y_dist = y_end - y_start;
 			const auto x_dist = x_end - x_start;
@@ -105,26 +137,26 @@ namespace graphics {
 
 			
 
-			for (int i = 0; i < num_threads; ++i) {
-				int t_start = i*y_dist / num_threads;
-				int t_end = (i + 1)*y_dist / num_threads;
-				if (i == num_threads - 1) {
-					t_end = y_dist;
-				}
-				t_array.emplace_back(std::thread (batch_line,
-					t_start,
-					t_end,
-					cur_x + (t_end - t_start)*i,
-					x_step,
-					which_side));
-			}
+			//for (int i = 0; i < num_threads; ++i) {
+			//	int t_start = i*y_dist / num_threads;
+			//	int t_end = (i + 1)*y_dist / num_threads;
+			//	if (i == num_threads - 1) {
+			//		t_end = y_dist;
+			//	}
+			//	t_array.emplace_back(std::thread (batch_line,
+			//		t_start,
+			//		t_end,
+			//		cur_x + (t_end - t_start)*i,
+			//		x_step,
+			//		which_side));
+			//}
 
-			for (auto i = t_array.begin(); i < t_array.end(); ++i) {
-				i->join();
-			}
+			//for (auto i = t_array.begin(); i < t_array.end(); ++i) {
+			//	i->join();
+			//}
 
 
-			//batch_line(y_start, y_end, cur_x, x_step, which_side);
+			batch_line(y_start, y_end, cur_x, x_step, which_side);
 
 		}
 		

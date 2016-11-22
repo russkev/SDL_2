@@ -9,41 +9,51 @@
 #include <iostream>
 #include <typeinfo>
 #include <sstream>
+#include <vector>
+#include <algorithm>
 #include "view.hpp"
 #include "algorithm.hpp"
 #include "canvas.hpp"
 #include "rendercontext.hpp"
 #include "math.hpp"
+#include "fps.hpp"
 
 float rot_counter = 0;
 
-void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, double s_delta_time, const glm::mat4& projection) {
+void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, double s_delta_time, const glm::mat4& projection, graphics::fps& frame_monitor) {
     using namespace graphics;
     typedef u8vec4 bgra_color_type;
     typedef vec4 point_type;
     typedef view2d<bgra_color_type> view_type;
 
+	// // Define centre of screen
     auto s_center = glm::ivec2 (s_surface.w, s_surface.h) / 2;
 
+	// // Setup canvas and view
     view_type s_view (s_surface.pixels, s_surface.w, s_surface.h);
     canvas<view_type, point_type> s_canvas (s_view);  
 
+	// // Setup colour of shape
 	s_canvas.stroke_color(bgra_color_type(0, 0, 255, 255));
 
-	point_type min_y_vert(-3,  3,  0,  1);
-	point_type mid_y_vert( 0, -3,  0,  1);
-	point_type max_y_vert( 3,  3,  0,  1);
+	// // Create a triangle
+	point_type min_y_vert(-5,  5,  0,  1);
+	point_type mid_y_vert( 0, -5,  0,  1);
+	point_type max_y_vert( 5,  5,  0,  1);
 
 	renderContext<view_type> s_render (s_view);
-	rot_counter+= s_delta_time;
+	rot_counter+= float(s_delta_time);
 
-	mat4 translation = translate(mat4(), vec3(0.0f, 0.0f, 10.0f));
+	// // Setup triangle transform
+	mat4 translation = translate(mat4(), vec3(0.0f, 0.0f, 13.0f));
 	mat4 rotation    = rotate(mat4(), rot_counter*10, vec3(0.0f, 1.0f, 0.0f));
 	mat4 transform   = projection*(translation*rotation);
 
-	vec4 test_vec(transform*min_y_vert);
-
+	// // Render triangle
 	s_render.fill_triangle(transform*max_y_vert, transform*mid_y_vert, transform*min_y_vert);
+
+	// // FPS counter
+	frame_monitor.think(s_delta_time);
 
 }
 
@@ -54,15 +64,13 @@ int main (int, char**) try {
 	typedef vec3 point_type;
 
 	// // TEST // //
-
-
 	 
 	// // END TEST // // 
 
     auto s_window = SDL_CreateWindow ("Pretty little lines", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_ALLOW_HIGHDPI);
     auto s_surface = SDL_GetWindowSurface (s_window);
 
-	mat4 projection = perspective<float>(deg_to_rad<float>(70.0f), s_surface[0].w / s_surface[0].h, 0.1f, 1000.0f);
+	mat4 projection = perspective<float>(deg_to_rad<float>(70.0f), float(s_surface[0].w) / s_surface[0].h, 0.1f, 1000.0f);
 
     // High precision clock interval
     static const auto s_freq_multiplier = 1.0 / SDL_GetPerformanceFrequency (); 
@@ -70,6 +78,10 @@ int main (int, char**) try {
     // Initial time in clock ticks
     auto s_time0 = s_freq_multiplier * SDL_GetPerformanceCounter ();
     auto s_time1 = s_time0;
+
+	// Initialise fps
+	fps frame_check(50);
+
 
     while (!SDL_QuitRequested ()) {
         SDL_Event s_event;
@@ -81,7 +93,7 @@ int main (int, char**) try {
         SDL_LockSurface (s_surface);
         
         s_time1 = s_freq_multiplier * SDL_GetPerformanceCounter ();
-        draw_animation_frame (s_surface [0], s_time1, s_time1 - s_time0, projection);
+        draw_animation_frame (s_surface [0], s_time1, s_time1 - s_time0, projection, frame_check);
         s_time0 = s_time1;
 
         SDL_UnlockSurface (s_surface);
