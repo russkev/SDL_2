@@ -8,6 +8,7 @@
 #include "math.hpp"
 #include "view.hpp"
 #include "algorithm.hpp"
+#include "edge.hpp"
 
 
 namespace graphics {
@@ -82,90 +83,107 @@ namespace graphics {
 				fill_shape(args...); 
 			};
 
-			auto s_start = int(min_y_vert.y);
+			auto s_start = int(ceil(min_y_vert.y));
 
 
 			// // If area of triangle is negative, handedness is 0. // //
-			int handedness = (triangle_area(min_y_vert, mid_y_vert, max_y_vert) >= 0 ? 1 : 0);
-			scan_convert_triangle(min_y_vert, mid_y_vert, max_y_vert, handedness);
+			//int handedness = (triangle_area(min_y_vert, mid_y_vert, max_y_vert) >= 0 ? 1 : 0);
+			scan_triangle(min_y_vert, mid_y_vert, max_y_vert, triangle_area(min_y_vert, mid_y_vert, max_y_vert) >= 0);
 
 			// // Do multi threaded fill shape
 			for (auto i = 0; i < s_num_threads; ++i) {
-				// s_threads.push_back(std::async(std::launch::async, s_bound_fill, s_start, min(s_start + s_length, int(max_y_vert.y))));
-				s_threads.emplace_back(std::thread(s_bound_fill, s_start, min(s_start + s_length, int(max_y_vert.y))));
-				//s_threads.emplace_back(std::thread(fill_shape, s_start, min(s_start + s_length, int(max_y_vert.y))));
+				s_threads.emplace_back(std::thread(s_bound_fill, s_start, min(s_start + s_length, int(ceil(max_y_vert.y)))));
 				s_start += s_length;
 			}
 			// // Wait for all threads to finish
 			for (auto & s_thread: s_threads) {
-				//s_thread.get();
 				s_thread.join();
 			}
-
-			//fill_shape(int(min_y_vert.y), int(max_y_vert.y));
 		}
 
-		void scan_convert_triangle(const vec4& min_y_vert, const vec4& mid_y_vert, const vec4& max_y_vert, int handedness) {
-			scan_convert_line(min_y_vert, max_y_vert, 0 + handedness);
-			scan_convert_line(min_y_vert, mid_y_vert, 1 - handedness);
-			scan_convert_line(mid_y_vert, max_y_vert, 1 - handedness);
-		}
 
+		void scan_triangle(const vec4& min_y_vert, const vec4& mid_y_vert, const vec4& max_y_vert, bool handedness) {
+
+			edge top_to_bottom(min_y_vert, max_y_vert);
+			edge top_to_middle(min_y_vert, mid_y_vert);
+			edge middle_to_bottom(mid_y_vert, max_y_vert);
+
+			edge left = top_to_bottom;
+			edge right = top_to_middle;
+
+			if (handedness) {
+				edge temp = left;
+				left = right;
+				right = temp;
+				// // Free up temp memory here?
+			}
+
+			int y_start = top_to_middle.m_y_start;
+			int y_end = top_to_middle.m_y_end;
+
+			for (int j = y_start; j < y_end; ++j) {
+				draw_scan_line(left, right, j);
+				left.step();
+				right.step();
+			}
+
+			y_start = middle_to_bottom.m_y_start;
+			y_end = middle_to_bottom.m_y_end;
+
+			for (int j = y_start; j < y_end; ++j) {
+				draw_scan_line(left, right, j);
+				left.step();
+				right.step();
+			}
+
+		}
 
 	private:
 
+		void draw_scan_line(const edge& left, const edge& right, int j) {
+			//if (j < 0) { continue; }
+			const auto& s_line = m_scan_buffer[j];
+			for (int i = int(ceil(left.m_x)); i < int(ceil(right.m_x)); ++i) {
+				//if (i < 0) i = 0;
+				blend_element(m_view, tvec2<int>(i, j), bgra_color_type(0, 0, 255, 255));
+			}
+		}
+		//void scan_convert_triangle(const vec4& min_y_vert, const vec4& mid_y_vert, const vec4& max_y_vert, int handedness) {
+		//	scan_convert_line(min_y_vert, max_y_vert, 0 + handedness);
+		//	scan_convert_line(min_y_vert, mid_y_vert, 1 - handedness);
+		//	scan_convert_line(mid_y_vert, max_y_vert, 1 - handedness);
+		//}
 
 		void scan_convert_line(const vec4& min_y_vert, const vec4& max_y_vert, int which_side) {
-			const auto y_start = int(round(min_y_vert.y));
-			const auto y_end   = int(round(max_y_vert.y));
-			const auto x_start = int(round(min_y_vert.x));
-			const auto x_end   = int(round(max_y_vert.x));
 
-		 //   auto num_threads = std::thread::hardware_concurrency();
-			//std::vector<std::thread> t_array;
-			//t_array.reserve(num_threads);
+			// // Work out the pixels to start and finish the line
+			const auto y_start = int(ceil(min_y_vert.y));
+			const auto y_end   = int(ceil(max_y_vert.y));
+			const auto x_start = int(ceil(min_y_vert.x));
+			const auto x_end   = int(ceil(max_y_vert.x));
 
-			const auto y_dist = y_end - y_start;
-			const auto x_dist = x_end - x_start;
+			const auto y_dist = max_y_vert.y - min_y_vert.y;
+			const auto x_dist = max_y_vert.x - min_y_vert.x;
 
 			if (y_dist <= 0) {
 				return;
 			}
 
+			// // Use the slope for x step
 			auto x_step = float(x_dist) / float(y_dist);
-			auto cur_x = float(x_start);
+			// // Calculate difference between point on line and the middle of the start pixel
+			auto y_prestep = y_start - min_y_vert.y;
+			auto cur_x = min_y_vert.x + y_prestep * x_step;
 
-			
-
-			//for (int i = 0; i < num_threads; ++i) {
-			//	int t_start = i*y_dist / num_threads;
-			//	int t_end = (i + 1)*y_dist / num_threads;
-			//	if (i == num_threads - 1) {
-			//		t_end = y_dist;
-			//	}
-			//	t_array.emplace_back(std::thread (batch_line,
-			//		t_start,
-			//		t_end,
-			//		cur_x + (t_end - t_start)*i,
-			//		x_step,
-			//		which_side));
-			//}
-
-			//for (auto i = t_array.begin(); i < t_array.end(); ++i) {
-			//	i->join();
-			//}
-
-
+			// // Convert line to pixel numbers
 			batch_line(y_start, y_end, cur_x, x_step, which_side);
 
 		}
 		
-
-
 		void batch_line(int y_start, int y_end, float cur_x, const float x_step, int which_side) {
 			for (int j = y_start; j < y_end; ++j) {
 				if (j < 0) continue;
-				(which_side == 0 ? m_scan_buffer[j].first = int(round(cur_x)) : m_scan_buffer[j].second = int(round(cur_x)));
+				(which_side == 0 ? m_scan_buffer[j].first = int(round(cur_x)) : m_scan_buffer[j].second = int(ceil(cur_x)));
 				cur_x += x_step;
 			}
 		}

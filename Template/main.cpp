@@ -46,7 +46,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 
 	// // Setup triangle transform
 	mat4 translation = translate(mat4(), vec3(0.0f, 0.0f, 13.0f));
-	mat4 rotation    = rotate(mat4(), rot_counter*10, vec3(0.0f, 1.0f, 0.0f));
+	mat4 rotation    = rotate(mat4(), rot_counter, vec3(0.0f, 1.0f, 0.0f));
 	mat4 transform   = projection*(translation*rotation);
 
 	// // Render triangle

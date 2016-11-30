@@ -41,5 +41,8 @@
     <ClInclude Include="fps.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="edge.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
