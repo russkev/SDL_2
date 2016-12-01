@@ -101,48 +101,38 @@ namespace graphics {
 			}
 		}
 
-
+	private:
 		void scan_triangle(const vec4& min_y_vert, const vec4& mid_y_vert, const vec4& max_y_vert, bool handedness) {
 
-			edge top_to_bottom(min_y_vert, max_y_vert);
-			edge top_to_middle(min_y_vert, mid_y_vert);
-			edge middle_to_bottom(mid_y_vert, max_y_vert);
+			edge top_to_bottom    (min_y_vert, max_y_vert);
+			edge top_to_middle    (min_y_vert, mid_y_vert);
+			edge middle_to_bottom (mid_y_vert, max_y_vert);
 
-			edge left = top_to_bottom;
-			edge right = top_to_middle;
+			scan_edges(top_to_bottom, top_to_middle, handedness);
+			scan_edges(top_to_bottom, middle_to_bottom, handedness);
 
+		}
+
+		void scan_edges(const edge& a, const edge& b, bool handedness) {
+
+			edge left = a;
+			edge right = b;
 			if (handedness) {
 				edge temp = left;
 				left = right;
 				right = temp;
-				// // Free up temp memory here?
+				// Free up temp??
 			}
 
-			int y_start = top_to_middle.m_y_start;
-			int y_end = top_to_middle.m_y_end;
-
-			for (int j = y_start; j < y_end; ++j) {
+			for (int j = b.m_y_start; j < b.m_y_end; ++j) {
 				draw_scan_line(left, right, j);
 				left.step();
 				right.step();
 			}
-
-			y_start = middle_to_bottom.m_y_start;
-			y_end = middle_to_bottom.m_y_end;
-
-			for (int j = y_start; j < y_end; ++j) {
-				draw_scan_line(left, right, j);
-				left.step();
-				right.step();
-			}
-
 		}
-
-	private:
 
 		void draw_scan_line(const edge& left, const edge& right, int j) {
 			//if (j < 0) { continue; }
-			const auto& s_line = m_scan_buffer[j];
 			for (int i = int(ceil(left.m_x)); i < int(ceil(right.m_x)); ++i) {
 				//if (i < 0) i = 0;
 				blend_element(m_view, tvec2<int>(i, j), bgra_color_type(0, 0, 255, 255));
@@ -154,39 +144,39 @@ namespace graphics {
 		//	scan_convert_line(mid_y_vert, max_y_vert, 1 - handedness);
 		//}
 
-		void scan_convert_line(const vec4& min_y_vert, const vec4& max_y_vert, int which_side) {
+		//void scan_convert_line(const vec4& min_y_vert, const vec4& max_y_vert, int which_side) {
 
-			// // Work out the pixels to start and finish the line
-			const auto y_start = int(ceil(min_y_vert.y));
-			const auto y_end   = int(ceil(max_y_vert.y));
-			const auto x_start = int(ceil(min_y_vert.x));
-			const auto x_end   = int(ceil(max_y_vert.x));
+		//	// // Work out the pixels to start and finish the line
+		//	const auto y_start = int(ceil(min_y_vert.y));
+		//	const auto y_end   = int(ceil(max_y_vert.y));
+		//	const auto x_start = int(ceil(min_y_vert.x));
+		//	const auto x_end   = int(ceil(max_y_vert.x));
 
-			const auto y_dist = max_y_vert.y - min_y_vert.y;
-			const auto x_dist = max_y_vert.x - min_y_vert.x;
+		//	const auto y_dist = max_y_vert.y - min_y_vert.y;
+		//	const auto x_dist = max_y_vert.x - min_y_vert.x;
 
-			if (y_dist <= 0) {
-				return;
-			}
+		//	if (y_dist <= 0) {
+		//		return;
+		//	}
 
-			// // Use the slope for x step
-			auto x_step = float(x_dist) / float(y_dist);
-			// // Calculate difference between point on line and the middle of the start pixel
-			auto y_prestep = y_start - min_y_vert.y;
-			auto cur_x = min_y_vert.x + y_prestep * x_step;
+		//	// // Use the slope for x step
+		//	auto x_step = float(x_dist) / float(y_dist);
+		//	// // Calculate difference between point on line and the middle of the start pixel
+		//	auto y_prestep = y_start - min_y_vert.y;
+		//	auto cur_x = min_y_vert.x + y_prestep * x_step;
 
-			// // Convert line to pixel numbers
-			batch_line(y_start, y_end, cur_x, x_step, which_side);
+		//	// // Convert line to pixel numbers
+		//	batch_line(y_start, y_end, cur_x, x_step, which_side);
 
-		}
+		//}
 		
-		void batch_line(int y_start, int y_end, float cur_x, const float x_step, int which_side) {
-			for (int j = y_start; j < y_end; ++j) {
-				if (j < 0) continue;
-				(which_side == 0 ? m_scan_buffer[j].first = int(round(cur_x)) : m_scan_buffer[j].second = int(ceil(cur_x)));
-				cur_x += x_step;
-			}
-		}
+		//void batch_line(int y_start, int y_end, float cur_x, const float x_step, int which_side) {
+		//	for (int j = y_start; j < y_end; ++j) {
+		//		if (j < 0) continue;
+		//		(which_side == 0 ? m_scan_buffer[j].first = int(round(cur_x)) : m_scan_buffer[j].second = int(ceil(cur_x)));
+		//		cur_x += x_step;
+		//	}
+		//}
 
 	};
 
