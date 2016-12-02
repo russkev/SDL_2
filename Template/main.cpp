@@ -53,7 +53,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	s_render.fill_triangle(transform*max_y_vert, transform*mid_y_vert, transform*min_y_vert);
 
 	// // FPS counter
-	frame_monitor.think(s_delta_time);
+	//frame_monitor.think(s_delta_time);
 
 }
 
