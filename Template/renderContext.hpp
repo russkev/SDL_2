@@ -88,7 +88,7 @@ namespace graphics {
 
 			// // If area of triangle is negative, handedness is 0. // //
 			//int handedness = (triangle_area(min_y_vert, mid_y_vert, max_y_vert) >= 0 ? 1 : 0);
-			scan_triangle(min_y_vert, mid_y_vert, max_y_vert, triangle_area(min_y_vert, mid_y_vert, max_y_vert) >= 0);
+			scan_triangle(min_y_vert, mid_y_vert, max_y_vert);
 
 			//// // Do multi threaded fill shape
 			//for (auto i = 0; i < s_num_threads; ++i) {
@@ -102,14 +102,13 @@ namespace graphics {
 		}
 
 	private:
-		void scan_triangle(const vec4& min_y_vert, const vec4& mid_y_vert, const vec4& max_y_vert, bool handedness) {
+		void scan_triangle(const vec4& min_y_vert, const vec4& mid_y_vert, const vec4& max_y_vert) {
 
 			edge top_to_bottom(min_y_vert, max_y_vert);
-
 			edge top_to_middle(min_y_vert, mid_y_vert);
 			edge middle_to_bottom(mid_y_vert, max_y_vert);
 
-			if (handedness) {
+			if (triangle_area(min_y_vert, mid_y_vert, max_y_vert)) {
 				scan_edges(top_to_middle, top_to_bottom, top_to_middle);
 				scan_edges(middle_to_bottom, top_to_bottom, middle_to_bottom);
 			}
