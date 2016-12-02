@@ -10,6 +10,8 @@
 #include "algorithm.hpp"
 #include "edge.hpp"
 
+#define USE_MULTITHREADING 1
+
 
 namespace graphics {
 	template<typename _View>
@@ -60,11 +62,32 @@ namespace graphics {
 
 	private:
 		void scan_triangle(const vec4& min_y_vert, const vec4& mid_y_vert, const vec4& max_y_vert) {
+#if USE_MULTITHREADING
+			const auto s_num_threads = std::thread::hardware_concurrency();
 
+			std::vector<std::future<void>> s_threads;
+			s_threads.reserve(s_num_threads);
+
+			for (auto i = 0; i < s_num_threads; ++i) {
+				s_threads.emplace_back(std::async(std::launch::async, [&, i]() {
+					edge top_to_bottom(min_y_vert, max_y_vert);
+					edge top_to_middle(min_y_vert, mid_y_vert);
+					edge middle_to_bottom(mid_y_vert, max_y_vert);
+					if (triangle_area(min_y_vert, mid_y_vert, max_y_vert)) {
+						scan_edges(top_to_middle, top_to_bottom, top_to_middle, s_num_threads, i);
+						scan_edges(middle_to_bottom, top_to_bottom, middle_to_bottom, s_num_threads, i);
+					}
+					else {
+						scan_edges(top_to_bottom, top_to_middle, top_to_middle, s_num_threads, i);
+						scan_edges(top_to_bottom, middle_to_bottom, middle_to_bottom, s_num_threads, i);
+					}
+				}));
+			}
+			for (auto& t : s_threads) t.get();
+#else
 			edge top_to_bottom(min_y_vert, max_y_vert);
 			edge top_to_middle(min_y_vert, mid_y_vert);
 			edge middle_to_bottom(mid_y_vert, max_y_vert);
-
 			if (triangle_area(min_y_vert, mid_y_vert, max_y_vert)) {
 				scan_edges(top_to_middle, top_to_bottom, top_to_middle);
 				scan_edges(middle_to_bottom, top_to_bottom, middle_to_bottom);
@@ -73,11 +96,23 @@ namespace graphics {
 				scan_edges(top_to_bottom, top_to_middle, top_to_middle);
 				scan_edges(top_to_bottom, middle_to_bottom, middle_to_bottom);
 			}
+#endif
 		}
 
-		void scan_edges(edge& left, edge& right, const edge& lead) {
+		void scan_edges(edge& left, edge& right, const edge& lead
+#if USE_MULTITHREADING
+			, unsigned every_nth, unsigned plus_i
+#endif // 
+			)
+		{
 			for (int j = lead.m_y_start; j < lead.m_y_end; ++j) {
+#if USE_MULTITHREADING
+				if (((j - lead.m_y_start) % every_nth) == plus_i) {
+					draw_scan_line(left, right, j);
+				}
+#else
 				draw_scan_line(left, right, j);
+#endif
 				left.step();
 				right.step();
 			}
