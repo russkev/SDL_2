@@ -16,7 +16,9 @@ namespace graphics {
 		Uint32 frameTimeLast;
 
 		// total frames rendered
-		Uint32 frameCount;
+		std::int64_t frameCount;
+
+		std::int64_t everyXFrames = 60;
 
 		// the value you want to output
 		float framesPerSecond;
@@ -57,7 +59,7 @@ namespace graphics {
 		//}
 		template <typename _time>
 		void think(_time s_delta_time) {
-			Uint32 frame_timesIndex; 
+			Uint32 frame_timesIndex;
 			Uint32 getticks;
 			Uint32 count;
 			Uint32 i;
@@ -76,7 +78,10 @@ namespace graphics {
 			}
 			average_time /= FRAME_VALUES;
 
-			std::cout << " Average FPS: " << average_time << " " << std::endl;;
+			if (--everyXFrames <= 0) {
+				std::cout << " Average FPS: " << average_time << "\r";
+				everyXFrames += int(average_time);
+			}
 			// // Increment frame count
 			++frameCount;
 
