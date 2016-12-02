@@ -109,23 +109,23 @@ namespace graphics {
 			edge top_to_middle(min_y_vert, mid_y_vert);
 			edge middle_to_bottom(mid_y_vert, max_y_vert);
 
-			scan_edges(top_to_bottom, top_to_middle, handedness);
-			scan_edges(top_to_bottom, middle_to_bottom, handedness);
-
+			if (handedness) {
+				scan_edges(top_to_middle, top_to_bottom, top_to_middle);
+				scan_edges(middle_to_bottom, top_to_bottom, middle_to_bottom);
+			}
+			else {
+				scan_edges(top_to_bottom, top_to_middle, top_to_middle);
+				scan_edges(top_to_bottom, middle_to_bottom, middle_to_bottom);
+			}
 		}
 
-		void scan_edges(edge& a, edge& b, bool handedness) {
+		void scan_edges(edge& left, edge& right, const edge& lead) {
 
-			auto* left = &a;
-			auto* right = &b;
-			if (handedness) {
-				std::swap(left, right);
-			}
 
-			for (int j = b.m_y_start; j < b.m_y_end; ++j) {
-				draw_scan_line(*left, *right, j);
-				left->step();
-				right->step();
+			for (int j = lead.m_y_start; j < lead.m_y_end; ++j) {
+				draw_scan_line(left, right, j);
+				left.step();
+				right.step();
 			}
 		}
 
@@ -138,7 +138,8 @@ namespace graphics {
 
 			for (int i = a; i < b; ++i) {
 				//if (i < 0) i = 0;
-				if (i >= m_view.size().x || i < 0 || j >= m_view.size().y || j < 0)
+				if (i >= m_view.size().x || i < 0
+					|| j >= m_view.size().y || j < 0)
 					continue;
 				blend_element(m_view, tvec2<int>(i, j), bgra_color_type(0, 0, 255, 255));
 			}
