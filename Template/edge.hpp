@@ -35,31 +35,31 @@ namespace graphics {
 	};
 }
 
-/*		// // This is the old scan convert line code	
+/*		// // This is the old scan convert line code
 
 
-		void scan_convert_line(const vec4& min_y_vert, const vec4& max_y_vert, int which_side) {
+void scan_convert_line(const vec4& min_y_vert, const vec4& max_y_vert, int which_side) {
 
-			// // Work out the pixels to start and finish the line
-			const auto y_start = int(ceil(min_y_vert.y));
-			const auto y_end   = int(ceil(max_y_vert.y));
-			const auto x_start = int(ceil(min_y_vert.x));
-			const auto x_end   = int(ceil(max_y_vert.x));
+// // Work out the pixels to start and finish the line
+const auto y_start = int(ceil(min_y_vert.y));
+const auto y_end   = int(ceil(max_y_vert.y));
+const auto x_start = int(ceil(min_y_vert.x));
+const auto x_end   = int(ceil(max_y_vert.x));
 
-			const auto y_dist = max_y_vert.y - min_y_vert.y;
-			const auto x_dist = max_y_vert.x - min_y_vert.x;
+const auto y_dist = max_y_vert.y - min_y_vert.y;
+const auto x_dist = max_y_vert.x - min_y_vert.x;
 
-			if (y_dist <= 0) {
-				return;
-			}
+if (y_dist <= 0) {
+return;
+}
 
-			// // Use the slope for x step
-			auto x_step = float(x_dist) / float(y_dist);
-			// // Calculate difference between point on line and the middle of the start pixel
-			auto y_prestep = y_start - min_y_vert.y;
-			auto cur_x = min_y_vert.x + y_prestep * x_step;
+// // Use the slope for x step
+auto x_step = float(x_dist) / float(y_dist);
+// // Calculate difference between point on line and the middle of the start pixel
+auto y_prestep = y_start - min_y_vert.y;
+auto cur_x = min_y_vert.x + y_prestep * x_step;
 
-			// // Convert line to pixel numbers
-			batch_line(y_start, y_end, cur_x, x_step, which_side);
+// // Convert line to pixel numbers
+batch_line(y_start, y_end, cur_x, x_step, which_side);
 
-		}*/
+}*/

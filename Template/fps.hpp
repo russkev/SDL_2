@@ -1,91 +1,45 @@
 #include <sdl.h>
-#include <vector>
-
-
+#include <cstdio>
+#include <cstdlib>
+#include <numeric>
+#include <array>
 
 namespace graphics {
 	struct fps {
+
 	private:
-		// How many frames time values to keep
-		// The higher the value the smoother the result is...
-		// Don't make it 0 or less :)
-		int FRAME_VALUES;
-		std::vector<float> frame_times;
+		SDL_Window* m_window = nullptr;
+		double m_time_passed = 0.0f;
+		double m_running_average = 60.0f;
+		std::uint64_t m_frames_passed = 0u;
 
-		// Last calculated SDL_GetTicks
-		Uint32 frameTimeLast;
-
-		// total frames rendered
-		std::int64_t frameCount;
-
-		std::int64_t everyXFrames = 60;
-
-		// the value you want to output
-		float framesPerSecond;
-
-
+		double m_update_interval = 1.0 / 8.0;
+		double m_alpha = 0.01;
 
 	public:
+		fps(SDL_Window* w, double update_interval = 1.0 / 8.0, double alpha = 0.01) :
+			m_window(w), m_update_interval(update_interval), m_alpha(alpha)
+		{};
 
-		// // Initiliase FPS
-		fps() :
-			frameTimeLast(0),
-			frameCount(0),
-			framesPerSecond(0.0f),
-			FRAME_VALUES(10)
-		{
-			for (int i = 0; i < FRAME_VALUES; ++i) {
-				frame_times.push_back(0.0f);
+
+		void think(double s_delta_time) {
+			static thread_local char s_str_buffer[2048];
+
+			m_time_passed += s_delta_time;
+			++m_frames_passed;
+
+
+
+			if (m_time_passed >= m_update_interval) {
+				const auto s_fps = m_frames_passed / m_time_passed;
+				m_time_passed = 0.0f;
+				m_frames_passed = 0u;
+
+				m_running_average = m_running_average * (1.0 - m_alpha) + s_fps * m_alpha;
+
+				sprintf_s(s_str_buffer, "FPS : %0.2f, Running Average : %0.2f\n", float(s_fps), float(m_running_average));
+				SDL_SetWindowTitle(m_window, s_str_buffer);
 			}
-		}
-
-		fps(int frame_values) :
-			frameTimeLast(0),
-			frameCount(0),
-			framesPerSecond(0.0f),
-			FRAME_VALUES(frame_values)
-		{
-			for (int i = 0; i < FRAME_VALUES; ++i) {
-				frame_times.push_back(0.0f);
-			}
-		}
-
-
-		// Initialise everything to 0
-		//void init() {
-		//	frameTimeLast = 0;
-		//	frameCount = 0;
-		//	framesPerSecond = 0.0f;
-		//}
-		template <typename _time>
-		void think(_time s_delta_time) {
-			Uint32 frame_timesIndex;
-			Uint32 getticks;
-			Uint32 count;
-			Uint32 i;
-			_time average_time = 0;
-
-			// // frametimesindex is the position in the array. It ranges from 0 to FRAME_VALUES.
-			// // This value rotates back to 0 after it hits FRAME_VALUES.
-			//frametimesindex = framecount % FRAME_VALUES;
-
-			frame_times.pop_back();
-			auto it = frame_times.begin();
-			frame_times.insert(it, 1 / s_delta_time);
-
-			for (auto i : frame_times) {
-				average_time += i;
-			}
-			average_time /= FRAME_VALUES;
-
-			if (--everyXFrames <= 0) {
-				std::cout << " Average FPS: " << average_time << "\r";
-				everyXFrames += int(average_time);
-			}
-			// // Increment frame count
-			++frameCount;
-
-
 		}
 
 	};

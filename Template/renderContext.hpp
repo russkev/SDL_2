@@ -10,7 +10,7 @@
 #include "algorithm.hpp"
 #include "edge.hpp"
 
-#define USE_MULTITHREADING 1
+#define USE_MULTITHREADING 0
 
 
 namespace graphics {
