@@ -377,7 +377,10 @@ namespace graphics {
 	}
 
 	//template <typename T>
+
 	float triangle_area(const vec4& min_y, const vec4& mid_y, const vec4& max_y) {
+		// // triangle_area determines the area of a given triangle. It will give negative answers if triangle is right
+		// // handed (i.e. mid point on right side of triangle) and positive answers if left handed
 
 		vec4 long_vec = max_y - min_y;
 		vec4 short_vec = mid_y - min_y;

@@ -11,6 +11,7 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
+
 #include "view.hpp"
 #include "algorithm.hpp"
 #include "canvas.hpp"
@@ -64,6 +65,7 @@ int main (int, char**) try {
 	typedef vec3 point_type;
 
 	// // TEST // //
+	float test_area = triangle_area(vec4(8, 6, 0, 0), vec4(10, 11, 0, 0), vec4(6, 14, 0, 0));
 	 
 	// // END TEST // // 
 
@@ -80,7 +82,7 @@ int main (int, char**) try {
     auto s_time1 = s_time0;
 
 	// Initialise fps
-	fps frame_check(50);
+	fps frame_check(s_window);
 
 
     while (!SDL_QuitRequested ()) {
