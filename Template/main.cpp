@@ -53,7 +53,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	mat4 transform   = projection*(translation*rotation);
 
 	// // Render triangle
-	s_render.fill_triangle(transform*max_y_vert.m_pos, transform*mid_y_vert.m_pos, transform*min_y_vert.m_pos);
+	s_render.fill_triangle(transform*max_y_vert, transform*mid_y_vert, transform*min_y_vert);
 
 	// // TEST // //
 
