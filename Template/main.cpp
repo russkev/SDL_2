@@ -18,6 +18,7 @@
 #include "rendercontext.hpp"
 #include "math.hpp"
 #include "fps.hpp"
+#include "vertex.hpp"
 
 float rot_counter = 0;
 
@@ -38,9 +39,10 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	s_canvas.stroke_color(bgra_color_type(0, 0, 255, 255));
 
 	// // Create a triangle
-	point_type min_y_vert(-5,  5,  0,  1);
-	point_type mid_y_vert( 0, -5,  0,  1);
-	point_type max_y_vert( 5,  5,  0,  1);
+
+	vertex min_y_vert(point_type(-5,  5,  0,  1), bgra_color_type(0,     0, 255, 255));
+	vertex mid_y_vert(point_type( 0, -5,  0,  1), bgra_color_type(0,   255,   0, 255));
+	vertex max_y_vert(point_type( 5,  5,  0,  1), bgra_color_type(255,   0,   0, 255));
 
 	renderContext<view_type> s_render (s_view);
 	rot_counter+= float(s_delta_time);
@@ -51,10 +53,21 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	mat4 transform   = projection*(translation*rotation);
 
 	// // Render triangle
-	s_render.fill_triangle(transform*max_y_vert, transform*mid_y_vert, transform*min_y_vert);
+	s_render.fill_triangle(transform*max_y_vert.m_pos, transform*mid_y_vert.m_pos, transform*min_y_vert.m_pos);
+
+	// // TEST // //
+
+	//point_type min_y_vert(-5, 5, 0, 1);
+	//point_type point_a(-5, 5, 0, 1);
+
+	vertex test_vertex(point_type(-5, 5, 0, 1), bgra_color_type(0, 0, 255, 255));
+
+	// // END TEST // // 
 
 	// // FPS counter
 	frame_monitor.think(s_delta_time);
+
+
 
 }
 
@@ -64,10 +77,7 @@ int main (int, char**) try {
     std::atexit (&SDL_Quit);
 	typedef vec3 point_type;
 
-	// // TEST // //
-	float test_area = triangle_area(vec4(8, 6, 0, 0), vec4(10, 11, 0, 0), vec4(6, 14, 0, 0));
-	 
-	// // END TEST // // 
+
 
     auto s_window = SDL_CreateWindow ("Pretty little lines", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_ALLOW_HIGHDPI);
     auto s_surface = SDL_GetWindowSurface (s_window);

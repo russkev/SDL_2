@@ -1,17 +1,28 @@
 #include "math.hpp"
+#include "gradients.hpp"
 
 // // This is a struct that essentially re-organises the scan buffer so it can handle multiple
 // // elements (like colour, lighting, etc. ) at once.
 namespace graphics {
 	struct edge {
-	public:
+	private:
 		float m_x;
 		float m_x_step;
 		int m_y_start;
 		int m_y_end;
+		u8vec4 m_color;
+		vec4 m_color_step;
+
 
 	public:
-		edge(const vec4& start, const vec4& end) {
+		// // Getters
+		float x() { return m_x; }
+		int y_start() { return m_y_start; }
+		int y_end() { return m_y_end; }
+		u8vec4 color() { return m_color; }
+
+		// // Main function	
+		edge(gradients s_gradients, const vec4& start, const vec4& end, int min_y_vert_index) {
 			m_y_start = int(ceil(start.y));
 			m_y_end = int(ceil(end.y));
 
@@ -23,8 +34,8 @@ namespace graphics {
 			float y_prestep = m_y_start - start.y;
 			// // Use the slope for x step
 			m_x_step = x_dist / y_dist;
-
 			m_x = start.x + y_prestep * m_x_step;
+			float x_prestep = m_x - start.x;
 		}
 
 		void step() {
