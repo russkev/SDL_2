@@ -10,7 +10,7 @@
 #include "algorithm.hpp"
 #include "edge.hpp"
 
-#define USE_MULTITHREADING 1
+#define USE_MULTITHREADING 0
 
 
 namespace graphics {
@@ -88,12 +88,12 @@ namespace graphics {
 
 			for (auto&t : s_threads) t.get();
 #else
-			gradients m_gradients(min_y_vert, mid_y_vert, max_y_vert);
-			edge top_to_bottom(min_y_vert, max_y_vert);
-			edge top_to_middle(min_y_vert, mid_y_vert);
-			edge middle_to_bottom(mid_y_vert, max_y_vert);
+			gradients m_gradients (min_y_vert, mid_y_vert, max_y_vert);
+			edge top_to_bottom    (m_gradients, min_y_vert.m_pos, max_y_vert.m_pos, 0);
+			edge top_to_middle    (m_gradients, min_y_vert.m_pos, mid_y_vert.m_pos, 0);
+			edge middle_to_bottom (m_gradients, mid_y_vert.m_pos, max_y_vert.m_pos, 1);
 
-			if (triangle_area(min_y_vert, mid_y_vert, max_y_vert) >= 0) { // // If triangle is left handed
+			if (triangle_area(min_y_vert.m_pos, mid_y_vert.m_pos, max_y_vert.m_pos) >= 0) { // // If triangle is left handed
 				// // First part of the triangle, top to the middle point. 1st arg is left side, 2nd is right side
 				scan_edges(top_to_middle, top_to_bottom, top_to_middle);
 				// // Same as above but for middle part down to bottom

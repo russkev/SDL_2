@@ -53,7 +53,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	mat4 transform   = projection*(translation*rotation);
 
 	// // Render triangle
-	s_render.fill_triangle(transform*max_y_vert, transform*mid_y_vert, transform*min_y_vert);
+	s_render.fill_triangle(max_y_vert*transform, mid_y_vert*transform, min_y_vert*transform);
 
 	// // TEST // //
 
@@ -61,6 +61,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	//point_type point_a(-5, 5, 0, 1);
 
 	vertex test_vertex(point_type(-5, 5, 0, 1), bgra_color_type(0, 0, 255, 255));
+	//test_vertex = test_vertex*5;
 
 	// // END TEST // // 
 
