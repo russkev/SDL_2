@@ -10,7 +10,7 @@
 #include "algorithm.hpp"
 #include "edge.hpp"
 
-#define USE_MULTITHREADING 0
+#define USE_MULTITHREADING 1
 
 
 namespace graphics {
@@ -137,16 +137,23 @@ namespace graphics {
 		void draw_scan_line(edge& left, edge& right, int j) {
 			//if (j < 0) { continue; }
 
-			auto a = int(ceil(left.x()));
-			auto b = int(ceil(right.x()));
-			if (a > b) std::swap(a, b);
+			bgra_color_type col_a =  left.color();
+			bgra_color_type col_b = right.color();
+			auto min = int(ceil(left.x()));
+			auto max = int(ceil(right.x()));
+			if (min > max) std::swap(min, max);
+
+			auto lerp_amt = 0.0f;
+			auto lerp_step = 1.0f / float(a - b);
 
 			for (int i = a; i < b; ++i) {
+				bgra_color_type color = lerp(col_a, col_b, lerp_amt);
 				//if (i < 0) i = 0;
 				if (i >= m_view.size().x || i < 0 || j >= m_view.size().y || j < 0)
 					continue;
 				//blend_element(m_view, tvec2<int>(i, j), bgra_color_type(0, 0, 255, 255)); // Solid colour so blend element not needed
-				m_view[j][i] = bgra_color_type(0, 0, 255, 255);
+				m_view[j][i] = color;
+				lerp_amt += lerp_step;
 			}
 		}
 	};

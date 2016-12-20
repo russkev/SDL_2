@@ -61,7 +61,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	//point_type point_a(-5, 5, 0, 1);
 
 	vertex test_vertex(point_type(-5, 5, 0, 1), bgra_color_type(0, 0, 255, 255));
-	//test_vertex = test_vertex*5;
+	vertex test_vertex_2 = 5.0f*test_vertex;
 
 	// // END TEST // // 
 
@@ -83,6 +83,7 @@ int main (int, char**) try {
     auto s_window = SDL_CreateWindow ("Pretty little lines", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_ALLOW_HIGHDPI);
     auto s_surface = SDL_GetWindowSurface (s_window);
 
+	// // Perspective parameters: fovy, aspect, near, far
 	mat4 projection = perspective<float>(deg_to_rad<float>(70.0f), float(s_surface[0].w) / s_surface[0].h, 0.1f, 1000.0f);
 
     // High precision clock interval
