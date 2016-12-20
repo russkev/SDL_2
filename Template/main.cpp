@@ -39,9 +39,9 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	s_canvas.stroke_color(bgra_color_type(0, 0, 255, 255));
 
 	// // Create a triangle
-	point_type min_y_vert(-5,  5,  0,  1);
-	point_type mid_y_vert( 0, -5,  0,  1);
-	point_type max_y_vert( 5,  5,  0,  1);
+	vertex min_y_vert(-5,  5,  0,  1);
+	vertex mid_y_vert( 0, -5,  0,  1);
+	vertex max_y_vert( 5,  5,  0,  1);
 
 	renderContext<view_type> s_render (s_view);
 	rot_counter+= float(s_delta_time);

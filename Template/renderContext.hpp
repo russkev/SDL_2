@@ -44,14 +44,14 @@ namespace graphics {
 			}
 		}
 
-		void fill_triangle(const point_type& p1, const point_type& p2, const point_type& p3) {
+		void fill_triangle(const vertex& p1, const vertex& p2, const vertex& p3) {
 
 			mat4 screen_space_transform = init_screen_space_transform(float(m_view.size().x), float(m_view.size().y));
 
 			// // Assign max, mid and min y vert arbitrarily, they will be sorted in next step
-			auto min_y_vert = (screen_space_transform*p1) / p1.w;
-			auto mid_y_vert = (screen_space_transform*p2) / p2.w;
-			auto max_y_vert = (screen_space_transform*p3) / p3.w;
+			auto min_y_vert = (screen_space_transform*p1) / p1.m_pos.w;
+			auto mid_y_vert = (screen_space_transform*p2) / p2.m_pos.w;
+			auto max_y_vert = (screen_space_transform*p3) / p3.m_pos.w;
 
 			// // Sort points so min, mid and max contain the correct values.
 			if (max_y_vert.y < min_y_vert.y) { std::swap(min_y_vert, max_y_vert); }

@@ -11,6 +11,8 @@ namespace graphics {
 		// // Constructor
 		vertex(const point_type& s_pos, const bgra_color_type& s_col) :m_pos(s_pos), m_col(s_col) {}
 
+		vertex(float x, float y, float z, float w) : m_pos(point_type(x, y, z, w)), m_col(bgra_color_type(0, 0, 0, 255)) {}
+
 	};
 	template <typename multiplier>
 	vertex operator * (multiplier const& a, vertex const& b) {
