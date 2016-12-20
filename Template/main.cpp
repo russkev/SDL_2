@@ -18,6 +18,7 @@
 #include "rendercontext.hpp"
 #include "math.hpp"
 #include "fps.hpp"
+#include "vertex.hpp"
 
 float rot_counter = 0;
 
@@ -62,10 +63,12 @@ int main (int, char**) try {
 	using namespace graphics;
     SDL_Init (SDL_INIT_EVERYTHING);
     std::atexit (&SDL_Quit);
-	typedef vec3 point_type;
+	typedef vec4 point_type;
+	typedef u8vec4 bgra_color_type;
 
 	// // TEST // //
-	float test_area = triangle_area(vec4(8, 6, 0, 0), vec4(10, 11, 0, 0), vec4(6, 14, 0, 0));
+	vertex test_vertex(point_type(0, 1, 2, 3), bgra_color_type(0, 0, 255, 255));
+	test_vertex = test_vertex*2.5f;
 	 
 	// // END TEST // // 
 

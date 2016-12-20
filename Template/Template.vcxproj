@@ -141,6 +141,7 @@
     <ClInclude Include="fps.hpp" />
     <ClInclude Include="math.hpp" />
     <ClInclude Include="renderContext.hpp" />
+    <ClInclude Include="vertex.hpp" />
     <ClInclude Include="view.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
