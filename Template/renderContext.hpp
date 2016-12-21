@@ -33,37 +33,41 @@ namespace graphics {
 
 
 	public:
-		void fill_shape(int y_min, int y_max) {
-			for (int j = y_min; j < y_max; ++j) {
-				if (j < 0) { continue; }
-				const auto& s_line = m_scan_buffer[j];
-				for (int i = s_line.first; i < s_line.second; ++i) {
-					if (i < 0) i = 0;
-					blend_element(m_view, tvec2<int>(i, j), bgra_color_type(0, 0, 255, 255));
-				}
-			}
-		}
+		//void fill_shape(int y_min, int y_max) {
+		//	for (int j = y_min; j < y_max; ++j) {
+		//		if (j < 0) { continue; }
+		//		const auto& s_line = m_scan_buffer[j];
+		//		for (int i = s_line.first; i < s_line.second; ++i) {
+		//			if (i < 0) i = 0;
+		//			blend_element(m_view, tvec2<int>(i, j), bgra_color_type(0, 0, 255, 255));
+		//		}
+		//	}
+		//}
 
-		void fill_triangle(const vertex& p1, const vertex& p2, const vertex& p3) {
+		void fill_triangle(
+			const vertex& p1, 
+			const vertex& p2, 
+			const vertex& p3
+		) {
 
 			mat4 screen_space_transform = init_screen_space_transform(float(m_view.size().x), float(m_view.size().y));
 
 			// // Assign max, mid and min y vert arbitrarily, they will be sorted in next step
-			auto min_y_vert = vertex((screen_space_transform*p1.m_pos) / p1.m_pos.w);
-			auto mid_y_vert = vertex((screen_space_transform*p2) / p2.m_pos.w);
-			auto max_y_vert = vertex((screen_space_transform*p3) / p3.m_pos.w);
+			auto min_y_vert = point_type(screen_space_transform*p1.m_pos) / point_type(p1.m_pos.w);
+			auto mid_y_vert = point_type(screen_space_transform*p2.m_pos) / point_type(p2.m_pos.w);
+			auto max_y_vert = point_type(screen_space_transform*p3.m_pos) / point_type(p3.m_pos.w);
 
 			// // Sort points so min, mid and max contain the correct values.
-			if (max_y_vert.m_pos.y < min_y_vert.m_pos.y) { std::swap(min_y_vert, max_y_vert); }
-			if (mid_y_vert.,_pos.y < min_y_vert.m_pos.y) { std::swap(min_y_vert, mid_y_vert); }
-			if (mid_y_vert.,_pos.y > max_y_vert.m_pos.y) { std::swap(max_y_vert, mid_y_vert); }
+			if (max_y_vert.y < min_y_vert.y) { std::swap(min_y_vert, max_y_vert); }
+			if (mid_y_vert.y < min_y_vert.y) { std::swap(min_y_vert, mid_y_vert); }
+			if (mid_y_vert.y > max_y_vert.y) { std::swap(max_y_vert, mid_y_vert); }
 
 			scan_triangle(min_y_vert, mid_y_vert, max_y_vert);
 
 		}
 
 	private:
-		void scan_triangle(const vertex& min_y_vert, const vertex& mid_y_vert, const vertex& max_y_vert) {
+		void scan_triangle(const point_type& min_y_vert, const point_type& mid_y_vert, const point_type& max_y_vert) {
 #if USE_MULTITHREADING
 			const auto s_num_threads = std::thread::hardware_concurrency();
 			std::vector<std::future<void>> s_threads;

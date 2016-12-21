@@ -1,9 +1,12 @@
-#include "math.hpp"
+#pragma once
 
+#include "math.hpp"
+#include "vertex.hpp"
 // // This is a struct that essentially re-organises the scan buffer so it can handle multiple
 // // elements (like colour, lighting, etc. ) at once.
 namespace graphics {
 	struct edge {
+		typedef vec4 point_type;
 	public:
 		float m_x;
 		float m_x_step;
@@ -11,16 +14,25 @@ namespace graphics {
 		int m_y_end;
 
 	public:
-		edge(const vertex& start, const vertex& end) {
-			m_y_start = int(ceil(start.m_pos.y));
-			m_y_end = int(ceil(end.m_pos.y));
+		// // Getters:
+		float x() { return m_x; }
+		int y_start() { return m_y_start; }
+		int y_end()   { return m_y_end;   }
 
-			const float y_dist = end.m_pos.y - start.m_pos.y;
-			const float x_dist = end.m_pos.x - start.m_pos.x;
+		// // Main Function:
+		edge(
+			const point_type& start, 
+			const point_type& end
+		) {
+			m_y_start = int(ceil(start.y));
+			m_y_end = int(ceil(end.y));
+
+			const float y_dist = end.y - start.y;
+			const float x_dist = end.x - start.x;
 
 
 			// // Calculate difference between point on line and the middle of the start pixel
-			float y_prestep = m_y_start - start.m_pos.ym
+			float y_prestep = m_y_start - start.y;
 			// // Use the slope for x step
 			m_x_step = x_dist / y_dist;
 
