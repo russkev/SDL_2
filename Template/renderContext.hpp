@@ -10,7 +10,7 @@
 #include "algorithm.hpp"
 #include "edge.hpp"
 
-#define USE_MULTITHREADING 1
+#define USE_MULTITHREADING 0
 
 
 namespace graphics {
@@ -49,21 +49,21 @@ namespace graphics {
 			mat4 screen_space_transform = init_screen_space_transform(float(m_view.size().x), float(m_view.size().y));
 
 			// // Assign max, mid and min y vert arbitrarily, they will be sorted in next step
-			auto min_y_vert = (screen_space_transform*p1) / p1.m_pos.w;
-			auto mid_y_vert = (screen_space_transform*p2) / p2.m_pos.w;
-			auto max_y_vert = (screen_space_transform*p3) / p3.m_pos.w;
+			auto min_y_vert = vertex((screen_space_transform*p1.m_pos) / p1.m_pos.w);
+			auto mid_y_vert = vertex((screen_space_transform*p2) / p2.m_pos.w);
+			auto max_y_vert = vertex((screen_space_transform*p3) / p3.m_pos.w);
 
 			// // Sort points so min, mid and max contain the correct values.
-			if (max_y_vert.y < min_y_vert.y) { std::swap(min_y_vert, max_y_vert); }
-			if (mid_y_vert.y < min_y_vert.y) { std::swap(min_y_vert, mid_y_vert); }
-			if (mid_y_vert.y > max_y_vert.y) { std::swap(max_y_vert, mid_y_vert); }
+			if (max_y_vert.m_pos.y < min_y_vert.m_pos.y) { std::swap(min_y_vert, max_y_vert); }
+			if (mid_y_vert.,_pos.y < min_y_vert.m_pos.y) { std::swap(min_y_vert, mid_y_vert); }
+			if (mid_y_vert.,_pos.y > max_y_vert.m_pos.y) { std::swap(max_y_vert, mid_y_vert); }
 
 			scan_triangle(min_y_vert, mid_y_vert, max_y_vert);
 
 		}
 
 	private:
-		void scan_triangle(const vec4& min_y_vert, const vec4& mid_y_vert, const vec4& max_y_vert) {
+		void scan_triangle(const vertex& min_y_vert, const vertex& mid_y_vert, const vertex& max_y_vert) {
 #if USE_MULTITHREADING
 			const auto s_num_threads = std::thread::hardware_concurrency();
 			std::vector<std::future<void>> s_threads;

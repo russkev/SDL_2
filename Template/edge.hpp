@@ -11,16 +11,16 @@ namespace graphics {
 		int m_y_end;
 
 	public:
-		edge(const vec4& start, const vec4& end) {
-			m_y_start = int(ceil(start.y));
-			m_y_end = int(ceil(end.y));
+		edge(const vertex& start, const vertex& end) {
+			m_y_start = int(ceil(start.m_pos.y));
+			m_y_end = int(ceil(end.m_pos.y));
 
-			const float y_dist = end.y - start.y;
-			const float x_dist = end.x - start.x;
+			const float y_dist = end.m_pos.y - start.m_pos.y;
+			const float x_dist = end.m_pos.x - start.m_pos.x;
 
 
 			// // Calculate difference between point on line and the middle of the start pixel
-			float y_prestep = m_y_start - start.y;
+			float y_prestep = m_y_start - start.m_pos.ym
 			// // Use the slope for x step
 			m_x_step = x_dist / y_dist;
 
