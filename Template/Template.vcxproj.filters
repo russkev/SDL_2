@@ -47,5 +47,8 @@
     <ClInclude Include="vertex.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="gradients.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

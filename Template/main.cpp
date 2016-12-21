@@ -19,6 +19,7 @@
 #include "math.hpp"
 #include "fps.hpp"
 #include "vertex.hpp"
+#include "gradients.hpp"
 
 float rot_counter = 0;
 
@@ -39,9 +40,9 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	s_canvas.stroke_color(bgra_color_type(0, 0, 255, 255));
 
 	// // Create a triangle
-	vertex min_y_vert(-5,  5,  0,  1);
-	vertex mid_y_vert( 0, -5,  0,  1);
-	vertex max_y_vert( 5,  5,  0,  1);
+	vertex min_y_vert(point_type(-5,  5,  0,  1), bgra_color_type(0,    0, 255, 255));
+	vertex mid_y_vert(point_type( 0, -5,  0,  1), bgra_color_type(0,  255, 0,   255));
+	vertex max_y_vert(point_type( 5,  5,  0,  1), bgra_color_type(255,  0, 0,   255));
 
 	renderContext<view_type> s_render (s_view);
 	rot_counter+= float(s_delta_time);
@@ -58,8 +59,16 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 		vertex(transform*min_y_vert.m_pos, min_y_vert.m_col)
 	);
 
+	// // TEST // //
+	gradients test_gradients(min_y_vert, mid_y_vert, max_y_vert);
+	auto test_x_step = test_gradients.col_x_step();
+	auto test_y_step = test_gradients.col_y_step();
+	auto test_col = test_gradients.color(1);
+	// // END TEST // // 
+
 	// // FPS counter
 	frame_monitor.think(s_delta_time);
+
 
 }
 
@@ -71,8 +80,6 @@ int main (int, char**) try {
 	typedef u8vec4 bgra_color_type;
 
 	// // TEST // //
-	vertex test_vertex(point_type(0, 1, 2, 3), bgra_color_type(0, 0, 255, 255));
-	test_vertex = test_vertex*2.5f;
 	 
 	// // END TEST // // 
 
