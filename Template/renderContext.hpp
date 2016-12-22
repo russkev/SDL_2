@@ -9,6 +9,7 @@
 #include "view.hpp"
 #include "algorithm.hpp"
 #include "edge.hpp"
+#include "gradients.hpp"
 
 #define USE_MULTITHREADING 0
 
@@ -33,16 +34,6 @@ namespace graphics {
 
 
 	public:
-		//void fill_shape(int y_min, int y_max) {
-		//	for (int j = y_min; j < y_max; ++j) {
-		//		if (j < 0) { continue; }
-		//		const auto& s_line = m_scan_buffer[j];
-		//		for (int i = s_line.first; i < s_line.second; ++i) {
-		//			if (i < 0) i = 0;
-		//			blend_element(m_view, tvec2<int>(i, j), bgra_color_type(0, 0, 255, 255));
-		//		}
-		//	}
-		//}
 
 		void fill_triangle(
 			const vertex& p1, 
@@ -53,21 +44,21 @@ namespace graphics {
 			mat4 screen_space_transform = init_screen_space_transform(float(m_view.size().x), float(m_view.size().y));
 
 			// // Assign max, mid and min y vert arbitrarily, they will be sorted in next step
-			auto min_y_vert = point_type(screen_space_transform*p1.m_pos) / point_type(p1.m_pos.w);
-			auto mid_y_vert = point_type(screen_space_transform*p2.m_pos) / point_type(p2.m_pos.w);
-			auto max_y_vert = point_type(screen_space_transform*p3.m_pos) / point_type(p3.m_pos.w);
+			auto min_y_vert = vertex(point_type(screen_space_transform*p1.m_pos) / point_type(p1.m_pos.w), p1.m_col);
+			auto mid_y_vert = vertex(point_type(screen_space_transform*p2.m_pos) / point_type(p2.m_pos.w), p2.m_col);
+			auto max_y_vert = vertex(point_type(screen_space_transform*p3.m_pos) / point_type(p3.m_pos.w), p3.m_col);
 
 			// // Sort points so min, mid and max contain the correct values.
-			if (max_y_vert.y < min_y_vert.y) { std::swap(min_y_vert, max_y_vert); }
-			if (mid_y_vert.y < min_y_vert.y) { std::swap(min_y_vert, mid_y_vert); }
-			if (mid_y_vert.y > max_y_vert.y) { std::swap(max_y_vert, mid_y_vert); }
+			if (max_y_vert.m_pos.y < min_y_vert.m_pos.y) { std::swap(min_y_vert, max_y_vert); }
+			if (mid_y_vert.m_pos.y < min_y_vert.m_pos.y) { std::swap(min_y_vert, mid_y_vert); }
+			if (mid_y_vert.m_pos.y > max_y_vert.m_pos.y) { std::swap(max_y_vert, mid_y_vert); }
 
 			scan_triangle(min_y_vert, mid_y_vert, max_y_vert);
 
 		}
 
 	private:
-		void scan_triangle(const point_type& min_y_vert, const point_type& mid_y_vert, const point_type& max_y_vert) {
+		void scan_triangle(const vertex& min_y_vert, const vertex& mid_y_vert, const vertex& max_y_vert) {
 #if USE_MULTITHREADING
 			const auto s_num_threads = std::thread::hardware_concurrency();
 			std::vector<std::future<void>> s_threads;
@@ -92,24 +83,25 @@ namespace graphics {
 			for (auto&t : s_threads) t.get();
 #else
 
-			edge top_to_bottom(min_y_vert, max_y_vert);
-			edge top_to_middle(min_y_vert, mid_y_vert);
-			edge middle_to_bottom(mid_y_vert, max_y_vert);
+			gradients m_gradients(min_y_vert, mid_y_vert, max_y_vert);
+			edge top_to_bottom   (m_gradients, min_y_vert, max_y_vert, 0);
+			edge top_to_middle   (m_gradients, min_y_vert, mid_y_vert, 0);
+			edge middle_to_bottom(m_gradients, mid_y_vert, max_y_vert, 1);
 
-			if (triangle_area(min_y_vert, mid_y_vert, max_y_vert) >= 0) { // // If triangle is left handed
-				// // First part of the triangle, top to the middle point. 1st arg is left side, 2nd is right side
-				scan_edges(top_to_middle, top_to_bottom, top_to_middle);
-				// // Same as above but for middle part down to bottom
-				scan_edges(middle_to_bottom, top_to_bottom, middle_to_bottom);
-			} else { // // If triangle is right handed
-				scan_edges(top_to_bottom, top_to_middle, top_to_middle);
-				scan_edges(top_to_bottom, middle_to_bottom, middle_to_bottom);
+			if (triangle_area(min_y_vert.m_pos, mid_y_vert.m_pos, max_y_vert.m_pos) >= 0) { // // If triangle is left handed
+				                                                         // // First part of the triangle, top to the middle point. 1st arg is left side, 2nd is right side
+				scan_edges(m_gradients, top_to_middle,    top_to_bottom,    top_to_middle);
+				                                                        // // Same as above but for middle part down to bottom
+				scan_edges(m_gradients, middle_to_bottom, top_to_bottom,    middle_to_bottom);
+			} else {                                               // // If triangle is right handed
+				scan_edges(m_gradients, top_to_bottom,    top_to_middle,    top_to_middle);
+				scan_edges(m_gradients, top_to_bottom,    middle_to_bottom, middle_to_bottom);
 			}
 #endif
 
 		}
 
-		void scan_edges(edge& left, edge& right, const edge& lead
+		void scan_edges(gradients& s_gradients, edge& left, edge& right, const edge& lead
 #if USE_MULTITHREADING
 			,unsigned every_nth, unsigned plus_i
 #endif
@@ -130,26 +122,33 @@ namespace graphics {
 					draw_scan_line(left, right, j);
 				}
 #else
-				draw_scan_line(left, right, j);
+				draw_scan_line(s_gradients, left, right, j);
 #endif
 				left.step();
 				right.step();
 			}
 		}
 
-		void draw_scan_line(edge& left, edge& right, int j) {
+		void draw_scan_line(gradients& s_gradients, edge& left, edge& right, int j) {
 			//if (j < 0) { continue; }
 
-			auto a = int(ceil(left.m_x));
-			auto b = int(ceil(right.m_x));
-			if (a > b) std::swap(a, b);
+			auto x_min  = int(ceil(left.m_x));
+			auto x_max  = int(ceil(right.m_x));
+			if (x_min > x_max) std::swap(x_min, x_max);
+			
+			auto x_prestep = x_min-left.x();
+			vec4 float_color = vec4(left.col()) + vec4(s_gradients.col_x_step())*x_prestep;
+			bgra_color_type color = bgra_color_type(float_color);
 
-			for (int i = a; i < b; ++i) {
+
+
+			for (int i = x_min; i < x_max; ++i) {
 				//if (i < 0) i = 0;
 				if (i >= m_view.size().x || i < 0 || j >= m_view.size().y || j < 0)
 					continue;
 				//blend_element(m_view, tvec2<int>(i, j), bgra_color_type(0, 0, 255, 255)); // Solid colour so blend element not needed
-				m_view[j][i] = bgra_color_type(0, 0, 255, 255);
+				m_view[j][i] = color;
+				color += s_gradients.col_x_step();
 			}
 		}
 	};

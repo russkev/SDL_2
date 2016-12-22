@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 
 #include "math.hpp"
@@ -26,19 +28,26 @@ namespace graphics {
 			m_colors.push_back(max_y_vert.m_col);
 
 			// // Interpolation equation
-			float one_over_dx = 1.0f /
-				(mid_y_vert.m_pos.x - max_y_vert.m_pos.x) * (min_y_vert.m_pos.y - max_y_vert.m_pos.y) -
-				(min_y_vert.m_pos.x - max_y_vert.m_pos.x) * (mid_y_vert.m_pos.y - max_y_vert.m_pos.y);
+			vec4 d_color_x  = vec4(mid_y_vert.m_col) - vec4(max_y_vert.m_col);
+			d_color_x      *= (min_y_vert.m_pos.y - max_y_vert.m_pos.y);
+			d_color_x      -= vec4(min_y_vert.m_col) - vec4(max_y_vert.m_col) * (mid_y_vert.m_pos.y - max_y_vert.m_pos.y);
+															
+															
+			vec4 d_color_y  = vec4(mid_y_vert.m_col) - vec4(max_y_vert.m_col);
+			d_color_y      *= (min_y_vert.m_pos.x - max_y_vert.m_pos.x);
+			d_color_y      -= vec4(min_y_vert.m_col) - vec4(max_y_vert.m_col) * (mid_y_vert.m_pos.x - max_y_vert.m_pos.x);
+
+			float one_over_dx  =  (mid_y_vert.m_pos.x - max_y_vert.m_pos.x);
+			one_over_dx       *= (min_y_vert.m_pos.y - max_y_vert.m_pos.y);
+			one_over_dx       -= (min_y_vert.m_pos.x - max_y_vert.m_pos.x) * (mid_y_vert.m_pos.y - max_y_vert.m_pos.y);
+			//one_over_dx        = 1/(one_over_dx);
 
 			float one_over_dy = -one_over_dx;
 
-			vec4 d_color = (
-				vec4(mid_y_vert.m_col - max_y_vert.m_col) * (min_y_vert.m_pos.y - max_y_vert.m_pos.y) -
-				vec4(min_y_vert.m_col - max_y_vert.m_col) * (mid_y_vert.m_pos.y - max_y_vert.m_pos.y)
-				);
 
-			m_col_x_step = d_color * one_over_dx;
-			m_col_y_step = d_color * one_over_dy;
+
+			m_col_x_step = d_color_x / one_over_dx;
+			m_col_y_step = d_color_y / one_over_dy;
 		}
 
 		// // Getters

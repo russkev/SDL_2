@@ -19,7 +19,6 @@
 #include "math.hpp"
 #include "fps.hpp"
 #include "vertex.hpp"
-#include "gradients.hpp"
 
 float rot_counter = 0;
 
