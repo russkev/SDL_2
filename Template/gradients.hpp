@@ -27,27 +27,27 @@ namespace graphics {
 			const vertex& min_y_vert,
 			const vertex& mid_y_vert,
 			const vertex& max_y_vert
-		){
+		) {
 
 			m_colors.push_back(min_y_vert.m_col);
 			m_colors.push_back(mid_y_vert.m_col);
 			m_colors.push_back(max_y_vert.m_col);
 
 			// // Interpolation equation
-			vec4 d_color_x  = 
-				vec4(mid_y_vert.m_col) - vec4(max_y_vert.m_col)*
+			vec4 d_color_x =
+				(vec4(mid_y_vert.m_col) - vec4(max_y_vert.m_col))*
 				(min_y_vert.m_pos.y - max_y_vert.m_pos.y);
-			d_color_x      -= 
-				vec4(min_y_vert.m_col) - vec4(max_y_vert.m_col)*
+			d_color_x -=
+				(vec4(min_y_vert.m_col) - vec4(max_y_vert.m_col))*
 				(mid_y_vert.m_pos.y - max_y_vert.m_pos.y);
-															
-															
-			vec4 d_color_y  = vec4(mid_y_vert.m_col) - vec4(max_y_vert.m_col)*(min_y_vert.m_pos.x - max_y_vert.m_pos.x);
-			d_color_y      -= vec4(min_y_vert.m_col) - vec4(max_y_vert.m_col)*(mid_y_vert.m_pos.x - max_y_vert.m_pos.x);
 
-			float one_over_dx  =  (mid_y_vert.m_pos.x - max_y_vert.m_pos.x);
-			one_over_dx       *= (min_y_vert.m_pos.y - max_y_vert.m_pos.y);
-			one_over_dx       -= (min_y_vert.m_pos.x - max_y_vert.m_pos.x) * (mid_y_vert.m_pos.y - max_y_vert.m_pos.y);
+
+			vec4 d_color_y = (vec4(mid_y_vert.m_col) - vec4(max_y_vert.m_col))*(min_y_vert.m_pos.x - max_y_vert.m_pos.x);
+			d_color_y -= (vec4(min_y_vert.m_col) - vec4(max_y_vert.m_col))*(mid_y_vert.m_pos.x - max_y_vert.m_pos.x);
+
+			float one_over_dx = (mid_y_vert.m_pos.x - max_y_vert.m_pos.x);
+			one_over_dx *= (min_y_vert.m_pos.y - max_y_vert.m_pos.y);
+			one_over_dx -= (min_y_vert.m_pos.x - max_y_vert.m_pos.x) * (mid_y_vert.m_pos.y - max_y_vert.m_pos.y);
 			//one_over_dx        = 1/(one_over_dx);
 
 			float one_over_dy = -one_over_dx;

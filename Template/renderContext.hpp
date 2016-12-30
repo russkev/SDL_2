@@ -98,9 +98,9 @@ namespace graphics {
 #else
 
 			gradients m_gradients(min_y_vert, mid_y_vert, max_y_vert);
-			edge top_to_bottom   (m_gradients, min_y_vert, max_y_vert, 0);
-			edge top_to_middle   (m_gradients, min_y_vert, mid_y_vert, 0);
-			edge middle_to_bottom(m_gradients, mid_y_vert, max_y_vert, 1);
+			edge top_to_bottom   (m_gradients, min_y_vert, max_y_vert, 1);
+			edge top_to_middle   (m_gradients, min_y_vert, mid_y_vert, 1);
+			edge middle_to_bottom(m_gradients, mid_y_vert, max_y_vert, 0);
 
 			if (triangle_area(min_y_vert.m_pos, mid_y_vert.m_pos, max_y_vert.m_pos) >= 0) { // // If triangle is left handed
 				scan_edges(m_gradients, top_to_middle,    top_to_bottom,    top_to_middle);
@@ -161,8 +161,8 @@ namespace graphics {
 					continue;
 				//blend_element(m_view, tvec2<int>(i, j), bgra_color_type(0, 0, 255, 255)); // Solid colour so blend element not needed
 				m_view[j][i] = color;
-				float_color += 1.5f;//s_gradients.col_x_step();
-				color = bgra_color_type(float_color);
+				float_color += s_gradients.col_x_step();// vec4(-1, 1, 1, 1);
+				color = bgra_color_type(clamp(float_color, vec4(0,0,0,0), vec4(255,255,255,255)));
 			}
 		}
 	};
