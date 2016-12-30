@@ -17,6 +17,12 @@ namespace graphics {
 		std::vector<bgra_color_type> m_colors;
 
 	public:
+		// // Getters
+		vec4 col_x_step() { return m_col_x_step; }
+		vec4 col_y_step() { return m_col_y_step; }
+		bgra_color_type color(int index) { return m_colors.at(index); }
+
+
 		gradients(
 			const vertex& min_y_vert,
 			const vertex& mid_y_vert,
@@ -28,14 +34,16 @@ namespace graphics {
 			m_colors.push_back(max_y_vert.m_col);
 
 			// // Interpolation equation
-			vec4 d_color_x  = vec4(mid_y_vert.m_col) - vec4(max_y_vert.m_col);
-			d_color_x      *= (min_y_vert.m_pos.y - max_y_vert.m_pos.y);
-			d_color_x      -= vec4(min_y_vert.m_col) - vec4(max_y_vert.m_col) * (mid_y_vert.m_pos.y - max_y_vert.m_pos.y);
+			vec4 d_color_x  = 
+				vec4(mid_y_vert.m_col) - vec4(max_y_vert.m_col)*
+				(min_y_vert.m_pos.y - max_y_vert.m_pos.y);
+			d_color_x      -= 
+				vec4(min_y_vert.m_col) - vec4(max_y_vert.m_col)*
+				(mid_y_vert.m_pos.y - max_y_vert.m_pos.y);
 															
 															
-			vec4 d_color_y  = vec4(mid_y_vert.m_col) - vec4(max_y_vert.m_col);
-			d_color_y      *= (min_y_vert.m_pos.x - max_y_vert.m_pos.x);
-			d_color_y      -= vec4(min_y_vert.m_col) - vec4(max_y_vert.m_col) * (mid_y_vert.m_pos.x - max_y_vert.m_pos.x);
+			vec4 d_color_y  = vec4(mid_y_vert.m_col) - vec4(max_y_vert.m_col)*(min_y_vert.m_pos.x - max_y_vert.m_pos.x);
+			d_color_y      -= vec4(min_y_vert.m_col) - vec4(max_y_vert.m_col)*(mid_y_vert.m_pos.x - max_y_vert.m_pos.x);
 
 			float one_over_dx  =  (mid_y_vert.m_pos.x - max_y_vert.m_pos.x);
 			one_over_dx       *= (min_y_vert.m_pos.y - max_y_vert.m_pos.y);
@@ -50,10 +58,7 @@ namespace graphics {
 			m_col_y_step = d_color_y / one_over_dy;
 		}
 
-		// // Getters
-		vec4 col_x_step() { return m_col_x_step; }
-		vec4 col_y_step() { return m_col_y_step; }
-		bgra_color_type color(int index) { return m_colors.at(index); }
+		
 	};
 
 

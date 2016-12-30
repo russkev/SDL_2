@@ -57,6 +57,20 @@ namespace graphics {
 
 		}
 
+		void scan_square(
+			const vertex& tl,
+			const vertex& tr,
+			const vertex& bl,
+			const vertex& br
+			) {
+			gradients m_gradients(tl, tr, bl);
+			edge left (m_gradients, tl, bl, 0);
+			edge right(m_gradients, tr, br, 0);
+
+			scan_edges(m_gradients, left, right, left);
+		}
+
+
 	private:
 		void scan_triangle(const vertex& min_y_vert, const vertex& mid_y_vert, const vertex& max_y_vert) {
 #if USE_MULTITHREADING
@@ -89,9 +103,7 @@ namespace graphics {
 			edge middle_to_bottom(m_gradients, mid_y_vert, max_y_vert, 1);
 
 			if (triangle_area(min_y_vert.m_pos, mid_y_vert.m_pos, max_y_vert.m_pos) >= 0) { // // If triangle is left handed
-				                                                         // // First part of the triangle, top to the middle point. 1st arg is left side, 2nd is right side
 				scan_edges(m_gradients, top_to_middle,    top_to_bottom,    top_to_middle);
-				                                                        // // Same as above but for middle part down to bottom
 				scan_edges(m_gradients, middle_to_bottom, top_to_bottom,    middle_to_bottom);
 			} else {                                               // // If triangle is right handed
 				scan_edges(m_gradients, top_to_bottom,    top_to_middle,    top_to_middle);
@@ -101,7 +113,7 @@ namespace graphics {
 
 		}
 
-		void scan_edges(gradients& s_gradients, edge& left, edge& right, const edge& lead
+		void scan_edges(gradients& s_gradients, edge& left, edge& right, edge& lead
 #if USE_MULTITHREADING
 			,unsigned every_nth, unsigned plus_i
 #endif
@@ -116,7 +128,7 @@ namespace graphics {
 			//	std::swap(left, right);
 			//}
 
-			for (int j = lead.m_y_start; j < lead.m_y_end; ++j) {
+			for (int j = lead.y_start(); j < lead.y_end(); ++j) {
 #if USE_MULTITHREADING
 				if (((j - lead.m_y_start) % every_nth) == plus_i) {
 					draw_scan_line(left, right, j);
@@ -132,12 +144,13 @@ namespace graphics {
 		void draw_scan_line(gradients& s_gradients, edge& left, edge& right, int j) {
 			//if (j < 0) { continue; }
 
-			auto x_min  = int(ceil(left.m_x));
-			auto x_max  = int(ceil(right.m_x));
+			auto x_min  = int(ceil(left.x()));
+			auto x_max  = int(ceil(right.x()));
 			if (x_min > x_max) std::swap(x_min, x_max);
 			
-			auto x_prestep = x_min-left.x();
-			vec4 float_color = vec4(left.col()) + vec4(s_gradients.col_x_step())*x_prestep;
+			float x_prestep       = x_min-left.x();
+			//vec4 float_color      = vec4(left.col()) + vec4(s_gradients.col_x_step())*x_prestep;
+			vec4 float_color      = vec4(left.col());
 			bgra_color_type color = bgra_color_type(float_color);
 
 
@@ -148,7 +161,8 @@ namespace graphics {
 					continue;
 				//blend_element(m_view, tvec2<int>(i, j), bgra_color_type(0, 0, 255, 255)); // Solid colour so blend element not needed
 				m_view[j][i] = color;
-				color += s_gradients.col_x_step();
+				float_color += 1.5f;//s_gradients.col_x_step();
+				color = bgra_color_type(float_color);
 			}
 		}
 	};
