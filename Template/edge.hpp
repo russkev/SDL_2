@@ -14,7 +14,7 @@ namespace graphics {
 		float m_x_step;
 		int m_y_start;
 		int m_y_end;
-		bgra_color_type m_color;
+		point_type m_color;
 		point_type m_col_step;
 
 	public:
@@ -41,16 +41,19 @@ namespace graphics {
 
 			// // Calculate difference between point on line and the middle of the start pixel
 			float y_prestep = m_y_start - start.m_pos.y;
-			// // Use the slope for x step
+			// // Every time y is incremented by 1, x is incremented by this amount:
 			m_x_step = x_dist / y_dist;
+			// // m_x is the x component of m_y_start (the ceiling integer value where we are rounding to)
 			m_x = start.m_pos.x + y_prestep * m_x_step;
+			// // x_prestep is just the dustance between the above m_x and the rounded start point.
 			float x_prestep = m_x - start.m_pos.x;
-			// // Calculate colour
+			// // Colour to start with after prestep offset has been taken into account:
 			m_color =
 				point_type(s_gradients.color(min_y_vert_index)) +
 				s_gradients.col_x_step() * x_prestep +
 				s_gradients.col_y_step() * y_prestep;
-			m_col_step = s_gradients.col_y_step() + s_gradients.col_x_step()*float(m_x_step);
+			// // This is how much the colour changes when you step one y unit along the edge.
+			m_col_step = s_gradients.col_y_step() + s_gradients.col_x_step()*m_x_step;
 
 		}
 

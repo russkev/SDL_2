@@ -98,9 +98,9 @@ namespace graphics {
 #else
 
 			gradients m_gradients(min_y_vert, mid_y_vert, max_y_vert);
-			edge top_to_bottom   (m_gradients, min_y_vert, max_y_vert, 1);
-			edge top_to_middle   (m_gradients, min_y_vert, mid_y_vert, 1);
-			edge middle_to_bottom(m_gradients, mid_y_vert, max_y_vert, 0);
+			edge top_to_bottom   (m_gradients, min_y_vert, max_y_vert, 0);
+			edge top_to_middle   (m_gradients, min_y_vert, mid_y_vert, 0);
+			edge middle_to_bottom(m_gradients, mid_y_vert, max_y_vert, 1);
 
 			if (triangle_area(min_y_vert.m_pos, mid_y_vert.m_pos, max_y_vert.m_pos) >= 0) { // // If triangle is left handed
 				scan_edges(m_gradients, top_to_middle,    top_to_bottom,    top_to_middle);
