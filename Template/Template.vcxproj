@@ -142,6 +142,7 @@
     <ClInclude Include="gradients.hpp" />
     <ClInclude Include="math.hpp" />
     <ClInclude Include="renderContext.hpp" />
+    <ClInclude Include="textures.hpp" />
     <ClInclude Include="vertex.hpp" />
     <ClInclude Include="view.hpp" />
   </ItemGroup>

@@ -20,13 +20,16 @@
 #include "fps.hpp"
 #include "vertex.hpp"
 
+
 float rot_counter = 0;
 
 void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, double s_delta_time, const glm::mat4& projection, graphics::fps& frame_monitor) {
     using namespace graphics;
     typedef u8vec4 bgra_color_type;
     typedef vec4 point_type;
+	typedef vec2 coord_type;
     typedef view2d<bgra_color_type> view_type;
+	typedef std::vector<std::vector<bgra_color_type> > texture_type;
 
 	// // Define centre of screen
     auto s_center = glm::ivec2 (s_surface.w, s_surface.h) / 2;
@@ -39,9 +42,12 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	s_canvas.stroke_color(bgra_color_type(0, 0, 255, 255));
 
 	// // Create a triangle
-	vertex min_y_vert(point_type(0,  -5,  0,  1), bgra_color_type(0,    0, 255, 255));
-	vertex mid_y_vert(point_type( -5, 5,  0,  1), bgra_color_type(0,  255, 0,   255));
-	vertex max_y_vert(point_type( 5,  5,  0,  1), bgra_color_type(255,  0, 0,   255));
+	vertex min_y_vert(point_type(0,  -5,  0,  1), coord_type(0,  0));
+	vertex mid_y_vert(point_type( -5, 5,  0,  1), coord_type(0,  1));
+	vertex max_y_vert(point_type( 5,  5,  0,  1), coord_type(1,  1));
+
+	// // Create texture
+	xor_texture texture_a(256, 256);
 
 	renderContext<view_type> s_render (s_view);
 	rot_counter+= float(s_delta_time);
@@ -53,9 +59,10 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 
 	// // Render triangle
 	s_render.fill_triangle(
-		vertex(transform*max_y_vert.m_pos, max_y_vert.m_col), 
-		vertex(transform*mid_y_vert.m_pos, mid_y_vert.m_col), 
-		vertex(transform*min_y_vert.m_pos, min_y_vert.m_col)
+		vertex(transform*max_y_vert.m_pos, max_y_vert.m_tex_coords),
+		vertex(transform*mid_y_vert.m_pos, mid_y_vert.m_tex_coords),
+		vertex(transform*min_y_vert.m_pos, min_y_vert.m_tex_coords),
+		xor_texture(256, 256)
 	);
 
 	// // TEST // //
@@ -70,6 +77,8 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	//vertex br(point_type(255, 255, 0, 1), bgra_color_type(255, 0,    0, 255));
 
 	//s_render.scan_square(tl, tr, bl, br);
+
+	//s_render.draw_test_texture();
 
 	// // END TEST // // 
 
