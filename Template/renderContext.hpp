@@ -11,7 +11,7 @@
 #include "edge.hpp"
 #include "gradients.hpp"
 
-#define USE_MULTITHREADING 0
+#define USE_MULTITHREADING 1
 
 
 namespace graphics {
@@ -78,18 +78,19 @@ namespace graphics {
 			std::vector<std::future<void>> s_threads;
 			s_threads.reserve(s_num_threads);
 			
-			for (auto i = 0; i < s_num_threads; ++i) {
+			for (uint i = 0; i < s_num_threads; ++i) {
 				s_threads.emplace_back(std::async(std::launch::async, [&, i]() {
-					edge top_to_bottom    (min_y_vert, max_y_vert);
-					edge top_to_middle    (min_y_vert, mid_y_vert);
-					edge middle_to_bottom (mid_y_vert, max_y_vert);
-					if (triangle_area(min_y_vert, mid_y_vert, max_y_vert) >= 0) { 
-						scan_edges(top_to_middle,     top_to_bottom,     top_to_middle,    s_num_threads, i);
-						scan_edges(middle_to_bottom,  top_to_bottom,     middle_to_bottom, s_num_threads, i);
-					}
+					gradients m_gradients (min_y_vert, mid_y_vert, max_y_vert);
+					edge top_to_bottom    (m_gradients, min_y_vert, max_y_vert, 0);
+					edge top_to_middle    (m_gradients, min_y_vert, mid_y_vert, 0);
+					edge middle_to_bottom (m_gradients, mid_y_vert, max_y_vert, 1);
+					if (triangle_area(min_y_vert.m_pos, mid_y_vert.m_pos, max_y_vert.m_pos) >= 0) { 
+						scan_edges(m_gradients, top_to_middle,     top_to_bottom,     top_to_middle,    s_num_threads, i);
+						scan_edges(m_gradients, middle_to_bottom,  top_to_bottom,     middle_to_bottom, s_num_threads, i);
+					}			   
 					else { // // If triangle is right handed
-						scan_edges(top_to_bottom,     top_to_middle,     top_to_middle,    s_num_threads, i);
-						scan_edges(top_to_bottom,     middle_to_bottom,  middle_to_bottom, s_num_threads, i);
+						scan_edges(m_gradients, top_to_bottom,     top_to_middle,     top_to_middle,    s_num_threads, i);
+						scan_edges(m_gradients, top_to_bottom,     middle_to_bottom,  middle_to_bottom, s_num_threads, i);
 					}
 				}));
 			}
@@ -130,8 +131,8 @@ namespace graphics {
 
 			for (int j = lead.y_start(); j < lead.y_end(); ++j) {
 #if USE_MULTITHREADING
-				if (((j - lead.m_y_start) % every_nth) == plus_i) {
-					draw_scan_line(left, right, j);
+				if (((j - lead.y_start()) % every_nth) == plus_i) {
+					draw_scan_line(s_gradients, left, right, j);
 				}
 #else
 				draw_scan_line(s_gradients, left, right, j);
