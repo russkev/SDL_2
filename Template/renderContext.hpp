@@ -163,6 +163,10 @@ namespace graphics {
 			
 			float x_prestep       = x_min-left.x();
 
+			float x_dist = right.x() - left.x();
+			coord_type tex_coord_x_step = (right.coord() - left.coord()) / x_dist;
+
+
 			coord_type tex_coord = left.coord() + s_gradients.coord_x_step() * x_prestep;
 			//vec4 float_color      = vec4(left.col());
 			//bgra_color_type color = bgra_color_type(float_color);
