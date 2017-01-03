@@ -167,8 +167,8 @@ namespace graphics {
 			//coord_type tex_coord_x_step = (right.coord() - left.coord()) / x_dist; // // Step by this amount along texture coordinates to get from left to right side
 			// // tex_coord = coordinate of the left side of texture + adjustment for prestep.
 			coord_type tex_coord = {
-				left.coord().x + s_gradients.coord_x_step().x * x_prestep * texture.width(),
-				left.coord().y + s_gradients.coord_x_step().y * x_prestep * texture.height()
+				left.coord().x + s_gradients.coord_x_step().x * x_prestep,
+				left.coord().y + s_gradients.coord_x_step().y * x_prestep
 			};
 
 			for (int i = x_min; i < x_max; ++i) {
