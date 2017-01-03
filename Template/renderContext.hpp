@@ -166,28 +166,15 @@ namespace graphics {
 			//float x_dist                = right.x() - left.x(); // // Screen distance between left and right pixels
 			//coord_type tex_coord_x_step = (right.coord() - left.coord()) / x_dist; // // Step by this amount along texture coordinates to get from left to right side
 			// // tex_coord = coordinate of the left side of texture + adjustment for prestep.
-			coord_type tex_coord.x = (left.coord().x + s_gradients.coord_x_step().x * x_prestep) * texture.width();
-			           tex_coord.y = (left.coord().y + s_gradients.coord_x_step().y * x_prestep) * texture.height();
+			coord_type tex_coord = {
+				left.coord().x + s_gradients.coord_x_step().x * x_prestep * texture.width(),
+				left.coord().y + s_gradients.coord_x_step().y * x_prestep * texture.height()
+			};
 
 			for (int i = x_min; i < x_max; ++i) {
-				//if (i >= m_view.size().x || i < 0 || j >= m_view.size().y || j < 0)
-				//	continue;
-				//blend_element(m_view, tvec2<int>(i, j), bgra_color_type(0, 0, 255, 255)); // Solid colour so blend element not needed
-
-
-				// // !!! THIS IS THE NEXT STEP !!! // //
-				// // Work out how to do texture coordinates // //
-				//ivec2 src = (
-				//	int(tex_coord.x * (texture.width() - 1) + 0.5f),
-				//	int(tex_coord.y * (texture.height() - 1) + 0.5f)
-				//	);
-
-
 				m_view[j][i] = texture.get_texture(int(tex_coord.x), int(tex_coord.y));
 
 				tex_coord += s_gradients.coord_x_step();
-				//float_color += s_gradients.col_x_step();
-				//color = bgra_color_type(clamp(float_color, vec4(0,0,0,0), vec4(255,255,255,255)));
 			}
 		}
 	};

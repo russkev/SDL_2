@@ -20,10 +20,10 @@ namespace graphics {
 
 	public:
 		// // Getters:
-		float x()               { return m_x; }
-		int y_start()           { return m_y_start; }
-		int y_end()             { return m_y_end;   }
-		coord_type coord()      { return m_coord; }
+		float x()                { return m_x; }
+		int y_start()            { return m_y_start; }
+		int y_end()              { return m_y_end;   }
+		coord_type coord() const { return m_coord; }
 
 
 		// // Main Function:
