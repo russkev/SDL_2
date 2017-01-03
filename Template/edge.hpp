@@ -11,12 +11,12 @@ namespace graphics {
 		typedef vec2 coord_type;
 		typedef tvec4<std::uint8_t> bgra_color_type;
 	private:
-		float m_x;
+		float m_x; // // The x position to draw
 		float m_x_step;
 		int m_y_start;
 		int m_y_end;
-		coord_type m_coord;
-		coord_type m_coord_step;
+		coord_type m_coord; // // The coordinate on the bitmap to draw
+		coord_type m_coord_step; // // How much to step the coordinate by when the scanline moves one pixel
 
 	public:
 		// // Getters:
