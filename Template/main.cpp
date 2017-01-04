@@ -19,6 +19,7 @@
 #include "math.hpp"
 #include "fps.hpp"
 #include "vertex.hpp"
+#include "textures.hpp"
 
 float rot_counter = 0;
 
@@ -59,7 +60,12 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	);
 
 	// // TEST // //
-
+	xor_texture test_texture(256, 256);
+	for (int x = 0; x < 256; ++x) {
+		for (int y = 0; y < 256; ++y) {
+			s_view[x][y] = test_texture.get_texture(x, y);
+		}
+	}
 
 	// // END TEST // // 
 

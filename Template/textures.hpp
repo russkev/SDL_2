@@ -34,10 +34,6 @@ namespace graphics {
 		int64 width() { return m_width; }
 		int64 height() { return m_height; }
 		ivec2 dimensions() { return m_dimensions; }
-
-		bgra_color_type copy_pixel(int dest_x, int dest_y, int src_x, int src_y) {
-			// do something
-		}
 	};
 
 }
