@@ -40,9 +40,12 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	s_canvas.stroke_color(bgra_color_type(0, 0, 255, 255));
 
 	// // Create a triangle
-	vertex min_y_vert(point_type(0,  -5,  0,  1), bgra_color_type(0,    0, 255, 255));
+	vertex min_y_vert(point_type(0,  -5,  0,  1), bgra_color_type(0,    0, 0,   255));
 	vertex mid_y_vert(point_type( -5, 5,  0,  1), bgra_color_type(0,  255, 0,   255));
 	vertex max_y_vert(point_type( 5,  5,  0,  1), bgra_color_type(255,  0, 0,   255));
+
+	// // Create a texture
+	xor_texture s_texture(256, 256);
 
 	renderContext<view_type> s_render (s_view);
 	rot_counter+= float(s_delta_time);
@@ -54,18 +57,13 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 
 	// // Render triangle
 	s_render.fill_triangle(
-		vertex(transform*max_y_vert.m_pos, max_y_vert.m_col), 
-		vertex(transform*mid_y_vert.m_pos, mid_y_vert.m_col), 
-		vertex(transform*min_y_vert.m_pos, min_y_vert.m_col)
+		vertex(transform*max_y_vert.m_pos, max_y_vert.m_col),
+		vertex(transform*mid_y_vert.m_pos, mid_y_vert.m_col),
+		vertex(transform*min_y_vert.m_pos, min_y_vert.m_col),
+		s_texture
 	);
 
 	// // TEST // //
-	xor_texture test_texture(256, 256);
-	for (int x = 0; x < 256; ++x) {
-		for (int y = 0; y < 256; ++y) {
-			s_view[x][y] = test_texture.get_texture(x, y);
-		}
-	}
 
 	// // END TEST // // 
 
