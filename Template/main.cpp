@@ -59,17 +59,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	);
 
 	// // TEST // //
-	//gradients test_gradients(min_y_vert, mid_y_vert, max_y_vert);
-	//auto test_x_step = test_gradients.col_x_step();
-	//auto test_y_step = test_gradients.col_y_step();
-	//auto test_col = test_gradients.color(1);
 
-	//vertex tl(point_type(0,     0, 0, 1), bgra_color_type(255, 0,    0, 255));
-	//vertex tr(point_type(255,   0, 0, 1), bgra_color_type(0,   255,  0, 255));
-	//vertex bl(point_type(0,   255, 0, 1), bgra_color_type(0,   0,  255, 255));
-	//vertex br(point_type(255, 255, 0, 1), bgra_color_type(255, 0,    0, 255));
-
-	//s_render.scan_square(tl, tr, bl, br);
 
 	// // END TEST // // 
 

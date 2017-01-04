@@ -84,11 +84,12 @@ namespace graphics {
 					edge top_to_bottom    (m_gradients, min_y_vert, max_y_vert, 0);
 					edge top_to_middle    (m_gradients, min_y_vert, mid_y_vert, 0);
 					edge middle_to_bottom (m_gradients, mid_y_vert, max_y_vert, 1);
+
+					// // If triangle is left handed, lead with top to middle, else lead with top to bottom
 					if (triangle_area(min_y_vert.m_pos, mid_y_vert.m_pos, max_y_vert.m_pos) >= 0) { 
 						scan_edges(m_gradients, top_to_middle,     top_to_bottom,     top_to_middle,    s_num_threads, i);
 						scan_edges(m_gradients, middle_to_bottom,  top_to_bottom,     middle_to_bottom, s_num_threads, i);
-					}			   
-					else { // // If triangle is right handed
+					} else { 
 						scan_edges(m_gradients, top_to_bottom,     top_to_middle,     top_to_middle,    s_num_threads, i);
 						scan_edges(m_gradients, top_to_bottom,     middle_to_bottom,  middle_to_bottom, s_num_threads, i);
 					}
@@ -103,10 +104,11 @@ namespace graphics {
 			edge top_to_middle   (m_gradients, min_y_vert, mid_y_vert, 0);
 			edge middle_to_bottom(m_gradients, mid_y_vert, max_y_vert, 1);
 
-			if (triangle_area(min_y_vert.m_pos, mid_y_vert.m_pos, max_y_vert.m_pos) >= 0) { // // If triangle is left handed
+			// // If triangle is left handed, lead with top to middle, else lead with top to bottom
+			if (triangle_area(min_y_vert.m_pos, mid_y_vert.m_pos, max_y_vert.m_pos) >= 0) {
 				scan_edges(m_gradients, top_to_middle,    top_to_bottom,    top_to_middle);
-				scan_edges(m_gradients, middle_to_bottom, top_to_bottom,    middle_to_bottom);
-			} else {                                               // // If triangle is right handed
+				scan_edges(m_gradients, middle_to_bottom, top_to_bottom,    middle_to_bottom); 
+			} else {
 				scan_edges(m_gradients, top_to_bottom,    top_to_middle,    top_to_middle);
 				scan_edges(m_gradients, top_to_bottom,    middle_to_bottom, middle_to_bottom);
 			}
@@ -120,15 +122,6 @@ namespace graphics {
 #endif
 			)
 		{
-			// // Edge a is the left side, edge b is the right side and lead is the edge used
-			// // to decide the start and end points of the scanning
-
-			//auto* left = &a;
-			//auto* right = &b;
-			//if (handedness) {
-			//	std::swap(left, right);
-			//}
-
 			for (int j = lead.y_start(); j < lead.y_end(); ++j) {
 #if USE_MULTITHREADING
 				if (((j - lead.y_start()) % every_nth) == plus_i) {
@@ -143,26 +136,20 @@ namespace graphics {
 		}
 
 		void draw_scan_line(gradients& s_gradients, edge& left, edge& right, int j) {
-			//if (j < 0) { continue; }
 
 			auto x_min  = int(ceil(left.x()));
 			auto x_max  = int(ceil(right.x()));
 			if (x_min > x_max) std::swap(x_min, x_max);
 			
 			float x_prestep       = x_min-left.x();
-			//vec4 float_color      = vec4(left.col()) + vec4(s_gradients.col_x_step())*x_prestep;
 			vec4 float_color      = vec4(left.col());
 			bgra_color_type color = bgra_color_type(float_color);
 
 
 
 			for (int i = x_min; i < x_max; ++i) {
-				//if (i < 0) i = 0;
-				if (i >= m_view.size().x || i < 0 || j >= m_view.size().y || j < 0)
-					continue;
-				//blend_element(m_view, tvec2<int>(i, j), bgra_color_type(0, 0, 255, 255)); // Solid colour so blend element not needed
 				m_view[j][i] = color;
-				float_color += s_gradients.col_x_step();// vec4(-1, 1, 1, 1);
+				float_color += s_gradients.col_x_step();
 				color = bgra_color_type(clamp(float_color, vec4(0,0,0,0), vec4(255,255,255,255)));
 			}
 		}
