@@ -4,6 +4,7 @@
 
 #include "math.hpp"
 #include "vertex.hpp"
+#include "textures.hpp"
 
 namespace graphics {
 	struct gradients {
