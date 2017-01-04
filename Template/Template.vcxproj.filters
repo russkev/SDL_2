@@ -50,5 +50,8 @@
     <ClInclude Include="gradients.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="textures.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
