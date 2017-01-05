@@ -48,7 +48,7 @@ namespace graphics {
 				if (s_fps > m_max) m_max = s_fps;
 				if (s_fps < m_min) m_min = s_fps;
 
-				// // Running averag is essentially a low pass filter
+				// // Running average as a low pass filter
 				//m_running_average = m_running_average * (1.0 - m_alpha) + s_fps * m_alpha;
 
 				// // Running average as average over total time

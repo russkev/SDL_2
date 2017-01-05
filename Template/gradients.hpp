@@ -24,9 +24,12 @@ namespace graphics {
 
 	public:
 		// // Getters
-		vec4 col_x_step() { return m_col_x_step; }
-		vec4 col_y_step() { return m_col_y_step; }
+		point_type col_x_step()   { return m_col_x_step; }
+		point_type col_y_step()   { return m_col_y_step; }
+		coord_type coord_x_step() { return m_coord_x_step; }
+		coord_type coord_y_step() { return m_coord_y_step; }
 		bgra_color_type color(int index) { return m_colors.at(index); }
+		coord_type      coord(int index) { return m_coords.at(index); }
 
 		// // Constructor
 		gradients(

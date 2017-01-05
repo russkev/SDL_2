@@ -23,6 +23,7 @@ namespace graphics {
 		typedef tvec4<std::uint8_t> bgra_color_type;
 		typedef vec4 point_type;
 		typedef xor_texture texture_type;
+		typedef vec2 coord_type;
 
 		renderContext(view_type& s_view) :
 			m_view(s_view),
@@ -47,9 +48,9 @@ namespace graphics {
 			mat4 screen_space_transform = init_screen_space_transform(float(m_view.size().x), float(m_view.size().y));
 
 			// // Assign max, mid and min y vert arbitrarily, they will be sorted in next step
-			auto min_y_vert = vertex(point_type(screen_space_transform*p1.m_pos) / point_type(p1.m_pos.w), p1.m_col);
-			auto mid_y_vert = vertex(point_type(screen_space_transform*p2.m_pos) / point_type(p2.m_pos.w), p2.m_col);
-			auto max_y_vert = vertex(point_type(screen_space_transform*p3.m_pos) / point_type(p3.m_pos.w), p3.m_col);
+			auto min_y_vert = vertex(point_type(screen_space_transform*p1.m_pos) / point_type(p1.m_pos.w), p1.m_coord, p1.m_col);
+			auto mid_y_vert = vertex(point_type(screen_space_transform*p2.m_pos) / point_type(p2.m_pos.w), p2.m_coord, p2.m_col);
+			auto max_y_vert = vertex(point_type(screen_space_transform*p3.m_pos) / point_type(p3.m_pos.w), p3.m_coord, p3.m_col);
 
 			// // Sort points so min, mid and max contain the correct values.
 			if (max_y_vert.m_pos.y < min_y_vert.m_pos.y) { std::swap(min_y_vert, max_y_vert); }
@@ -146,15 +147,17 @@ namespace graphics {
 			if (x_min > x_max) std::swap(x_min, x_max);
 			
 			float x_prestep       = x_min-left.x();
-			vec4 float_color      = vec4(left.col());
-			bgra_color_type color = bgra_color_type(float_color);
+			//vec4 float_color      = vec4(left.col());
+			coord_type coord      = left.coord();
+			//bgra_color_type color = bgra_color_type(float_color);
 
 
 
 			for (int i = x_min; i < x_max; ++i) {
-				m_view[j][i] = s_texture.get_texture(color.x, color.y);
-				float_color += s_gradients.col_x_step();
-				color = bgra_color_type(clamp(float_color, vec4(0,0,0,0), vec4(255,255,255,255)));
+				m_view[j][i] = s_texture.get_texture(coord.x, coord.y);
+				coord += s_gradients.coord_x_step();
+				//float_color += s_gradients.col_x_step();
+				//color = bgra_color_type(clamp(float_color, vec4(0,0,0,0), vec4(255,255,255,255)));
 			}
 		}
 	};
