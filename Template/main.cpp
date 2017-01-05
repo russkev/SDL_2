@@ -28,6 +28,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
     typedef u8vec4 bgra_color_type;
     typedef vec4 point_type;
     typedef view2d<bgra_color_type> view_type;
+	typedef vec2 coord_type;
 
 	// // Define centre of screen
     auto s_center = glm::ivec2 (s_surface.w, s_surface.h) / 2;
@@ -64,6 +65,10 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	);
 
 	// // TEST // //
+	vertex test_vertex_01(point_type(0, 1, 2, 3), coord_type(23,34), bgra_color_type(12, 23, 45, 255));
+	vertex test_vertex_02(point_type(0, 1, 2, 3), coord_type(23, 34));
+	vertex test_vertex_03(point_type(0, 1, 2, 3), bgra_color_type(12, 23, 45, 255));
+	vertex test_vertex_04(point_type(0, 1, 2, 3));
 
 	// // END TEST // // 
 
