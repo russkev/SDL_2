@@ -11,7 +11,7 @@
 #include "edge.hpp"
 #include "gradients.hpp"
 
-#define USE_MULTITHREADING 1
+#define USE_MULTITHREADING 0
 
 
 namespace graphics {
