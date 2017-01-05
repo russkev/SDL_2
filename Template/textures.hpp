@@ -1,4 +1,7 @@
-# pragma once
+#pragma once
+//#pragma warning( disable : 4996 )
+//#define _SCL_SECURE_NO_WARNINGS  
+
 #include <cstdint>
 #include <vector>
 #include <memory>
@@ -27,6 +30,7 @@ namespace graphics {
 			m_dimensions(float(other.m_width), float(other.m_height)),
 			m_out_texture(std::make_unique<bgra_color_type[]>(m_width * m_height))
 		{
+			//std::copy(other.m_out_texture.get(), other.m_out_texture.get() + m_width*m_height, m_out_texture.get());
 			std::copy(other.m_out_texture.get(), other.m_out_texture.get() + m_width*m_height, m_out_texture.get());
 		}
 
@@ -42,7 +46,7 @@ namespace graphics {
 			for (int64 y = 0; y < m_height; ++y) {
 				for (int64 x = 0; x < m_width; ++x) {
 					auto col = uint8_t(x ^ y);
-					m_out_texture[y * m_width * x] = bgra_color_type(col % 128, col % 64, col, 255);
+					m_out_texture[y * m_width + x] = bgra_color_type(col % 128, col % 64, col, 255);
 				};
 			};
 		}
