@@ -15,7 +15,7 @@ namespace graphics {
 		vertex(const point_type& s_pos, const coord_type& s_coord) : vertex(s_pos, s_coord, bgra_color_type(0, 0, 0, 0)) {}
 		vertex(const point_type& s_pos, const bgra_color_type& s_color) : vertex(s_pos, coord_type(0, 0), s_color) {}
 		vertex(const point_type& s_pos) : vertex(s_pos, coord_type(0, 0)) {}
-
+		
 
 		template <typename multiplier>
 		vertex operator * (multiplier const& a) {
