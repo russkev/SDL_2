@@ -406,10 +406,10 @@ namespace graphics {
 	//	float inv_z_range = 1/(z_near - z_far);
 	//	const auto out_mat =
 	//		transpose(mat4(
-	//			vec4(1.0f*(tan_half_fov*aspect_ratio), 0, 0, 0),
-	//			vec4(0, 1.0f / tan_half_fov, 0, 0),
-	//			vec4(0, 0, (-z_near - z_far)*inv_z_range, 2*z_far*z_near*inv_z_range),
-	//			vec4(0, 0, 0, 1)));
+	//			vec4(1.0f*(tan_half_fov*aspect_ratio), 0,                   0,                              0                         ),
+	//			vec4(0,                                1.0f / tan_half_fov, 0,                              0                         ),
+	//			vec4(0,                                0,                   (-z_near - z_far)*inv_z_range,  2*z_far*z_near*inv_z_range)
+	//			vec4(0,                                0,                   0,                              1                         )));
 	//	return out_mat;
 	//}
 }
