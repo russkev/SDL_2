@@ -140,15 +140,16 @@ namespace graphics {
 			}
 		}
 
-		void draw_scan_line(gradients& s_gradients, edge& left, edge& right, int j, texture_type s_texture) {
+		void draw_scan_line(gradients& s_gradients, edge& left, edge& right, int j, const texture_type& s_texture) {
 
 			auto x_min  = int(ceil(left.x()));
 			auto x_max  = int(ceil(right.x()));
 			if (x_min > x_max) std::swap(x_min, x_max);
 			
-			float x_prestep       = x_min-left.x();
+			float x_prestep         = x_min-left.x();
 			
-			coord_type coord      = left.coord();
+			coord_type coord        = left.coord();
+			coord_type coord_x_step = (right.coord() - left.coord()) / (right.x() - left.x());
 
 			// // USE FOR COLOUR GRADIENT // //
 			//vec4 float_color      = vec4(left.col());
@@ -159,7 +160,7 @@ namespace graphics {
 
 			for (int i = x_min; i < x_max; ++i) {
 				m_view[j][i] = s_texture.get_texture(int(coord.x), int(coord.y));
-				coord += s_gradients.coord_x_step();
+				coord += coord_x_step;
 
 				// // USE FOR COLOUR GRADIENT // //
 				//float_color += s_gradients.col_x_step();
