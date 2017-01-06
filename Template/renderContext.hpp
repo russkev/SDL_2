@@ -154,7 +154,7 @@ namespace graphics {
 
 
 			for (int i = x_min; i < x_max; ++i) {
-				m_view[j][i] = s_texture.get_texture(coord.x, coord.y);
+				m_view[j][i] = s_texture.get_texture(int(coord.x), int(coord.y));
 				coord += s_gradients.coord_x_step();
 				//float_color += s_gradients.col_x_step();
 				//color = bgra_color_type(clamp(float_color, vec4(0,0,0,0), vec4(255,255,255,255)));
