@@ -65,10 +65,6 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	);
 
 	// // TEST // //
-	vertex test_vertex_01(point_type(0, 1, 2, 3), coord_type(23,34), bgra_color_type(12, 23, 45, 255));
-	vertex test_vertex_02(point_type(0, 1, 2, 3), coord_type(23, 34));
-	vertex test_vertex_03(point_type(0, 1, 2, 3), bgra_color_type(12, 23, 45, 255));
-	vertex test_vertex_04(point_type(0, 1, 2, 3));
 
 	// // END TEST // // 
 

@@ -12,7 +12,7 @@
 #include "gradients.hpp"
 #include "textures.hpp"
 
-#define USE_MULTITHREADING 1
+#define USE_MULTITHREADING 0
 
 
 namespace graphics {
@@ -147,17 +147,24 @@ namespace graphics {
 			if (x_min > x_max) std::swap(x_min, x_max);
 			
 			float x_prestep       = x_min-left.x();
-			//vec4 float_color      = vec4(left.col());
+			
 			coord_type coord      = left.coord();
+
+			// // USE FOR COLOUR GRADIENT // //
+			//vec4 float_color      = vec4(left.col());
 			//bgra_color_type color = bgra_color_type(float_color);
+			// // END COLOUR GRADIENT     // //
 
 
 
 			for (int i = x_min; i < x_max; ++i) {
 				m_view[j][i] = s_texture.get_texture(int(coord.x), int(coord.y));
 				coord += s_gradients.coord_x_step();
+
+				// // USE FOR COLOUR GRADIENT // //
 				//float_color += s_gradients.col_x_step();
 				//color = bgra_color_type(clamp(float_color, vec4(0,0,0,0), vec4(255,255,255,255)));
+				// // END COLOUR GRADIENT     // //
 			}
 		}
 	};
