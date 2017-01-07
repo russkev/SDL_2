@@ -28,7 +28,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
     typedef u8vec4 bgra_color_type;
     typedef vec4 point_type;
     typedef view2d<bgra_color_type> view_type;
-	typedef vec3 coord_type;
+	typedef vec2 coord_type;
 
 	// // Define centre of screen
     auto s_center = glm::ivec2 (s_surface.w, s_surface.h) / 2;
@@ -41,9 +41,9 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	s_canvas.stroke_color(bgra_color_type(0, 0, 255, 255));
 
 	// // Create a triangle
-	vertex min_y_vert(point_type(0,  -5,  0,  1), coord_type(0,    0, 0));
-	vertex mid_y_vert(point_type( -5, 5,  0,  1), coord_type(0,  255, 0));
-	vertex max_y_vert(point_type( 5,  5,  0,  1), coord_type(255,  0, 0));
+	vertex min_y_vert(point_type(0,  -5,  0,  1), coord_type(0,    0));
+	vertex mid_y_vert(point_type( -5, 5,  0,  1), coord_type(0,  255));
+	vertex max_y_vert(point_type( 5,  5,  0,  1), coord_type(255,  0));
 
 	// // Create a texture
 	xor_texture s_texture(256, 256);
@@ -62,9 +62,9 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 
 	// // Render triangle
 	s_render.fill_triangle(
-		vertex(max_y_vert_transformed, coord_type(max_y_vert.m_coord.x, max_y_vert.m_coord.y, max_y_vert_transformed.z), max_y_vert.m_col),
-		vertex(mid_y_vert_transformed, coord_type(mid_y_vert.m_coord.x, mid_y_vert.m_coord.y, mid_y_vert_transformed.z), mid_y_vert.m_col),
-		vertex(min_y_vert_transformed, coord_type(min_y_vert.m_coord.x, min_y_vert.m_coord.y, min_y_vert_transformed.z), min_y_vert.m_col),
+		vertex(max_y_vert_transformed, max_y_vert.m_coord, max_y_vert.m_col),
+		vertex(mid_y_vert_transformed, mid_y_vert.m_coord, mid_y_vert.m_col),
+		vertex(min_y_vert_transformed, min_y_vert.m_coord, min_y_vert.m_col),
 		s_texture
 	);
 

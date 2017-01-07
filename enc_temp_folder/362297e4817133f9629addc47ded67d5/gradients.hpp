@@ -60,7 +60,7 @@ namespace graphics {
 			m_one_over_zs.push_back(1 / max_y_vert.m_pos.w);
 
 			// // Divide by z here so calculations can be made and then teh figure multiplied by z later
-			m_colors.push_back(vec4(min_y_vert.m_col * uint8_t(m_one_over_zs.at(0)));
+			m_colors.push_back(min_y_vert.m_col * uint8_t(m_one_over_zs.at(0)));
 			m_colors.push_back(mid_y_vert.m_col * uint8_t(m_one_over_zs.at(1)));
 			m_colors.push_back(max_y_vert.m_col * uint8_t(m_one_over_zs.at(2)));
 
@@ -88,8 +88,8 @@ namespace graphics {
 			//m_coord_x_step = d_coord_x / one_over_dx;
 			//m_coord_y_step = d_coord_y / one_over_dy;
 
-			m_col_x_step					=   calc_x_step(m_colors, min_y_vert, mid_y_vert, max_y_vert, one_over_dx);
-			m_col_y_step					=   calc_y_step(m_colors, min_y_vert, mid_y_vert, max_y_vert, one_over_dy);
+			//m_col_x_step					=   calc_x_step(m_colors, min_y_vert, mid_y_vert, max_y_vert, one_over_dx);
+			//m_col_y_step					=   calc_y_step(m_colors, min_y_vert, mid_y_vert, max_y_vert, one_over_dy);
 
 			m_coord_x_step					= calc_x_step(m_coords, min_y_vert, mid_y_vert, max_y_vert, one_over_dx);
 			m_coord_y_step					= calc_y_step(m_coords, min_y_vert, mid_y_vert, max_y_vert, one_over_dy);
