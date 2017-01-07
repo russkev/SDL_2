@@ -9,7 +9,7 @@ namespace graphics {
 	struct gradients {
 		typedef tvec4<std::uint8_t> bgra_color_type;
 		typedef vec4 point_type;
-		typedef vec2 coord_type;
+		typedef vec3 coord_type;
 
 	private:
 		// // Member variables
@@ -64,11 +64,11 @@ namespace graphics {
 				(vec4(min_y_vert.m_col) - vec4(max_y_vert.m_col))*(mid_y_vert.m_pos.x - max_y_vert.m_pos.x);
 
 			d_coord_x =
-				(vec2(mid_y_vert.m_coord) - vec2(max_y_vert.m_coord))*(min_y_vert.m_pos.y - max_y_vert.m_pos.y) -
-				(vec2(min_y_vert.m_coord) - vec2(max_y_vert.m_coord))*(mid_y_vert.m_pos.y - max_y_vert.m_pos.y);
+				(coord_type(mid_y_vert.m_coord) - coord_type(max_y_vert.m_coord))*(min_y_vert.m_pos.y - max_y_vert.m_pos.y) -
+				(coord_type(min_y_vert.m_coord) - coord_type(max_y_vert.m_coord))*(mid_y_vert.m_pos.y - max_y_vert.m_pos.y);
 			d_coord_y =			   							  
-				(vec2(mid_y_vert.m_coord) - vec2(max_y_vert.m_coord))*(min_y_vert.m_pos.x - max_y_vert.m_pos.x) -
-				(vec2(min_y_vert.m_coord) - vec2(max_y_vert.m_coord))*(mid_y_vert.m_pos.x - max_y_vert.m_pos.x);
+				(coord_type(mid_y_vert.m_coord) - coord_type(max_y_vert.m_coord))*(min_y_vert.m_pos.x - max_y_vert.m_pos.x) -
+				(coord_type(min_y_vert.m_coord) - coord_type(max_y_vert.m_coord))*(mid_y_vert.m_pos.x - max_y_vert.m_pos.x);
 
 			one_over_dx =
 				((mid_y_vert.m_pos.x - max_y_vert.m_pos.x) * (min_y_vert.m_pos.y - max_y_vert.m_pos.y)) - 

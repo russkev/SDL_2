@@ -9,7 +9,7 @@ namespace graphics {
 	struct edge {
 		typedef vec4 point_type;
 		typedef tvec4<std::uint8_t> bgra_color_type;
-		typedef vec2 coord_type;
+		typedef vec3 coord_type;
 
 	private:
 		float m_x;

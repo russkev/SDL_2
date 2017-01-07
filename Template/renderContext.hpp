@@ -23,7 +23,7 @@ namespace graphics {
 		typedef tvec4<std::uint8_t> bgra_color_type;
 		typedef vec4 point_type;
 		typedef xor_texture texture_type;
-		typedef vec2 coord_type;
+		typedef vec3 coord_type;
 
 		renderContext(view_type& s_view) :
 			m_view(s_view),
@@ -162,7 +162,7 @@ namespace graphics {
 
 
 			for (int i = x_min; i < x_max; ++i) {
-				m_view[j][i] = s_texture.get_texture(int(coord.x), int(coord.y));
+				m_view[j][i] = s_texture.get_texture(int(coord.x / coord.z), int(coord.y / coord.z));
 				coord += coord_x_step;
 
 				// // USE FOR COLOUR GRADIENT // //
