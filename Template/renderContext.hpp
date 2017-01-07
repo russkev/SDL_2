@@ -91,11 +91,11 @@ namespace graphics {
 
 					// // If triangle is left handed, lead with top to middle, else lead with top to bottom
 					if (triangle_area(min_y_vert.m_pos, mid_y_vert.m_pos, max_y_vert.m_pos) >= 0) { 
-						scan_edges(m_gradients, top_to_middle,     top_to_bottom,     top_to_middle,    s_num_threads, i, s_texture);
-						scan_edges(m_gradients, middle_to_bottom,  top_to_bottom,     middle_to_bottom, s_num_threads, i, s_texture);
-					} else { 																							
-						scan_edges(m_gradients, top_to_bottom,     top_to_middle,     top_to_middle,    s_num_threads, i, s_texture);
-						scan_edges(m_gradients, top_to_bottom,     middle_to_bottom,  middle_to_bottom, s_num_threads, i, s_texture);
+						scan_edges(top_to_middle,     top_to_bottom,     top_to_middle,    s_num_threads, i, s_texture);
+						scan_edges(middle_to_bottom,  top_to_bottom,     middle_to_bottom, s_num_threads, i, s_texture);
+					} else { 										
+						scan_edges(top_to_bottom,     top_to_middle,     top_to_middle,    s_num_threads, i, s_texture);
+						scan_edges(top_to_bottom,     middle_to_bottom,  middle_to_bottom, s_num_threads, i, s_texture);
 					}
 				}));
 			}
@@ -110,17 +110,17 @@ namespace graphics {
 
 			// // If triangle is left handed, lead with top to middle, else lead with top to bottom
 			if (triangle_area(min_y_vert.m_pos, mid_y_vert.m_pos, max_y_vert.m_pos) >= 0) {
-				scan_edges(m_gradients, top_to_middle,    top_to_bottom,    top_to_middle   , s_texture);
-				scan_edges(m_gradients, middle_to_bottom, top_to_bottom,    middle_to_bottom, s_texture); 
+				scan_edges(top_to_middle,    top_to_bottom,    top_to_middle   , s_texture);
+				scan_edges(middle_to_bottom, top_to_bottom,    middle_to_bottom, s_texture); 
 			} else {																		
-				scan_edges(m_gradients, top_to_bottom,    top_to_middle,    top_to_middle   , s_texture);
-				scan_edges(m_gradients, top_to_bottom,    middle_to_bottom, middle_to_bottom, s_texture);
+				scan_edges(top_to_bottom,    top_to_middle,    top_to_middle   , s_texture);
+				scan_edges(top_to_bottom,    middle_to_bottom, middle_to_bottom, s_texture);
 			}
 #endif
 
 		}
 
-		void scan_edges(gradients& s_gradients, edge& left, edge& right, edge& lead
+		void scan_edges(edge& left, edge& right, edge& lead
 #if USE_MULTITHREADING
 			,unsigned every_nth, unsigned plus_i
 #endif
@@ -133,14 +133,14 @@ namespace graphics {
 					draw_scan_line(s_gradients, left, right, j, s_texture);
 				}
 #else
-				draw_scan_line(s_gradients, left, right, j, s_texture);
+				draw_scan_line(left, right, j, s_texture);
 #endif
 				left.step();
 				right.step();
 			}
 		}
 
-		void draw_scan_line(gradients& s_gradients, edge& left, edge& right, int j, const texture_type& s_texture) {
+		void draw_scan_line(edge& left, edge& right, int j, const texture_type& s_texture) {
 
 			auto x_min  = int(ceil(left.x()));
 			auto x_max  = int(ceil(right.x()));
@@ -148,8 +148,11 @@ namespace graphics {
 			
 			float x_prestep         = x_min-left.x();
 			
-			coord_type coord        = left.coord();
-			coord_type coord_x_step = (right.coord() - left.coord()) / (right.x() - left.x());
+			
+			// // Work out what the next step for each calculation to reduce errors to do with precision
+			coord_type coord_x_step = (right.coord() - left.coord()) / (right.x() - left.x()); 
+			// // Calculate start coordinate
+			coord_type coord = left.coord() + coord_x_step * x_prestep;
 
 			// // USE FOR COLOUR GRADIENT // //
 			//vec4 float_color      = vec4(left.col());
