@@ -10,6 +10,7 @@
 #include "algorithm.hpp"
 #include "edge.hpp"
 #include "gradients.hpp"
+#include "textures.hpp"
 
 #define USE_MULTITHREADING 0
 
@@ -21,6 +22,8 @@ namespace graphics {
 		typedef std::vector<std::pair<int, int> > buffer_type;
 		typedef tvec4<std::uint8_t> bgra_color_type;
 		typedef vec4 point_type;
+		typedef xor_texture texture_type;
+		typedef vec2 coord_type;
 
 		renderContext(view_type& s_view) :
 			m_view(s_view),
@@ -38,22 +41,23 @@ namespace graphics {
 		void fill_triangle(
 			const vertex& p1, 
 			const vertex& p2, 
-			const vertex& p3
+			const vertex& p3,
+			const texture_type& s_texture
 		) {
 
 			mat4 screen_space_transform = init_screen_space_transform(float(m_view.size().x), float(m_view.size().y));
 
 			// // Assign max, mid and min y vert arbitrarily, they will be sorted in next step
-			auto min_y_vert = vertex(point_type(screen_space_transform*p1.m_pos) / point_type(p1.m_pos.w), p1.m_col);
-			auto mid_y_vert = vertex(point_type(screen_space_transform*p2.m_pos) / point_type(p2.m_pos.w), p2.m_col);
-			auto max_y_vert = vertex(point_type(screen_space_transform*p3.m_pos) / point_type(p3.m_pos.w), p3.m_col);
+			auto min_y_vert = vertex(point_type(screen_space_transform*p1.m_pos) / point_type(p1.m_pos.w), p1.m_coord, p1.m_col);
+			auto mid_y_vert = vertex(point_type(screen_space_transform*p2.m_pos) / point_type(p2.m_pos.w), p2.m_coord, p2.m_col);
+			auto max_y_vert = vertex(point_type(screen_space_transform*p3.m_pos) / point_type(p3.m_pos.w), p3.m_coord, p3.m_col);
 
 			// // Sort points so min, mid and max contain the correct values.
 			if (max_y_vert.m_pos.y < min_y_vert.m_pos.y) { std::swap(min_y_vert, max_y_vert); }
 			if (mid_y_vert.m_pos.y < min_y_vert.m_pos.y) { std::swap(min_y_vert, mid_y_vert); }
 			if (mid_y_vert.m_pos.y > max_y_vert.m_pos.y) { std::swap(max_y_vert, mid_y_vert); }
 
-			scan_triangle(min_y_vert, mid_y_vert, max_y_vert);
+			scan_triangle(min_y_vert, mid_y_vert, max_y_vert, s_texture);
 
 		}
 
@@ -72,7 +76,7 @@ namespace graphics {
 
 
 	private:
-		void scan_triangle(const vertex& min_y_vert, const vertex& mid_y_vert, const vertex& max_y_vert) {
+		void scan_triangle(const vertex& min_y_vert, const vertex& mid_y_vert, const vertex& max_y_vert, const texture_type& s_texture) {
 #if USE_MULTITHREADING
 			const auto s_num_threads = std::thread::hardware_concurrency();
 			std::vector<std::future<void>> s_threads;
@@ -87,11 +91,11 @@ namespace graphics {
 
 					// // If triangle is left handed, lead with top to middle, else lead with top to bottom
 					if (triangle_area(min_y_vert.m_pos, mid_y_vert.m_pos, max_y_vert.m_pos) >= 0) { 
-						scan_edges(m_gradients, top_to_middle,     top_to_bottom,     top_to_middle,    s_num_threads, i);
-						scan_edges(m_gradients, middle_to_bottom,  top_to_bottom,     middle_to_bottom, s_num_threads, i);
-					} else { 
-						scan_edges(m_gradients, top_to_bottom,     top_to_middle,     top_to_middle,    s_num_threads, i);
-						scan_edges(m_gradients, top_to_bottom,     middle_to_bottom,  middle_to_bottom, s_num_threads, i);
+						scan_edges(top_to_middle,     top_to_bottom,     top_to_middle,    s_num_threads, i, s_texture);
+						scan_edges(middle_to_bottom,  top_to_bottom,     middle_to_bottom, s_num_threads, i, s_texture);
+					} else { 										
+						scan_edges(top_to_bottom,     top_to_middle,     top_to_middle,    s_num_threads, i, s_texture);
+						scan_edges(top_to_bottom,     middle_to_bottom,  middle_to_bottom, s_num_threads, i, s_texture);
 					}
 				}));
 			}
@@ -106,51 +110,65 @@ namespace graphics {
 
 			// // If triangle is left handed, lead with top to middle, else lead with top to bottom
 			if (triangle_area(min_y_vert.m_pos, mid_y_vert.m_pos, max_y_vert.m_pos) >= 0) {
-				scan_edges(m_gradients, top_to_middle,    top_to_bottom,    top_to_middle);
-				scan_edges(m_gradients, middle_to_bottom, top_to_bottom,    middle_to_bottom); 
-			} else {
-				scan_edges(m_gradients, top_to_bottom,    top_to_middle,    top_to_middle);
-				scan_edges(m_gradients, top_to_bottom,    middle_to_bottom, middle_to_bottom);
+				scan_edges(top_to_middle,    top_to_bottom,    top_to_middle   , s_texture);
+				scan_edges(middle_to_bottom, top_to_bottom,    middle_to_bottom, s_texture); 
+			} else {																		
+				scan_edges(top_to_bottom,    top_to_middle,    top_to_middle   , s_texture);
+				scan_edges(top_to_bottom,    middle_to_bottom, middle_to_bottom, s_texture);
 			}
 #endif
 
 		}
 
-		void scan_edges(gradients& s_gradients, edge& left, edge& right, edge& lead
+		void scan_edges(edge& left, edge& right, edge& lead
 #if USE_MULTITHREADING
 			,unsigned every_nth, unsigned plus_i
 #endif
+			,const texture_type& s_texture
 			)
 		{
 			for (int j = lead.y_start(); j < lead.y_end(); ++j) {
 #if USE_MULTITHREADING
 				if (((j - lead.y_start()) % every_nth) == plus_i) {
-					draw_scan_line(s_gradients, left, right, j);
+					draw_scan_line(s_gradients, left, right, j, s_texture);
 				}
 #else
-				draw_scan_line(s_gradients, left, right, j);
+				draw_scan_line(left, right, j, s_texture);
 #endif
 				left.step();
 				right.step();
 			}
 		}
 
-		void draw_scan_line(gradients& s_gradients, edge& left, edge& right, int j) {
+		void draw_scan_line(edge& left, edge& right, int j, const texture_type& s_texture) {
 
 			auto x_min  = int(ceil(left.x()));
 			auto x_max  = int(ceil(right.x()));
 			if (x_min > x_max) std::swap(x_min, x_max);
 			
-			float x_prestep       = x_min-left.x();
-			vec4 float_color      = vec4(left.col());
-			bgra_color_type color = bgra_color_type(float_color);
+			float x_prestep         = x_min-left.x();
+			
+			
+			// // Work out what the next step for each calculation to reduce errors to do with precision
+			coord_type coord_x_step = (right.coord() - left.coord()) / (right.x() - left.x()); 
+			// // Calculate start coordinate
+			coord_type coord = left.coord() + coord_x_step * x_prestep;
+
+			// // USE FOR COLOUR GRADIENT // //
+			//vec4 float_color      = vec4(left.col());
+			//bgra_color_type color = bgra_color_type(float_color);
+			// // END COLOUR GRADIENT     // //
 
 
 
 			for (int i = x_min; i < x_max; ++i) {
-				m_view[j][i] = color;
-				float_color += s_gradients.col_x_step();
-				color = bgra_color_type(clamp(float_color, vec4(0,0,0,0), vec4(255,255,255,255)));
+				m_view[j][i] = s_texture.get_texture(int(coord.x), int(coord.y));
+				coord += coord_x_step;
+
+				// // USE FOR COLOUR GRADIENT // //
+				//float_color += s_gradients.col_x_step();
+				//color = bgra_color_type(clamp(float_color, vec4(0,0,0,0), vec4(255,255,255,255)));
+				// // END COLOUR GRADIENT     // //
 			}
 		}
 	};
