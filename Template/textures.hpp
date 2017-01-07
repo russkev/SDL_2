@@ -17,9 +17,6 @@ namespace graphics {
 		std::unique_ptr<bgra_color_type[]> m_out_texture; // // unique_pointer is a smart pointer that manages the pointer life time (deletes at right time etc.)
 	public:
 
-		// // QUESTIONS FOR ALEX:
-		// // How come it can access member variables like that
-
 		xor_texture(const xor_texture& other) :
 			m_width(other.m_width),
 			m_height(other.m_height),
@@ -28,8 +25,6 @@ namespace graphics {
 		{
 			std::copy(other.m_out_texture.get(), other.m_out_texture.get() + m_width*m_height, m_out_texture.get());
 		}
-
-
 
 		xor_texture(int s_width, int s_height) :
 			m_width(int64(s_width)), 
@@ -44,11 +39,12 @@ namespace graphics {
 				};
 			};
 		}
-		// // Getter // //
+
+
+		// // Getters // //
 		bgra_color_type get_texture(int x, int y) const {
 			return m_out_texture[(y % m_height) * m_width + (x % m_width)]; // Finds correct coord, loops if necessary
 		}
-
 		int64 width() { return m_width; }
 		int64 height() { return m_height; }
 		ivec2 dimensions() { return m_dimensions; }
