@@ -42,8 +42,8 @@ namespace graphics {
 
 
 		// // Getters // //
-		bgra_color_type get_texture(int x, int y) const {
-			return m_out_texture[(y % m_height) * m_width + (x % m_width)]; // Finds correct coord, loops if necessary
+		bgra_color_type get_texture(int s, int t) const {
+			return m_out_texture[(t % m_height) * m_width + (s % m_width)]; // Finds correct coord, loops if necessary
 		}
 		int64 width() { return m_width; }
 		int64 height() { return m_height; }

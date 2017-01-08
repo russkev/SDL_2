@@ -73,7 +73,7 @@ namespace graphics {
 			m_col_step = s_gradients.col_y_step() + s_gradients.col_x_step()*m_x_step;
 			// // This is how much the coord will change by
 			m_coord_step = s_gradients.coord_y_step() + s_gradients.coord_x_step()*m_x_step;
-			// // This is how mych the 1/z value will change by:
+			// // This is how much the 1/z value will change by:
 			m_one_over_z_step = s_gradients.one_over_z_step().y + s_gradients.one_over_z_step().x * m_x_step;
 
 		}

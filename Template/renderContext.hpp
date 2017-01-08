@@ -146,7 +146,7 @@ namespace graphics {
 			auto x_max  = int(ceil(right.x()));
 			if (x_min > x_max) std::swap(x_min, x_max);
 			
-			float x_prestep         = x_min-left.x();
+			float x_prestep = x_min-left.x();
 			
 			float x_dist = right.x() / left.x();
 			// // Work out what the next step for each calculation to reduce errors to do with precision
@@ -165,12 +165,13 @@ namespace graphics {
 
 
 			for (int i = x_min; i < x_max; ++i) {
-				float z = 1 / one_over_z;
-				ivec2 coord_corrected = { int(coord.x * z), int(coord.y * z) };
+				float z = 1.0f / one_over_z;
+				ivec2 coord_corrected = { int(coord.s * z), int(coord.t * z) };
 				// // Display pixel on the screen at j, i from the texture at coordinate x,y
-				m_view[j][i] = s_texture.get_texture(coord_corrected.x, coord_corrected.y);
+				m_view[j][i] = s_texture.get_texture(coord_corrected.s, coord_corrected.t);
+				// // Do steps
 				one_over_z += one_over_z_x_step;
-				coord += coord_x_step;
+				coord      += coord_x_step;
 
 				// // USE FOR COLOUR GRADIENT // //
 				//float_color += s_gradients.col_x_step();
