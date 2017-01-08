@@ -43,7 +43,7 @@ namespace graphics {
 		int y_start()           { return m_y_start; }
 		int y_end()             { return m_y_end;   }
 		bgra_color_type col()   { return m_color; }
-		coord_type coord()      { return m_coord; }
+		coord_type coord()      { return m_coord_test; }
 		// // TRIAL BIT // //
 		coord_type coord_test() { return m_coord_test; }
 		float z()				{ return m_z; }
@@ -127,11 +127,11 @@ namespace graphics {
 			m_y_percent += m_y_percent_step;
 			++m_y;
 			m_z = lerp(m_start_z, m_end_z, m_y_percent);
-			m_coord_test.x = lerp(m_start_coord.s, m_end_coord.s,
+			m_coord_test.s = lerp(m_start_coord.s, m_end_coord.s,
 				(m_x*m_z - m_start.m_pos.x*m_z) /
 				(m_end.m_pos.x*m_z - m_start.m_pos.x*m_z)
 			);
-			m_coord_test.y = lerp(m_start_coord.t, m_end_coord.t,
+			m_coord_test.t = lerp(m_start_coord.t, m_end_coord.t,
 				(m_y*m_z - m_start.m_pos.y*m_z) /
 				(m_end.m_pos.y*m_z - m_start.m_pos.y*m_z)
 			);

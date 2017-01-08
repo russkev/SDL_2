@@ -171,7 +171,7 @@ namespace graphics {
 			//vec4 float_color      = vec4(left.col());
 			//bgra_color_type color = bgra_color_type(float_color);
 			// // END COLOUR GRADIENT     // //
-
+			//auto test_width = s_texture.width();
 
 
 			for (int i = x_min; i < x_max; ++i) {
@@ -180,14 +180,19 @@ namespace graphics {
 				z = lerp(left.z(), right.z(), percentage_along_screen_line);
 				percentage_along_3d_line_x = (i*z - left.x()*left.z()) / (right.x()*right.z() - left.x()*left.z());
 				percentage_along_3d_line_y = (j*z - j*left.z()) / (j*right.z() - j*left.z());
-				coord_test.s = lerp(left.coord().s, left.coord().s, percentage_along_3d_line_x);
-				coord_test.t = lerp(left.coord().t, left.coord().t, percentage_along_3d_line_y);
+				coord_test.s = lerp(left.coord().s, right.coord().s, percentage_along_3d_line_x);
+				coord_test.t = lerp(left.coord().t, right.coord().t, percentage_along_3d_line_y);
+
+				
+				if (coord_test.s > 255 || coord_test.t > 255){//float(s_texture.width())){// || coord_test.t > float(s_texture.height())) {
+					__debugbreak();
+				}
 
 				// // END TRIAL // //
 
 				// // i is screen x, j is screen y
 				m_view[j][i] = s_texture.get_texture(int(coord_test.s), int(coord_test.t));
-				coord += coord_x_step;
+				//coord += coord_x_step;
 
 				// // USE FOR COLOUR GRADIENT // //
 				//float_color += s_gradients.col_x_step();
