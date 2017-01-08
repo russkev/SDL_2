@@ -42,33 +42,7 @@ namespace graphics {
     // Sometimes this is also refered to as Mix instead of Lerp
     template <typename _Atype, typename _Btype, typename _Qtype>
     auto lerp (const _Atype& a, const _Btype& b, _Qtype q) {
-		bool gammaCorrectOn = true;
-		float gamma = 2.2f;
-		float gamma_i = 1/gamma;
-
-		//std::common_type_t<_Atype, _Btype> a_temp, b_temp;
-		float a_b = pow(a.b * 0.00392156862f, gamma) * (1-q);
-		float a_g = pow(a.g * 0.00392156862f, gamma) * (1-q);
-		float a_r = pow(a.r * 0.00392156862f, gamma) * (1-q);
-		float b_b = pow(b.b * 0.00392156862f, gamma) * q;
-		float b_g = pow(b.g * 0.00392156862f, gamma) * q;
-		float b_r = pow(b.r * 0.00392156862f, gamma) * q;// pow(b.r * 0.00392156862f, gamma_i)*q;
-
-		std::common_type_t<_Atype, _Btype> out_value;
-
-		a_b = (a_b + b_b);
-		a_g = (a_g + b_g);
-		a_r = (a_r + b_r);
-
-		a_b = pow(a_b, gamma_i);
-		a_g = pow(a_g, gamma_i);
-		a_r = pow(a_r, gamma_i);
-		
-		out_value.b = a_b * 255.0f;
-		out_value.g = a_g * 255.0f;
-		out_value.r = a_r * 255.0f;		
-		
-		return out_value;
+		return std::common_type_t<_Atype, _Btype>(a*(_Qtype(1) - q) + q*b);
     }
 
     // Blend source element with destination element depending on source element alpha channel

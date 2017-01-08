@@ -46,6 +46,7 @@ namespace graphics {
 		) {
 
 			mat4 screen_space_transform = init_screen_space_transform(float(m_view.size().x), float(m_view.size().y));
+			// // These coordinates are the coordinates compared to the screen before perspective divide
 			auto p1_pos = screen_space_transform*p1.m_pos;
 			auto p2_pos = screen_space_transform*p2.m_pos;
 			auto p3_pos = screen_space_transform*p3.m_pos;
@@ -150,13 +151,21 @@ namespace graphics {
 			auto x_max  = int(ceil(right.x()));
 			if (x_min > x_max) std::swap(x_min, x_max);
 			
-			float x_prestep         = x_min-left.x();
+			float x_prestep = x_min - left.x();
+
+			// // TRIAL BIT // //
+			float percentage_along_screen_line = 0;
+			float percentage_along_3d_line_x = 0;
+			float percentage_along_3d_line_y = 0;
+			float z = 0;
+			coord_type coord_test;
+			// // END TRIAL // //
 			
 			
 			// // Work out what the next step for each calculation to reduce errors to do with precision
 			coord_type coord_x_step = (right.coord() - left.coord()) / (right.x() - left.x()); 
 			// // Calculate start coordinate
-			coord_type coord = left.coord() + coord_x_step * x_prestep;
+			coord_type coord = left.coord_test() + coord_x_step * x_prestep;
 
 			// // USE FOR COLOUR GRADIENT // //
 			//vec4 float_color      = vec4(left.col());
@@ -166,7 +175,18 @@ namespace graphics {
 
 
 			for (int i = x_min; i < x_max; ++i) {
-				m_view[j][i] = s_texture.get_texture(int(coord.x), int(coord.y));
+				// // TRIAL BIT // //
+				percentage_along_screen_line = (i - left.x())/(right.x() - left.x());
+				z = lerp(left.z(), right.z(), percentage_along_screen_line);
+				percentage_along_3d_line_x = (i*z - left.x()*left.z()) / (right.x()*right.z() - left.x()*left.z());
+				percentage_along_3d_line_y = (j*z - j*left.z()) / (j*right.z() - j*left.z());
+				coord_test.s = lerp(left.coord().s, left.coord().s, percentage_along_3d_line_x);
+				coord_test.t = lerp(left.coord().t, left.coord().t, percentage_along_3d_line_y);
+
+				// // END TRIAL // //
+
+				// // i is screen x, j is screen y
+				m_view[j][i] = s_texture.get_texture(int(coord_test.s), int(coord_test.t));
 				coord += coord_x_step;
 
 				// // USE FOR COLOUR GRADIENT // //
