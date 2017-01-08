@@ -48,9 +48,9 @@ namespace graphics {
 			mat4 screen_space_transform = init_screen_space_transform(float(m_view.size().x), float(m_view.size().y));
 
 			// // Assign max, mid and min y vert arbitrarily, they will be sorted in next step
-			auto min_y_vert = vertex(point_type(screen_space_transform*p1.m_pos) / point_type(p1.m_pos.w), p1.m_coord, p1.m_col);
-			auto mid_y_vert = vertex(point_type(screen_space_transform*p2.m_pos) / point_type(p2.m_pos.w), p2.m_coord, p2.m_col);
-			auto max_y_vert = vertex(point_type(screen_space_transform*p3.m_pos) / point_type(p3.m_pos.w), p3.m_coord, p3.m_col);
+			auto min_y_vert = vertex(perspective_divide(screen_space_transform*p1.m_pos), p1.m_coord, p1.m_col);
+			auto mid_y_vert = vertex(perspective_divide(screen_space_transform*p2.m_pos), p2.m_coord, p2.m_col);
+			auto max_y_vert = vertex(perspective_divide(screen_space_transform*p3.m_pos), p3.m_coord, p3.m_col);
 
 			// // Sort points so min, mid and max contain the correct values.
 			if (max_y_vert.m_pos.y < min_y_vert.m_pos.y) { std::swap(min_y_vert, max_y_vert); }

@@ -7,6 +7,7 @@
 
 
 namespace graphics {
+	typedef vec4 point_type;
 
     template <typename _Vtype = float>
     auto pi () {
@@ -400,16 +401,7 @@ namespace graphics {
 		return out_mat;
 	}
 
-	//mat4 init_perspective(float fov, float aspect_ratio, float z_near, float z_far) {
-
-	//	float tan_half_fov = float(tan(fov*0.5));
-	//	float inv_z_range = 1/(z_near - z_far);
-	//	const auto out_mat =
-	//		transpose(mat4(
-	//			vec4(1.0f*(tan_half_fov*aspect_ratio), 0,                   0,                              0                         ),
-	//			vec4(0,                                1.0f / tan_half_fov, 0,                              0                         ),
-	//			vec4(0,                                0,                   (-z_near - z_far)*inv_z_range,  2*z_far*z_near*inv_z_range)
-	//			vec4(0,                                0,                   0,                              1                         )));
-	//	return out_mat;
-	//}
+	point_type perspective_divide(const point_type& a) {
+		return point_type(a.x / a.w, a.y / a.w, a.z / a.w, a.w);
+	}
 }
