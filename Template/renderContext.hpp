@@ -159,6 +159,13 @@ namespace graphics {
 			float percentage_along_3d_line_y = 0;
 			float z = 0;
 			coord_type coord_test;
+			point_type left_3d;
+			point_type middle_3d;
+			point_type right_3d;
+
+
+			left_3d  = { left.x()*left.z(), left.y_end()*left.z(), left.z(), left.z() };
+			right_3d = { right.x()*right.z(), right.y_end()*right.z(), right.z(), right.z() };
 			// // END TRIAL // //
 			
 			
@@ -178,7 +185,11 @@ namespace graphics {
 				// // TRIAL BIT // //
 				percentage_along_screen_line = (i - left.x())/(right.x() - left.x());
 				z = lerp(left.z(), right.z(), percentage_along_screen_line);
-				percentage_along_3d_line_x = (i*z - left.x()*left.z()) / (right.x()*right.z() - left.x()*left.z());
+				
+				//x_3d = { left.x()*left.z(), i*z, right.x()*right.z() };
+				//percentage_along_3d_line_x = (i*z - left.x()*left.z()) / (right.x()*right.z() - left.x()*left.z());
+				//percentage_along_3d_line_x = (x_3d.y - x_3d.x) / (x_3d.z - x_3d.x);
+				percentage_along_3d_line_x = alpha(x_3d.x, x_3d.z, x_3d.y);
 				percentage_along_3d_line_y = (j*z - j*left.z()) / (j*right.z() - j*left.z());
 				coord_test.s = lerp(left.coord().s, right.coord().s, percentage_along_3d_line_x);
 				coord_test.t = lerp(left.coord().t, right.coord().t, percentage_along_3d_line_y);

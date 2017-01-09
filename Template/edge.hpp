@@ -38,7 +38,7 @@ namespace graphics {
 		coord_type m_coord_step;
 
 	public:
-		// // Getters:
+		// // GETTERS // //
 		float x()               { return m_x; }
 		int y_start()           { return m_y_start; }
 		int y_end()             { return m_y_end;   }
@@ -47,7 +47,7 @@ namespace graphics {
 		// // TRIAL BIT // //
 		coord_type coord_test() { return m_coord_test; }
 		float z()				{ return m_z; }
-
+		// // END TRIAL // //
 
 
 		// // Main Function:
