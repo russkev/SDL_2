@@ -155,7 +155,7 @@ namespace graphics {
 
 			// // TRIAL BIT // //
 			float percentage_along_screen_line = 0;
-			float percentage_along_3d_line_x = 0;
+			vec2  alpha_3d_line;
 			float percentage_along_3d_line_y = 0;
 			float z = 0;
 			coord_type coord_test;
@@ -164,8 +164,8 @@ namespace graphics {
 			point_type right_3d;
 
 
-			left_3d  = { left.x()*left.z(), left.y_end()*left.z(), left.z(), left.z() };
-			right_3d = { right.x()*right.z(), right.y_end()*right.z(), right.z(), right.z() };
+			left_3d  = { left.x()*left.z(), j*left.z(), left.z(), left.z() };
+			right_3d = { right.x()*right.z(), j*right.z(), right.z(), right.z() };
 			// // END TRIAL // //
 			
 			
@@ -185,14 +185,17 @@ namespace graphics {
 				// // TRIAL BIT // //
 				percentage_along_screen_line = (i - left.x())/(right.x() - left.x());
 				z = lerp(left.z(), right.z(), percentage_along_screen_line);
+				middle_3d = { z*i, z*j, z, z };
 				
 				//x_3d = { left.x()*left.z(), i*z, right.x()*right.z() };
-				//percentage_along_3d_line_x = (i*z - left.x()*left.z()) / (right.x()*right.z() - left.x()*left.z());
+				//float percentage_along_3d_line_x = (i*z - left.x()*left.z()) / (right.x()*right.z() - left.x()*left.z());
 				//percentage_along_3d_line_x = (x_3d.y - x_3d.x) / (x_3d.z - x_3d.x);
-				percentage_along_3d_line_x = alpha(x_3d.x, x_3d.z, x_3d.y);
-				percentage_along_3d_line_y = (j*z - j*left.z()) / (j*right.z() - j*left.z());
-				coord_test.s = lerp(left.coord().s, right.coord().s, percentage_along_3d_line_x);
-				coord_test.t = lerp(left.coord().t, right.coord().t, percentage_along_3d_line_y);
+				//percentage_along_3d_line_y = (j*z - j*left.z()) / (j*right.z() - j*left.z());
+				//alpha_3d_line.x = alpha(left_3d.x, right_3d.x, middle_3d.x);
+				//alpha_3d_line.y = alpha(left_3d.y, right_3d.y, middle_3d.y);
+				alpha_3d_line = alpha(left_3d, right_3d, middle_3d);
+
+				coord_test = lerp(left.coord(), right.coord(), alpha_3d_line);
 
 				
 				if (coord_test.s > 255 || coord_test.t > 255){//float(s_texture.width())){// || coord_test.t > float(s_texture.height())) {

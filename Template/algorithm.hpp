@@ -45,6 +45,7 @@ namespace graphics {
 		return std::common_type_t<_Atype, _Btype>(a*(_Qtype(1) - q) + q*b);
     }
 
+	// Find the percentage between a and b that q is.
 	template <typename _Atype, typename _Btype, typename _Qtype>
 	auto alpha(const _Atype& a, const _Btype& b, _Qtype q) {
 		return std::common_type_t<_Atype, _Btype>((q - a) / (b - a));
