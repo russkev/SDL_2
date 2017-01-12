@@ -172,12 +172,15 @@ namespace graphics {
 				alpha_screen_line = alpha(left.x(), right.x(), i);
 				z = lerp(left.z(), right.z(), alpha_screen_line);
 
+				float alpha_3d_x = alpha(left_3d.x, right_3d.x, z*i);
+				vec2 alpha_3d = { alpha_3d_x, alpha_3d_x };
+				//vec2 middle_3d_test = { z*i, lerp(left_3d.y, right_3d.y, alpha_3d_x) };
 
-				middle_3d = { z*i, z*j };
+				//middle_3d = { z*i, z*j };
 
-				alpha_3d_line = alpha(left_3d, right_3d, middle_3d);
+				//alpha_3d_line = alpha(left_3d, right_3d, middle_3d);
 
-				f_coord = lerp(left.coord(), right.coord(), alpha_3d_line);
+				f_coord = lerp(left.coord(), right.coord(), alpha_3d);
 				i_coord = { int(ceil(f_coord.s)), int(ceil(f_coord.y)) };
 
 				if (out_of_bounds(s_texture.dimensions(), i_coord)){
