@@ -28,14 +28,14 @@ namespace graphics {
 		vertex m_end;
 		coord_type m_start_coord;
 		coord_type m_end_coord;
-		coord_type m_coord_test;
+		coord_type m_coord;
 		// // END TRIAL // //
 
 
 		point_type m_color;
 		point_type m_col_step;
-		coord_type m_coord;
-		coord_type m_coord_step;
+		//coord_type m_coord;
+		//coord_type m_coord_step;
 
 	public:
 		// // GETTERS // //
@@ -43,9 +43,8 @@ namespace graphics {
 		int y_start()           { return m_y_start; }
 		int y_end()             { return m_y_end;   }
 		bgra_color_type col()   { return m_color; }
-		coord_type coord()      { return m_coord_test; }
+		coord_type coord()      { return m_coord; }
 		// // TRIAL BIT // //
-		coord_type coord_test() { return m_coord_test; }
 		float z()				{ return m_z; }
 		// // END TRIAL // //
 
@@ -105,14 +104,10 @@ namespace graphics {
 				point_type(s_gradients.color(min_y_vert_index)) +
 				s_gradients.col_x_step() * x_prestep +
 				s_gradients.col_y_step() * y_prestep;
-			m_coord =
-				coord_type(s_gradients.coord(min_y_vert_index)) +
-				s_gradients.coord_x_step() * x_prestep +
-				s_gradients.coord_y_step() * y_prestep;
 			// // This is how much the colour changes when you step one y unit along the edge.
 			m_col_step = s_gradients.col_y_step() + s_gradients.col_x_step()*m_x_step;
 			// // This is how much the coord will change by
-			m_coord_step = s_gradients.coord_y_step() + s_gradients.coord_x_step()*m_x_step;
+
 
 		}
 
@@ -121,17 +116,16 @@ namespace graphics {
 
 			m_x         += m_x_step;
 			m_color     += m_col_step;
-			m_coord     += m_coord_step;
 
 			// // TRIAL BIT // //
 			m_y_percent += m_y_percent_step;
 			++m_y;
 			m_z = lerp(m_start_z, m_end_z, m_y_percent);
-			m_coord_test.s = lerp(m_start_coord.s, m_end_coord.s,
+			m_coord.s = lerp(m_start_coord.s, m_end_coord.s,
 				(m_x*m_z - m_start.m_pos.x*m_z) /
 				(m_end.m_pos.x*m_z - m_start.m_pos.x*m_z)
 			);
-			m_coord_test.t = lerp(m_start_coord.t, m_end_coord.t,
+			m_coord.t = lerp(m_start_coord.t, m_end_coord.t,
 				(m_y*m_z - m_start.m_pos.y*m_z) /
 				(m_end.m_pos.y*m_z - m_start.m_pos.y*m_z)
 			);

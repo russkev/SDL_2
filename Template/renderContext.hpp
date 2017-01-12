@@ -151,67 +151,41 @@ namespace graphics {
 			auto x_max  = int(ceil(right.x()));
 			if (x_min > x_max) std::swap(x_min, x_max);
 			
-			float x_prestep = x_min - left.x();
-
-			// // TRIAL BIT // //
-			float percentage_along_screen_line = 0;
+			float alpha_screen_line = 0;
 			vec2  alpha_3d_line;
-			float percentage_along_3d_line_y = 0;
 			float z = 0;
-			coord_type coord_test;
-			point_type left_3d;
-			point_type middle_3d;
-			point_type right_3d;
+			coord_type f_coord = left.coord();
+			ivec2 i_coord;
+			vec2 left_3d;
+			vec2 middle_3d;
+			vec2 right_3d;
 
 
-			left_3d  = { left.x()*left.z(), j*left.z(), left.z(), left.z() };
-			right_3d = { right.x()*right.z(), j*right.z(), right.z(), right.z() };
-			// // END TRIAL // //
-			
-			
-			// // Work out what the next step for each calculation to reduce errors to do with precision
-			coord_type coord_x_step = (right.coord() - left.coord()) / (right.x() - left.x()); 
-			// // Calculate start coordinate
-			coord_type coord = left.coord_test() + coord_x_step * x_prestep;
+			left_3d  = { left.x()*left.z(), j*left.z() };
+			right_3d = { right.x()*right.z(), j*right.z() };
 
-			// // USE FOR COLOUR GRADIENT // //
-			//vec4 float_color      = vec4(left.col());
-			//bgra_color_type color = bgra_color_type(float_color);
-			// // END COLOUR GRADIENT     // //
-			//auto test_width = s_texture.width();
+			// if (left.z() > right.z()) { std::swap(left_3d, right_3d); }
 
 
 			for (int i = x_min; i < x_max; ++i) {
-				// // TRIAL BIT // //
-				percentage_along_screen_line = (i - left.x())/(right.x() - left.x());
-				z = lerp(left.z(), right.z(), percentage_along_screen_line);
-				middle_3d = { z*i, z*j, z, z };
-				
-				//x_3d = { left.x()*left.z(), i*z, right.x()*right.z() };
-				//float percentage_along_3d_line_x = (i*z - left.x()*left.z()) / (right.x()*right.z() - left.x()*left.z());
-				//percentage_along_3d_line_x = (x_3d.y - x_3d.x) / (x_3d.z - x_3d.x);
-				//percentage_along_3d_line_y = (j*z - j*left.z()) / (j*right.z() - j*left.z());
-				//alpha_3d_line.x = alpha(left_3d.x, right_3d.x, middle_3d.x);
-				//alpha_3d_line.y = alpha(left_3d.y, right_3d.y, middle_3d.y);
+
+				alpha_screen_line = alpha(left.x(), right.x(), i);
+				z = lerp(left.z(), right.z(), alpha_screen_line);
+
+
+				middle_3d = { z*i, z*j };
+
 				alpha_3d_line = alpha(left_3d, right_3d, middle_3d);
 
-				coord_test = lerp(left.coord(), right.coord(), alpha_3d_line);
+				f_coord = lerp(left.coord(), right.coord(), alpha_3d_line);
+				i_coord = { int(ceil(f_coord.s)), int(ceil(f_coord.y)) };
 
-				
-				if (coord_test.s > 255 || coord_test.t > 255){//float(s_texture.width())){// || coord_test.t > float(s_texture.height())) {
+				if (out_of_bounds(s_texture.dimensions(), i_coord)){
 					__debugbreak();
 				}
 
-				// // END TRIAL // //
-
 				// // i is screen x, j is screen y
-				m_view[j][i] = s_texture.get_texture(int(coord_test.s), int(coord_test.t));
-				//coord += coord_x_step;
-
-				// // USE FOR COLOUR GRADIENT // //
-				//float_color += s_gradients.col_x_step();
-				//color = bgra_color_type(clamp(float_color, vec4(0,0,0,0), vec4(255,255,255,255)));
-				// // END COLOUR GRADIENT     // //
+				m_view[j][i] = s_texture.get_texture(i_coord.s, i_coord.t);
 			}
 		}
 	};

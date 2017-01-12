@@ -49,9 +49,9 @@ namespace graphics {
 			return m_out_texture[(y % m_height) * m_width + (x % m_width)]; // Finds correct coord, loops if necessary
 		}
 
-		float width()      { return float(m_width); }
-		float height()     { return float(m_height); }
-		ivec2 dimensions() { return m_dimensions; }
+		float width() const      { return float(m_width); }
+		float height() const     { return float(m_height); }
+		ivec2 dimensions() const { return m_dimensions; }
 	};
 
 }

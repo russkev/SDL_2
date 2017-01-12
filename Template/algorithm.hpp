@@ -51,6 +51,15 @@ namespace graphics {
 		return std::common_type_t<_Atype, _Btype>((q - a) / (b - a));
 	}
 
+	// Check if input is out of bounds
+	template <typename _dimensionType, typename _checkType>
+	bool out_of_bounds(const _dimensionType& a, const _checkType& b) {
+		return (
+			b.x > a.x || b.x < 0 ||
+			b.y > a.y || b.y < 0
+			);
+	}
+
     // Blend source element with destination element depending on source element alpha channel
     template <typename _View, typename _Coord>
     auto blend_element ( // Takes view, pixel coordinate and color
