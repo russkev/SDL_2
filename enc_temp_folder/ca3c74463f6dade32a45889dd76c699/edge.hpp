@@ -76,7 +76,6 @@ namespace graphics {
 
 			m_y_alpha_step = 1/(float(m_y_end) - float(m_y_start));
 			float y_alpha_prestep = (float(m_y_start) - start.m_pos.y) * m_y_alpha_step;
-			//float x_alpha_prestep = v/
 			m_y_alpha = y_alpha_prestep;
 
 			// // m_z is the scale factor
