@@ -18,10 +18,10 @@ namespace graphics {
 		int m_y_end;
 	
 		// // TRIAL BIT // //
-		float m_y_percent;
-		float m_y_percent_step;
+		float m_y_alpha;
+		float m_y_alpha_step;
 		float m_z;
-		float m_y;
+		int m_y;
 		float m_start_z;
 		float m_end_z;
 		vertex m_start;
@@ -56,14 +56,17 @@ namespace graphics {
 			const vertex& end,
 			int min_y_vert_index
 		):
-		m_start(start), m_end(end)		
+			m_start(start), m_end(end), 
+			m_y_start(int(ceil(start.m_pos.y))), m_y_end(int(ceil(end.m_pos.y)))
 		{
-			m_y_start = int(ceil(start.m_pos.y));
-			m_y_end =   int(ceil(  end.m_pos.y));
 
 
 			// // TRIAL BIT // // 
-			m_y = float(m_y_start);
+			if (m_start.m_pos.y > m_end.m_pos.y) {
+				__debugbreak();
+			}
+
+			m_y = m_y_start;
 
 			m_start_z = start.m_pos.w;
 			m_end_z = end.m_pos.w;
@@ -71,12 +74,13 @@ namespace graphics {
 			m_start_coord = start.m_coord;
 			m_end_coord = end.m_coord;
 
-			m_y_percent_step = 1/(float(m_y_end) - float(m_y_start));
-			float y_percent_prestep = (float(m_y_start) - start.m_pos.y) * m_y_percent_step;
-			m_y_percent = y_percent_prestep;
+			m_y_alpha_step = 1/(float(m_y_end) - float(m_y_start));
+			float y_alpha_prestep = (float(m_y_start) - start.m_pos.y) * m_y_alpha_step;
+			m_y_alpha = y_alpha_prestep;
 
 			// // m_z is the scale factor
-			m_z = (start.m_pos.w * (1 - y_percent_prestep)) + (end.m_pos.w * y_percent_prestep);
+			m_z = (start.m_pos.w * (1 - y_alpha_prestep)) + (end.m_pos.w * y_alpha_prestep);
+			
 			// // END TRIAL // //
 			
 			
@@ -118,9 +122,9 @@ namespace graphics {
 			m_color     += m_col_step;
 
 			// // TRIAL BIT // //
-			m_y_percent += m_y_percent_step;
+			m_y_alpha += m_y_alpha_step;
 			++m_y;
-			m_z = lerp(m_start_z, m_end_z, m_y_percent);
+			m_z = lerp(m_start_z, m_end_z, m_y_alpha);
 			m_coord.s = lerp(m_start_coord.s, m_end_coord.s,
 				(m_x*m_z - m_start.m_pos.x*m_z) /
 				(m_end.m_pos.x*m_z - m_start.m_pos.x*m_z)
