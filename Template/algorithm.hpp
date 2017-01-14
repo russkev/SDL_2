@@ -60,6 +60,14 @@ namespace graphics {
 			);
 	}
 
+	// Find the percentage between a and b that q is.
+	template <typename _Atype, typename _Btype>
+	auto length_2d(const _Atype& a, const _Btype& b) {
+		return float(
+			sqrt(dot(b-a,b-a))
+			);
+	}
+
     // Blend source element with destination element depending on source element alpha channel
     template <typename _View, typename _Coord>
     auto blend_element ( // Takes view, pixel coordinate and color

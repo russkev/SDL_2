@@ -172,6 +172,18 @@ namespace graphics {
 				alpha_screen_line = alpha(left.x(), right.x(), i);
 				z = lerp(left.z(), right.z(), alpha_screen_line);
 
+
+				vec3 v_a_vec3 = { left.x()*left.z(), j*left.z(), left.z() };
+				vec3 v_b_vec3 = { i*z, j*z, z };
+				vec3 v_c_vec3 = { right.x()*right.z(), j*right.z(), right.z() };
+
+				float start_middle_length = distance(v_a_vec3, v_b_vec3);
+				float start_end_length = distance(v_a_vec3, v_c_vec3);
+				if (start_middle_length > start_end_length) {
+					__debugbreak;
+				}
+				float alpha_3d_2 = start_middle_length / start_end_length;
+
 				float alpha_3d_x = alpha(left_3d.x, right_3d.x, z*i);
 				vec2 alpha_3d = { alpha_3d_x, alpha_3d_x };
 				//vec2 middle_3d_test = { z*i, lerp(left_3d.y, right_3d.y, alpha_3d_x) };
@@ -180,7 +192,7 @@ namespace graphics {
 
 				//alpha_3d_line = alpha(left_3d, right_3d, middle_3d);
 
-				f_coord = lerp(left.coord(), right.coord(), alpha_3d);
+				f_coord = lerp(left.coord(), right.coord(), alpha_3d_2);
 				i_coord = { int(ceil(f_coord.s)), int(ceil(f_coord.y)) };
 
 				if (out_of_bounds(s_texture.dimensions(), i_coord)){
