@@ -166,6 +166,14 @@ namespace graphics {
 
 			// if (left.z() > right.z()) { std::swap(left_3d, right_3d); }
 
+			// // TEMP // // 
+			if (
+				right.y_start() < 200 &&
+				left.x_start() < right.x_start() - 30 &&
+				j > 600
+				) {
+				__debugbreak();
+			}
 
 			for (int i = x_min; i < x_max; ++i) {
 
@@ -198,6 +206,8 @@ namespace graphics {
 				if (out_of_bounds(s_texture.dimensions(), i_coord)){
 					__debugbreak();
 				}
+
+
 
 				// // i is screen x, j is screen y
 				m_view[j][i] = s_texture.get_texture(i_coord.s, i_coord.t);

@@ -47,6 +47,9 @@ namespace graphics {
 		float x()               { return m_x; }
 		int y_start()           { return m_y_start; }
 		int y_end()             { return m_y_end;   }
+		float x_start()			{ return m_start.m_pos.x; }
+		float x_end()			{ return m_end.m_pos.x; }
+
 		bgra_color_type col()   { return m_color; }
 		coord_type coord()      { return m_coord; }
 		// // TRIAL BIT // //
