@@ -65,7 +65,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	);
 
 	// // TEST // //
-
+	float test_result = lerp(float(1.0f / 2.4f), float(1.0f / 3.6f), 0.5f);
 	// // END TEST // // 
 
 	// // FPS counter
