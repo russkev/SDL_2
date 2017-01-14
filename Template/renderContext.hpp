@@ -166,14 +166,15 @@ namespace graphics {
 
 			// if (left.z() > right.z()) { std::swap(left_3d, right_3d); }
 
-			// // TEMP // // 
-			if (
-				right.y_start() < 200 &&
-				left.x_start() < right.x_start() - 30 &&
-				j > 600
-				) {
-				__debugbreak();
-			}
+			//// // TEMP // // 
+			//if (
+			//	right.y_start() < 200 &&
+			//	left.x_start() < right.x_start() - 30 &&
+			//	j > 600
+			//	) {
+			//	__debugbreak();
+			//}
+			//// // END TEMP // //
 
 			for (int i = x_min; i < x_max; ++i) {
 

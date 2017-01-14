@@ -175,9 +175,12 @@ namespace graphics {
 			m_coord.t = lerp(m_start_coord.t, m_end_coord.t, alpha_3d);
 
 
-			//if (out_of_bounds(vec2(255, 255), m_coord)){
-			//	__debugbreak();
-			//}
+			if (m_start.m_pos.y > 500 && 
+				m_start.m_pos.x < 490 &&
+				m_y%20 == 0
+				){
+				__debugbreak();
+			}
 			// // END TRIAL // //
 		}
 	};
