@@ -41,9 +41,9 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	s_canvas.stroke_color(bgra_color_type(0, 0, 255, 255));
 
 	// // Create a triangle
-	vertex min_y_vert(point_type(0,  -5,  0,  1), coord_type(0,    0));
-	vertex mid_y_vert(point_type( -5, 5,  0,  1), coord_type(0,  255));
-	vertex max_y_vert(point_type( 5,  5,  0,  1), coord_type(255,  0));
+	vertex min_y_vert(point_type(0,  -5,  0,  1), coord_type(127, 0  ));
+	vertex mid_y_vert(point_type( -5, 5,  0,  1), coord_type(0,   255));
+	vertex max_y_vert(point_type( 5,  5,  0,  1), coord_type(255, 255));
 
 	// // Create a texture
 	xor_texture s_texture(256, 256);
@@ -65,7 +65,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	);
 
 	// // TEST // //
-
+	float test_result = lerp(float(5.0f / 3.0f), float(9.0f / 3.0f), 0.644f);
 	// // END TEST // // 
 
 	// // FPS counter
