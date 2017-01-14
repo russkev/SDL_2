@@ -1,0 +1,220 @@
+#include <vector>
+#include <thread>
+#include <future>
+
+#include <glm/glm.hpp>
+#include <glm/matrix.hpp>
+
+#include "math.hpp"
+#include "view.hpp"
+#include "algorithm.hpp"
+#include "edge.hpp"
+#include "gradients.hpp"
+#include "textures.hpp"
+
+#define USE_MULTITHREADING 0
+
+
+namespace graphics {
+	template<typename _View>
+	struct renderContext {
+		typedef _View view_type;
+		typedef std::vector<std::pair<int, int> > buffer_type;
+		typedef tvec4<std::uint8_t> bgra_color_type;
+		typedef vec4 point_type;
+		typedef xor_texture texture_type;
+		typedef vec2 coord_type;
+
+		renderContext(view_type& s_view) :
+			m_view(s_view),
+			m_scan_buffer(s_view.size().y * 2, { 0, 0 })
+		{}
+
+	private:
+		view_type& m_view;
+		buffer_type m_scan_buffer;
+
+
+
+	public:
+
+		void fill_triangle(
+			const vertex& p1, 
+			const vertex& p2, 
+			const vertex& p3,
+			const texture_type& s_texture
+		) {
+
+			mat4 screen_space_transform = init_screen_space_transform(float(m_view.size().x), float(m_view.size().y));
+			// // These coordinates are the coordinates compared to the screen before perspective divide
+			auto p1_pos = screen_space_transform*p1.m_pos;
+			auto p2_pos = screen_space_transform*p2.m_pos;
+			auto p3_pos = screen_space_transform*p3.m_pos;
+
+
+			// // Assign max, mid and min y vert arbitrarily, they will be sorted in next step
+			auto min_y_vert = vertex(perspective_divide(p1_pos), p1.m_coord, p1.m_col);
+			auto mid_y_vert = vertex(perspective_divide(p2_pos), p2.m_coord, p2.m_col);
+			auto max_y_vert = vertex(perspective_divide(p3_pos), p3.m_coord, p3.m_col);
+
+			// // Sort points so min, mid and max contain the correct values.
+			if (max_y_vert.m_pos.y < min_y_vert.m_pos.y) { std::swap(min_y_vert, max_y_vert); }
+			if (mid_y_vert.m_pos.y < min_y_vert.m_pos.y) { std::swap(min_y_vert, mid_y_vert); }
+			if (mid_y_vert.m_pos.y > max_y_vert.m_pos.y) { std::swap(max_y_vert, mid_y_vert); }
+
+			scan_triangle(min_y_vert, mid_y_vert, max_y_vert, s_texture);
+
+		}
+
+		void scan_square(
+			const vertex& tl,
+			const vertex& tr,
+			const vertex& bl,
+			const vertex& br
+			) {
+			gradients m_gradients(tl, tr, bl);
+			edge left (m_gradients, tl, bl, 0);
+			edge right(m_gradients, tr, br, 0);
+
+			scan_edges(m_gradients, left, right, left);
+		}
+
+
+	private:
+		void scan_triangle(const vertex& min_y_vert, const vertex& mid_y_vert, const vertex& max_y_vert, const texture_type& s_texture) {
+#if USE_MULTITHREADING
+			const auto s_num_threads = std::thread::hardware_concurrency();
+			std::vector<std::future<void>> s_threads;
+			s_threads.reserve(s_num_threads);
+			
+			for (uint i = 0; i < s_num_threads; ++i) {
+				s_threads.emplace_back(std::async(std::launch::async, [&, i]() {
+					gradients m_gradients (min_y_vert, mid_y_vert, max_y_vert);
+					edge top_to_bottom    (m_gradients, min_y_vert, max_y_vert, 0);
+					edge top_to_middle    (m_gradients, min_y_vert, mid_y_vert, 0);
+					edge middle_to_bottom (m_gradients, mid_y_vert, max_y_vert, 1);
+
+					// // If triangle is left handed, lead with top to middle, else lead with top to bottom
+					if (triangle_area(min_y_vert.m_pos, mid_y_vert.m_pos, max_y_vert.m_pos) >= 0) { 
+						scan_edges(top_to_middle,     top_to_bottom,     top_to_middle,    s_num_threads, i, s_texture);
+						scan_edges(middle_to_bottom,  top_to_bottom,     middle_to_bottom, s_num_threads, i, s_texture);
+					} else { 										
+						scan_edges(top_to_bottom,     top_to_middle,     top_to_middle,    s_num_threads, i, s_texture);
+						scan_edges(top_to_bottom,     middle_to_bottom,  middle_to_bottom, s_num_threads, i, s_texture);
+					}
+				}));
+			}
+
+			for (auto&t : s_threads) t.get();
+#else
+
+			gradients m_gradients(min_y_vert, mid_y_vert, max_y_vert);
+			edge top_to_bottom   (m_gradients, min_y_vert, max_y_vert, 0);
+			edge top_to_middle   (m_gradients, min_y_vert, mid_y_vert, 0);
+			edge middle_to_bottom(m_gradients, mid_y_vert, max_y_vert, 1);
+
+			// // If triangle is left handed, lead with top to middle, else lead with top to bottom
+			if (triangle_area(min_y_vert.m_pos, mid_y_vert.m_pos, max_y_vert.m_pos) >= 0) {
+				scan_edges(top_to_middle,    top_to_bottom,    top_to_middle   , s_texture);
+				scan_edges(middle_to_bottom, top_to_bottom,    middle_to_bottom, s_texture); 
+			} else {																		
+				scan_edges(top_to_bottom,    top_to_middle,    top_to_middle   , s_texture);
+				scan_edges(top_to_bottom,    middle_to_bottom, middle_to_bottom, s_texture);
+			}
+#endif
+
+		}
+
+		void scan_edges(edge& left, edge& right, edge& lead
+#if USE_MULTITHREADING
+			,unsigned every_nth, unsigned plus_i
+#endif
+			,const texture_type& s_texture
+			)
+		{
+			for (int j = lead.y_start(); j < lead.y_end(); ++j) {
+#if USE_MULTITHREADING
+				if (((j - lead.y_start()) % every_nth) == plus_i) {
+					draw_scan_line(s_gradients, left, right, j, s_texture);
+				}
+#else
+				draw_scan_line(left, right, j, s_texture);
+#endif
+				left.step();
+				right.step();
+			}
+		}
+
+		void draw_scan_line(edge& left, edge& right, int j, const texture_type& s_texture) {
+
+			auto x_min  = int(ceil(left.x()));
+			auto x_max  = int(ceil(right.x()));
+			if (x_min > x_max) std::swap(x_min, x_max);
+			
+			float alpha_screen_line = 0;
+			vec2  alpha_3d_line;
+			float z = 0;
+			coord_type f_coord = left.coord();
+			ivec2 i_coord;
+			vec2 left_3d;
+			vec2 middle_3d;
+			vec2 right_3d;
+
+
+			left_3d  = { left.x()*left.z(), j*left.z() };
+			right_3d = { right.x()*right.z(), j*right.z() };
+
+			// if (left.z() > right.z()) { std::swap(left_3d, right_3d); }
+
+			//// // TEMP // // 
+			//if (
+			//	right.y_start() < 200 &&
+			//	left.x_start() < right.x_start() - 30 &&
+			//	j > 600
+			//	) {
+			//	__debugbreak();
+			//}
+			//// // END TEMP // //
+
+			for (int i = x_min; i < x_max; ++i) {
+
+				alpha_screen_line = alpha(left.x(), right.x(), i);
+				z = lerp(left.z(), right.z(), alpha_screen_line);
+
+
+				vec3 v_a_vec3 = { left.x()*left.z(), j*left.z(), left.z() };
+				vec3 v_b_vec3 = { i*z, j*z, z };
+				vec3 v_c_vec3 = { right.x()*right.z(), j*right.z(), right.z() };
+
+				float start_middle_length = distance(v_a_vec3, v_b_vec3);
+				float start_end_length = distance(v_a_vec3, v_c_vec3);
+				if (start_middle_length > start_end_length) {
+					__debugbreak;
+				}
+				float alpha_3d_2 = start_middle_length / start_end_length;
+
+				float alpha_3d_x = alpha(left_3d.x, right_3d.x, z*i);
+				vec2 alpha_3d = { alpha_3d_x, alpha_3d_x };
+				//vec2 middle_3d_test = { z*i, lerp(left_3d.y, right_3d.y, alpha_3d_x) };
+
+				//middle_3d = { z*i, z*j };
+
+				//alpha_3d_line = alpha(left_3d, right_3d, middle_3d);
+
+				f_coord = lerp(left.coord(), right.coord(), alpha_3d_2);
+				i_coord = { int(ceil(f_coord.s)), int(ceil(f_coord.y)) };
+
+				if (out_of_bounds(s_texture.dimensions(), i_coord)){
+					__debugbreak();
+				}
+
+
+
+				// // i is screen x, j is screen y
+				m_view[j][i] = s_texture.get_texture(i_coord.s, i_coord.t);
+			}
+		}
+	};
+
+
+}

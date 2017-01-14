@@ -147,68 +147,8 @@ namespace graphics {
 
 		void draw_scan_line(edge& left, edge& right, int j, const texture_type& s_texture) {
 
-			auto x_min  = int(ceil(left.x()));
-			auto x_max  = int(ceil(right.x()));
-			if (x_min > x_max) std::swap(x_min, x_max);
-			
-			float alpha_screen_line = 0;
-			vec2  alpha_3d_line;
-			float z = 0;
-			coord_type f_coord = left.coord();
-			ivec2 i_coord;
-			vec2 left_3d;
-			vec2 middle_3d;
-			vec2 right_3d;
-
-
-			left_3d  = { left.x()*left.z(), j*left.z() };
-			right_3d = { right.x()*right.z(), j*right.z() };
-
-			// if (left.z() > right.z()) { std::swap(left_3d, right_3d); }
-
-			//// // TEMP // // 
-			//if (
-			//	right.y_start() < 200 &&
-			//	left.x_start() < right.x_start() - 30 &&
-			//	j > 600
-			//	) {
-			//	__debugbreak();
-			//}
-			//// // END TEMP // //
 
 			for (int i = x_min; i < x_max; ++i) {
-
-				alpha_screen_line = alpha(left.x(), right.x(), i);
-				z = lerp(left.z(), right.z(), alpha_screen_line);
-
-
-				vec3 v_a_vec3 = { left.x()*left.z(), j*left.z(), left.z() };
-				vec3 v_b_vec3 = { i*z, j*z, z };
-				vec3 v_c_vec3 = { right.x()*right.z(), j*right.z(), right.z() };
-
-				float start_middle_length = distance(v_a_vec3, v_b_vec3);
-				float start_end_length = distance(v_a_vec3, v_c_vec3);
-				if (start_middle_length > start_end_length) {
-					__debugbreak;
-				}
-				float alpha_3d_2 = start_middle_length / start_end_length;
-
-				float alpha_3d_x = alpha(left_3d.x, right_3d.x, z*i);
-				vec2 alpha_3d = { alpha_3d_x, alpha_3d_x };
-				//vec2 middle_3d_test = { z*i, lerp(left_3d.y, right_3d.y, alpha_3d_x) };
-
-				//middle_3d = { z*i, z*j };
-
-				//alpha_3d_line = alpha(left_3d, right_3d, middle_3d);
-
-				f_coord = lerp(left.coord(), right.coord(), alpha_3d_2);
-				i_coord = { int(ceil(f_coord.s)), int(ceil(f_coord.y)) };
-
-				if (out_of_bounds(s_texture.dimensions(), i_coord)){
-					__debugbreak();
-				}
-
-
 
 				// // i is screen x, j is screen y
 				m_view[j][i] = s_texture.get_texture(i_coord.s, i_coord.t);
