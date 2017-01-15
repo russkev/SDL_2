@@ -14,8 +14,8 @@ namespace graphics {
 
 	private:
 		// // Member variables
-		coord_type m_coord_over_z_x_step;
-		coord_type m_coord_over_z_y_step;
+		coord_type m_coord_over_z_s_step;
+		coord_type m_coord_over_z_t_step;
 		float m_one_over_z_x_step;
 		float m_one_over_z_y_step;
 
@@ -27,8 +27,8 @@ namespace graphics {
 
 	public:
 		// // Getters
-		coord_type coord_over_z_x_step() { return m_coord_over_z_x_step; }
-		coord_type coord_over_z_y_step() { return m_coord_over_z_y_step; }
+		coord_type coord_over_z_s_step() { return m_coord_over_z_s_step; }
+		coord_type coord_over_z_t_step() { return m_coord_over_z_t_step; }
 
 		float one_over_z_x_step() { return m_one_over_z_x_step; }
 		float one_over_z_y_step() { return m_one_over_z_y_step; }
@@ -67,8 +67,8 @@ namespace graphics {
 
 
 
-			m_coord_over_z_x_step = calc_x_step(m_coord_over_zs, min_y_vert, mid_y_vert, max_y_vert, one_over_dx);
-			m_coord_over_z_y_step = calc_y_step(m_coord_over_zs, min_y_vert, mid_y_vert, max_y_vert, one_over_dy);
+			m_coord_over_z_s_step = calc_x_step(m_coord_over_zs, min_y_vert, mid_y_vert, max_y_vert, one_over_dx);
+			m_coord_over_z_t_step = calc_y_step(m_coord_over_zs, min_y_vert, mid_y_vert, max_y_vert, one_over_dy);
 
 			m_one_over_z_x_step = calc_x_step(m_one_over_zs, min_y_vert, mid_y_vert, max_y_vert, one_over_dx);
 			m_one_over_z_y_step = calc_y_step(m_one_over_zs, min_y_vert, mid_y_vert, max_y_vert, one_over_dy);

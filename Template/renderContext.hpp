@@ -161,8 +161,8 @@ namespace graphics {
 			for (int i = x_min; i < x_max; ++i) {
 				float z = 1 / one_over_z;
 				vec2 source = {
-					(coord_over_z.x * z + 0.5), 
-					(coord_over_z.y * z + 0.5)
+					(coord_over_z.s * z + 0.5), 
+					(coord_over_z.t * z + 0.5)
 				};
 
 

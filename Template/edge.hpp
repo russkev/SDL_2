@@ -57,10 +57,10 @@ namespace graphics {
 			// // Colour to start with after prestep offset has been taken into account:
 			m_coord_over_z =
 				coord_type(s_gradients.coord(min_y_vert_index)) +
-				s_gradients.coord_over_z_x_step() * x_prestep +
-				s_gradients.coord_over_z_y_step() * y_prestep;
+				s_gradients.coord_over_z_s_step() * x_prestep +
+				s_gradients.coord_over_z_t_step() * y_prestep;
 			// // This is how much the coord will change by
-			m_coord_over_z_step = s_gradients.coord_over_z_y_step() + s_gradients.coord_over_z_x_step()*m_x_step;
+			m_coord_over_z_step = s_gradients.coord_over_z_t_step() + s_gradients.coord_over_z_s_step()*m_x_step;
 
 
 			m_one_over_z =

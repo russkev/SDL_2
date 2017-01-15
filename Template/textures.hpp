@@ -37,18 +37,18 @@ namespace graphics {
 			m_dimensions(float(s_width), float(s_height)),
 			m_out_texture(std::make_unique<bgra_color_type[]> (s_width * s_height))
 		{
-			for (int64 y = 0; y < m_height; ++y) {
-				for (int64 x = 0; x < m_width; ++x) {
-					auto col = uint8_t(x ^ y);
-					m_out_texture[y * m_width + x] = bgra_color_type(col % 128, col % 64, col, 255);
+			for (int64 t = 0; t < m_height; ++t) {
+				for (int64 s = 0; s < m_width; ++s) {
+					auto col = uint8_t(s ^ t);
+					m_out_texture[t * m_width + s] = bgra_color_type(col % 128, col % 64, col, 255);
 				};
 			};
 		}
 		// // Getter // //
-		bgra_color_type get_texture(float x, float y) const {
-			int64 x_texture = int64(ceil(x*float(m_width  -1))) ;
-			int64 y_texture = int64(ceil(y*float(m_height -1))) ;
-			return m_out_texture[(y_texture % m_height) * m_width + (x_texture % m_width)]; // Finds correct coord, loops if necessary
+		bgra_color_type get_texture(float s, float t) const {
+			int64 s_texture = int64(ceil(s*float(m_width  -1))) ;
+			int64 t_texture = int64(ceil(t*float(m_height -1))) ;
+			return m_out_texture[(t_texture % m_height) * m_width + (s_texture % m_width)]; // Finds correct coord, loops if necessary
 		}
 
 		int64 width() const		 { return m_width; }
