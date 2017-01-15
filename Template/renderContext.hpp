@@ -12,7 +12,7 @@
 #include "gradients.hpp"
 #include "textures.hpp"
 
-#define USE_MULTITHREADING 0
+#define USE_MULTITHREADING 1
 
 
 namespace graphics {
@@ -130,7 +130,7 @@ namespace graphics {
 			for (int j = lead.y_start(); j < lead.y_end(); ++j) {
 #if USE_MULTITHREADING
 				if (((j - lead.y_start()) % every_nth) == plus_i) {
-					draw_scan_line(s_gradients, left, right, j, s_texture);
+					draw_scan_line(left, right, j, s_texture);
 				}
 #else
 				draw_scan_line(left, right, j, s_texture);
