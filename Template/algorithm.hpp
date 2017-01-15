@@ -45,6 +45,11 @@ namespace graphics {
 		return std::common_type_t<_Atype, _Btype>(a*(_Qtype(1) - q) + q*b);
     }
 
+	template <typename _Atype, typename _Btype, typename _Qtype>
+	auto lerp_2d(const _Atype& a, const _Btype& b, _Qtype q) {
+		return std::common_type_t<_Atype, _Btype>(a*(_Qtype(1) - q) + q*b);
+	}
+
     // Blend source element with destination element depending on source element alpha channel
     template <typename _View, typename _Coord>
     auto blend_element ( // Takes view, pixel coordinate and color

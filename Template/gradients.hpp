@@ -14,22 +14,16 @@ namespace graphics {
 
 	private:
 		// // Member variables
-		point_type m_col_x_step;
-		point_type m_col_y_step;
 		coord_type m_coord_x_step;
 		coord_type m_coord_y_step;
-		std::vector<bgra_color_type> m_colors;
 		std::vector<coord_type> m_coords;
 
 
 
 	public:
 		// // Getters
-		point_type col_x_step()   { return m_col_x_step; }
-		point_type col_y_step()   { return m_col_y_step; }
 		coord_type coord_x_step() { return m_coord_x_step; }
 		coord_type coord_y_step() { return m_coord_y_step; }
-		bgra_color_type color(int index) { return m_colors.at(index); }
 		coord_type      coord(int index) { return m_coords.at(index); }
 
 		// // Constructor
@@ -47,43 +41,37 @@ namespace graphics {
 			float		one_over_dy;
 
 			// // Make vectors
-			m_colors.push_back(min_y_vert.m_col);
-			m_colors.push_back(mid_y_vert.m_col);
-			m_colors.push_back(max_y_vert.m_col);
-
 			m_coords.push_back(min_y_vert.m_coord);
 			m_coords.push_back(mid_y_vert.m_coord);
 			m_coords.push_back(max_y_vert.m_coord);
 
 
 			// // Interpolation equation
-			d_color_x =
-				(vec4(mid_y_vert.m_col) - vec4(max_y_vert.m_col))*(min_y_vert.m_pos.y - max_y_vert.m_pos.y) - 
-				(vec4(min_y_vert.m_col) - vec4(max_y_vert.m_col))*(mid_y_vert.m_pos.y - max_y_vert.m_pos.y);
-			d_color_y = 
-				(vec4(mid_y_vert.m_col) - vec4(max_y_vert.m_col))*(min_y_vert.m_pos.x - max_y_vert.m_pos.x) -
-				(vec4(min_y_vert.m_col) - vec4(max_y_vert.m_col))*(mid_y_vert.m_pos.x - max_y_vert.m_pos.x);
-
-			d_coord_x =
-				(vec2(mid_y_vert.m_coord) - vec2(max_y_vert.m_coord))*(min_y_vert.m_pos.y - max_y_vert.m_pos.y) -
-				(vec2(min_y_vert.m_coord) - vec2(max_y_vert.m_coord))*(mid_y_vert.m_pos.y - max_y_vert.m_pos.y);
-			d_coord_y =			   							  
-				(vec2(mid_y_vert.m_coord) - vec2(max_y_vert.m_coord))*(min_y_vert.m_pos.x - max_y_vert.m_pos.x) -
-				(vec2(min_y_vert.m_coord) - vec2(max_y_vert.m_coord))*(mid_y_vert.m_pos.x - max_y_vert.m_pos.x);
 
 			one_over_dx =
 				((mid_y_vert.m_pos.x - max_y_vert.m_pos.x) * (min_y_vert.m_pos.y - max_y_vert.m_pos.y)) - 
 				((min_y_vert.m_pos.x - max_y_vert.m_pos.x) * (mid_y_vert.m_pos.y - max_y_vert.m_pos.y));
 			one_over_dy = -one_over_dx;
 
-			m_col_x_step = d_color_x / one_over_dx;
-			m_col_y_step = d_color_y / one_over_dy;
-
-			m_coord_x_step = d_coord_x / one_over_dx;
-			m_coord_y_step = d_coord_y / one_over_dy;
+			m_coord_x_step = calc_x_step(m_coords, min_y_vert, mid_y_vert, max_y_vert, one_over_dx);
+			m_coord_y_step = calc_y_step(m_coords, min_y_vert, mid_y_vert, max_y_vert, one_over_dy);
 		}
 
-		
+		template <typename interpolant>
+		auto calc_x_step(const std::vector < interpolant >& values, const vertex& min_y_vert, const vertex& mid_y_vert, const vertex& max_y_vert, float one_over_dx) {
+			return
+				((values.at(1) - values.at(2)) * (min_y_vert.m_pos.y - max_y_vert.m_pos.y) - 
+				 (values.at(0) - values.at(2)) * (mid_y_vert.m_pos.y - max_y_vert.m_pos.y)) / 
+				one_over_dx;
+		}
+
+		template <typename interpolant>
+		auto calc_y_step(const std::vector < interpolant >& values, const vertex& min_y_vert, const vertex& mid_y_vert, const vertex& max_y_vert, float one_over_dy) {
+			return
+				((values.at(1) - values.at(2)) * (min_y_vert.m_pos.x - max_y_vert.m_pos.x) -
+				(values.at(0) - values.at(2)) * (mid_y_vert.m_pos.x - max_y_vert.m_pos.x)) /
+				one_over_dy;
+		}
 	};
 
 
