@@ -16,15 +16,25 @@ namespace graphics {
 		// // Member variables
 		coord_type m_coord_x_step;
 		coord_type m_coord_y_step;
+		float m_one_over_z_x_step;
+		float m_one_over_z_y_step;
+
+
 		std::vector<coord_type> m_coords;
+		std::vector<float> m_one_over_zs;
 
 
 
 	public:
 		// // Getters
 		coord_type coord_x_step() { return m_coord_x_step; }
-		coord_type coord_y_step() { return m_coord_y_step; }
+		coord_type coord_y_step() { return m_coord_y_step; }    
+		float one_over_z_x_step() { return m_one_over_z_x_step; }
+		float one_over_z_y_step() { return m_one_over_z_y_step; }
+
+
 		coord_type      coord(int index) { return m_coords.at(index); }
+		float	   one_over_z(int index) { return m_one_over_zs.at(index); }
 
 		// // Constructor
 		gradients(
@@ -33,10 +43,6 @@ namespace graphics {
 			const vertex& max_y_vert
 		) {
 			// // Constructor variables
-			point_type	d_color_x;
-			point_type	d_color_y;
-			coord_type	d_coord_x;
-			coord_type	d_coord_y;
 			float		one_over_dx;
 			float		one_over_dy;
 
@@ -45,16 +51,26 @@ namespace graphics {
 			m_coords.push_back(mid_y_vert.m_coord);
 			m_coords.push_back(max_y_vert.m_coord);
 
+			m_one_over_zs.push_back(1 / min_y_vert.m_pos.w);
+			m_one_over_zs.push_back(1 / mid_y_vert.m_pos.w);
+			m_one_over_zs.push_back(1 / max_y_vert.m_pos.w);
+
 
 			// // Interpolation equation
+			// // Basically the x and y steps can be pre-calculated so that you don't have to calculate it every time for every edge
 
 			one_over_dx =
 				((mid_y_vert.m_pos.x - max_y_vert.m_pos.x) * (min_y_vert.m_pos.y - max_y_vert.m_pos.y)) - 
 				((min_y_vert.m_pos.x - max_y_vert.m_pos.x) * (mid_y_vert.m_pos.y - max_y_vert.m_pos.y));
 			one_over_dy = -one_over_dx;
 
+
+
 			m_coord_x_step = calc_x_step(m_coords, min_y_vert, mid_y_vert, max_y_vert, one_over_dx);
 			m_coord_y_step = calc_y_step(m_coords, min_y_vert, mid_y_vert, max_y_vert, one_over_dy);
+
+			m_one_over_z_x_step = calc_x_step(m_one_over_zs, min_y_vert, mid_y_vert, max_y_vert, one_over_dx);
+			m_one_over_z_y_step = calc_y_step(m_one_over_zs, min_y_vert, mid_y_vert, max_y_vert, one_over_dy);
 		}
 
 		template <typename interpolant>
