@@ -14,26 +14,27 @@ namespace graphics {
 
 	private:
 		// // Member variables
-		coord_type m_coord_x_step;
-		coord_type m_coord_y_step;
+		coord_type m_coord_over_z_x_step;
+		coord_type m_coord_over_z_y_step;
 		float m_one_over_z_x_step;
 		float m_one_over_z_y_step;
 
 
-		std::vector<coord_type> m_coords;
+		std::vector<coord_type> m_coord_over_zs;
 		std::vector<float> m_one_over_zs;
 
 
 
 	public:
 		// // Getters
-		coord_type coord_x_step() { return m_coord_x_step; }
-		coord_type coord_y_step() { return m_coord_y_step; }    
+		coord_type coord_over_z_x_step() { return m_coord_over_z_x_step; }
+		coord_type coord_over_z_y_step() { return m_coord_over_z_y_step; }
+
 		float one_over_z_x_step() { return m_one_over_z_x_step; }
 		float one_over_z_y_step() { return m_one_over_z_y_step; }
 
 
-		coord_type      coord(int index) { return m_coords.at(index); }
+		coord_type      coord(int index) { return m_coord_over_zs.at(index); }
 		float	   one_over_z(int index) { return m_one_over_zs.at(index); }
 
 		// // Constructor
@@ -47,13 +48,13 @@ namespace graphics {
 			float		one_over_dy;
 
 			// // Make vectors
-			m_coords.push_back(min_y_vert.m_coord);
-			m_coords.push_back(mid_y_vert.m_coord);
-			m_coords.push_back(max_y_vert.m_coord);
-
 			m_one_over_zs.push_back(1 / min_y_vert.m_pos.w);
 			m_one_over_zs.push_back(1 / mid_y_vert.m_pos.w);
 			m_one_over_zs.push_back(1 / max_y_vert.m_pos.w);
+
+			m_coord_over_zs.push_back(min_y_vert.m_coord * m_one_over_zs.at(0));
+			m_coord_over_zs.push_back(mid_y_vert.m_coord * m_one_over_zs.at(1));
+			m_coord_over_zs.push_back(max_y_vert.m_coord * m_one_over_zs.at(2));
 
 
 			// // Interpolation equation
@@ -66,8 +67,8 @@ namespace graphics {
 
 
 
-			m_coord_x_step = calc_x_step(m_coords, min_y_vert, mid_y_vert, max_y_vert, one_over_dx);
-			m_coord_y_step = calc_y_step(m_coords, min_y_vert, mid_y_vert, max_y_vert, one_over_dy);
+			m_coord_over_z_x_step = calc_x_step(m_coord_over_zs, min_y_vert, mid_y_vert, max_y_vert, one_over_dx);
+			m_coord_over_z_y_step = calc_y_step(m_coord_over_zs, min_y_vert, mid_y_vert, max_y_vert, one_over_dy);
 
 			m_one_over_z_x_step = calc_x_step(m_one_over_zs, min_y_vert, mid_y_vert, max_y_vert, one_over_dx);
 			m_one_over_z_y_step = calc_y_step(m_one_over_zs, min_y_vert, mid_y_vert, max_y_vert, one_over_dy);

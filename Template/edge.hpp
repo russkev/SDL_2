@@ -16,19 +16,19 @@ namespace graphics {
 		float m_x_step;
 		int m_y_start;
 		int m_y_end;
-		coord_type m_coord;
-		coord_type m_coord_step;
+		coord_type m_coord_over_z;
+		coord_type m_coord_over_z_step;
 
 		float m_one_over_z;
 		float m_one_over_z_step;
 
 	public:
 		// // Getters:
-		float x()             { return m_x; }
-		int y_start()         { return m_y_start; }
-		int y_end()           { return m_y_end;   }
-		coord_type coord()    { return m_coord; }
-		float one_over_z()    { return m_one_over_z;}
+		float x()					 { return m_x; }
+		int y_start()				 { return m_y_start; }
+		int y_end()					 { return m_y_end;   }
+		coord_type coord_over_z()    { return m_coord_over_z; }
+		float one_over_z()			 { return m_one_over_z;}
 
 
 
@@ -55,12 +55,12 @@ namespace graphics {
 			// // x_prestep is just the dustance between the above m_x and the rounded start point.
 			float x_prestep = m_x - start.m_pos.x;
 			// // Colour to start with after prestep offset has been taken into account:
-			m_coord =
+			m_coord_over_z =
 				coord_type(s_gradients.coord(min_y_vert_index)) +
-				s_gradients.coord_x_step() * x_prestep +
-				s_gradients.coord_y_step() * y_prestep;
+				s_gradients.coord_over_z_x_step() * x_prestep +
+				s_gradients.coord_over_z_y_step() * y_prestep;
 			// // This is how much the coord will change by
-			m_coord_step = s_gradients.coord_y_step() + s_gradients.coord_x_step()*m_x_step;
+			m_coord_over_z_step = s_gradients.coord_over_z_y_step() + s_gradients.coord_over_z_x_step()*m_x_step;
 
 
 			m_one_over_z =
@@ -75,7 +75,7 @@ namespace graphics {
 			// // By having this as a seperate piece of code here, it makes it easy to add things like colour_step, etc.
 			m_one_over_z += m_one_over_z_step;
 			m_x += m_x_step;
-			m_coord += m_coord_step;
+			m_coord_over_z += m_coord_over_z_step;
 		}
 	};
 }

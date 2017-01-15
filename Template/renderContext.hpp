@@ -150,10 +150,10 @@ namespace graphics {
 			float x_dist            = right.x() - left.x();
 			
 			// // Work out what the next step for each calculation to reduce errors to do with precision
-			coord_type coord_x_step = (right.coord() - left.coord()) / x_dist;
+			coord_type coord_over_z_x_step = (right.coord_over_z() - left.coord_over_z()) / x_dist;
 			float one_over_z_x_step = (right.one_over_z() - left.one_over_z()) / x_dist;
 			// // Calculate start coordinate
-			coord_type coord = left.coord() + coord_x_step * x_prestep;
+			coord_type coord_over_z = left.coord_over_z() + coord_over_z_x_step * x_prestep;
 			float one_over_z = left.one_over_z() + one_over_z_x_step * x_prestep;
 
 
@@ -161,13 +161,13 @@ namespace graphics {
 			for (int i = x_min; i < x_max; ++i) {
 				float z = 1 / one_over_z;
 				ivec2 source = {
-					int((coord.x * z) * float(s_texture.width() - 1) + 0.5f),
-					int((coord.y * z) * float(s_texture.height() - 1) + 0.5f)
+					int(coord_over_z.x * z + 0.5), 
+					int(coord_over_z.y * z + 0.5)
 				};
 
 
 				m_view[j][i] = s_texture.get_texture(source.x, source.y);
-				coord += coord_x_step;
+				coord_over_z += coord_over_z_x_step;
 				one_over_z += one_over_z_x_step;
 
 

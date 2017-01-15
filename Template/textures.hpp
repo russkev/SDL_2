@@ -11,9 +11,9 @@ namespace graphics {
 
 	struct xor_texture {
 	private:
-		int64 const m_width;
-		int64 const m_height;
-		ivec2 const m_dimensions;
+		int64 m_width;
+		int64 m_height;
+		ivec2 m_dimensions;
 		std::unique_ptr<bgra_color_type[]> m_out_texture; // // unique_pointer is a smart pointer that manages the pointer life time (deletes at right time etc.)
 	public:
 
@@ -49,9 +49,9 @@ namespace graphics {
 			return m_out_texture[(y % m_height) * m_width + (x % m_width)]; // Finds correct coord, loops if necessary
 		}
 
-		int64 width() { return m_width; }
-		int64 height() { return m_height; }
-		ivec2 dimensions() { return m_dimensions; }
+		int64 width() const		 { return m_width; }
+		int64 height() const	 { return m_height; }
+		ivec2 dimensions() const { return m_dimensions; }
 	};
 
 }
