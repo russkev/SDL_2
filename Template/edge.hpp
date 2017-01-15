@@ -18,7 +18,7 @@ namespace graphics {
 		int m_y_end;
 		coord_type m_coord;
 		coord_type m_coord_step;
-		
+
 		float m_one_over_z;
 		float m_one_over_z_step;
 
@@ -63,17 +63,17 @@ namespace graphics {
 			m_coord_step = s_gradients.coord_y_step() + s_gradients.coord_x_step()*m_x_step;
 
 
-			//m_one_over_z =
-			//	s_gradients.one_over_z(min_y_vert_index) +
-			//	s_gradients.one_over_z_x_step() * x_prestep +
-			//	s_gradients.one_over_z_y_step() * y_prestep;
-			//m_one_over_z_step = s_gradients.one_over_z_y_step() + s_gradients.one_over_z_x_step()*m_x_step;
+			m_one_over_z =
+				s_gradients.one_over_z(min_y_vert_index) +
+				s_gradients.one_over_z_x_step() * x_prestep +
+				s_gradients.one_over_z_y_step() * y_prestep;
+			m_one_over_z_step = s_gradients.one_over_z_y_step() + s_gradients.one_over_z_x_step()*m_x_step;
 
 		}
 
 		void step() {
 			// // By having this as a seperate piece of code here, it makes it easy to add things like colour_step, etc.
-
+			m_one_over_z += m_one_over_z_step;
 			m_x += m_x_step;
 			m_coord += m_coord_step;
 		}

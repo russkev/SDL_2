@@ -147,18 +147,28 @@ namespace graphics {
 			if (x_min > x_max) std::swap(x_min, x_max);
 			
 			float x_prestep         = x_min-left.x();
-			
+			float x_dist            = right.x() - left.x();
 			
 			// // Work out what the next step for each calculation to reduce errors to do with precision
-			coord_type coord_x_step = (right.coord() - left.coord()) / (right.x() - left.x()); 
+			coord_type coord_x_step = (right.coord() - left.coord()) / x_dist;
+			float one_over_z_x_step = (right.one_over_z() - left.one_over_z()) / x_dist;
 			// // Calculate start coordinate
 			coord_type coord = left.coord() + coord_x_step * x_prestep;
+			float one_over_z = left.one_over_z() + one_over_z_x_step * x_prestep;
 
 
 
 			for (int i = x_min; i < x_max; ++i) {
-				m_view[j][i] = s_texture.get_texture(int(coord.x), int(coord.y));
+				float z = 1 / one_over_z;
+				ivec2 source = {
+					int((coord.x * z) * float(s_texture.width() - 1) + 0.5f),
+					int((coord.y * z) * float(s_texture.height() - 1) + 0.5f)
+				};
+
+
+				m_view[j][i] = s_texture.get_texture(source.x, source.y);
 				coord += coord_x_step;
+				one_over_z += one_over_z_x_step;
 
 
 			}
