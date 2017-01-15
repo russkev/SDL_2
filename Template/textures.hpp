@@ -45,8 +45,10 @@ namespace graphics {
 			};
 		}
 		// // Getter // //
-		bgra_color_type get_texture(int x, int y) const {
-			return m_out_texture[(y % m_height) * m_width + (x % m_width)]; // Finds correct coord, loops if necessary
+		bgra_color_type get_texture(float x, float y) const {
+			int64 x_texture = int64(ceil(x*float(m_width  -1))) ;
+			int64 y_texture = int64(ceil(y*float(m_height -1))) ;
+			return m_out_texture[(y_texture % m_height) * m_width + (x_texture % m_width)]; // Finds correct coord, loops if necessary
 		}
 
 		int64 width() const		 { return m_width; }
