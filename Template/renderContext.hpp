@@ -48,9 +48,9 @@ namespace graphics {
 			mat4 screen_space_transform = init_screen_space_transform(float(m_view.size().x), float(m_view.size().y));
 
 			// // Assign max, mid and min y vert arbitrarily, they will be sorted in next step
-			auto min_y_vert = vertex(perspective_divide(screen_space_transform*p1.m_pos), p1.m_coord, p1.m_col);
-			auto mid_y_vert = vertex(perspective_divide(screen_space_transform*p2.m_pos), p2.m_coord, p2.m_col);
-			auto max_y_vert = vertex(perspective_divide(screen_space_transform*p3.m_pos), p3.m_coord, p3.m_col);
+			auto min_y_vert = vertex(perspective_divide(screen_space_transform*p1.m_pos), p1.m_coord);
+			auto mid_y_vert = vertex(perspective_divide(screen_space_transform*p2.m_pos), p2.m_coord);
+			auto max_y_vert = vertex(perspective_divide(screen_space_transform*p3.m_pos), p3.m_coord);
 
 			// // Sort points so min, mid and max contain the correct values.
 			if (max_y_vert.m_pos.y < min_y_vert.m_pos.y) { std::swap(min_y_vert, max_y_vert); }
@@ -61,18 +61,16 @@ namespace graphics {
 
 		}
 
-		void scan_square(
-			const vertex& tl,
-			const vertex& tr,
-			const vertex& bl,
-			const vertex& br
-			) {
-			gradients m_gradients(tl, tr, bl);
-			edge left (m_gradients, tl, bl, 0);
-			edge right(m_gradients, tr, br, 0);
+		//void fill_square(
+		//	const vertex& p1,
+		//	const vertex& p2,
+		//	const vertex& p3,
+		//	const vertex& p4,
+		//	const texture_type& s_texture
+		//)
+		//	fill
 
-			scan_edges(m_gradients, left, right, left);
-		}
+		//}
 
 
 	private:

@@ -40,10 +40,8 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	// // Setup colour of shape
 	s_canvas.stroke_color(bgra_color_type(0, 0, 255, 255));
 
-	// // Create a triangle
-	vertex min_y_vert(point_type(0,  -5,  0,  1), coord_type(0.5, 0));
-	vertex mid_y_vert(point_type( -5, 5,  0,  1), coord_type(0  , 1));
-	vertex max_y_vert(point_type( 5,  5,  0,  1), coord_type(1  , 1));
+	// // Create a square
+	std::vector<vertex> test_square = create_square(point_type(0,0,0,0), 1);
 
 	// // Create a texture
 	xor_texture s_texture(256, 256);
@@ -58,14 +56,21 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 
 	// // Render triangle
 	s_render.fill_triangle(
-		vertex(transform*max_y_vert.m_pos, max_y_vert.m_coord, max_y_vert.m_col),
-		vertex(transform*mid_y_vert.m_pos, mid_y_vert.m_coord, mid_y_vert.m_col),
-		vertex(transform*min_y_vert.m_pos, min_y_vert.m_coord, min_y_vert.m_col),
+		transform*test_square.at(0),
+		transform*test_square.at(2),
+		transform*test_square.at(3),
+		s_texture
+	);
+
+	s_render.fill_triangle(
+		transform*test_square.at(0),
+		transform*test_square.at(1),
+		transform*test_square.at(3),
 		s_texture
 	);
 
 	// // TEST // //
-
+	
 	// // END TEST // // 
 
 	// // FPS counter
@@ -88,7 +93,7 @@ int main (int, char**) try {
     auto s_window = SDL_CreateWindow ("Pretty little lines", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_ALLOW_HIGHDPI);
     auto s_surface = SDL_GetWindowSurface (s_window);
 
-	mat4 projection = perspective<float>(deg_to_rad<float>(70.0f), float(s_surface[0].w) / s_surface[0].h, 0.1f, 1000.0f);
+	mat4 projection = perspective<float>(deg_to_rad<float>(15.0f), float(s_surface[0].w) / s_surface[0].h, 0.1f, 1000.0f);
 
     // High precision clock interval
     static const auto s_freq_multiplier = 1.0 / SDL_GetPerformanceFrequency (); 

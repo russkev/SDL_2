@@ -141,6 +141,7 @@
     <ClInclude Include="fps.hpp" />
     <ClInclude Include="gradients.hpp" />
     <ClInclude Include="math.hpp" />
+    <ClInclude Include="mesh.hpp" />
     <ClInclude Include="renderContext.hpp" />
     <ClInclude Include="textures.hpp" />
     <ClInclude Include="vertex.hpp" />

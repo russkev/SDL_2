@@ -3,11 +3,14 @@
 #include <type_traits>
 #include <cmath>
 
+
+#include "vertex.hpp"
 #include "math.hpp"
 
 
 namespace graphics {
 	typedef vec4 point_type;
+	typedef vec2 coord_type;
 
     template <typename _Vtype = float>
     auto pi () {
@@ -366,6 +369,22 @@ namespace graphics {
 		vec4 short_vec = mid_y - min_y;
 		return float((long_vec.x*short_vec.y - long_vec.y*short_vec.x)*0.5);
 	}
+
+
+	//std::vector<vertex> cube(const point_type& centre, const point_type& size) {
+
+	//}
+
+	std::vector<vertex> create_square(const point_type& centre, float radius) {
+		std::vector<vertex> out_vector;
+		out_vector.push_back(vertex(point_type(centre.x - radius, centre.y - radius, centre.z, 1), coord_type(0, 0)));
+		out_vector.push_back(vertex(point_type(centre.x + radius, centre.y - radius, centre.z, 1), coord_type(0, 1)));
+		out_vector.push_back(vertex(point_type(centre.x - radius, centre.y + radius, centre.z, 1), coord_type(1, 0)));
+		out_vector.push_back(vertex(point_type(centre.x + radius, centre.y + radius, centre.z, 1), coord_type(1, 1)));
+		return out_vector;
+	}
+
+	
 
 	
 	mat4 init_screen_space_transform(float w, float h) {

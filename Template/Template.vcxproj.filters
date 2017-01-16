@@ -53,5 +53,8 @@
     <ClInclude Include="textures.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="mesh.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
