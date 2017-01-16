@@ -12,6 +12,9 @@
 #include <vector>
 #include <algorithm>
 
+#include <fstream>
+#include <string>
+
 #include "view.hpp"
 #include "algorithm.hpp"
 #include "canvas.hpp"
@@ -87,6 +90,8 @@ int main (int, char**) try {
 	typedef u8vec4 bgra_color_type;
 
 	// // TEST // //
+	std::string file;
+	ifstrean in_file;
 	 
 	// // END TEST // // 
 
