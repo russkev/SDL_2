@@ -56,6 +56,9 @@
     <ClInclude Include="mesh.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="obj.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Object Include="cube_01.obj">

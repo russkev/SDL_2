@@ -23,6 +23,7 @@
 #include "fps.hpp"
 #include "vertex.hpp"
 #include "textures.hpp"
+#include "obj.hpp"
 
 float rot_counter = 0;
 
@@ -90,8 +91,7 @@ int main (int, char**) try {
 	typedef u8vec4 bgra_color_type;
 
 	// // TEST // //
-	std::string file;
-	ifstrean in_file;
+	obj obj1 = "cube_01.obj";
 	 
 	// // END TEST // // 
 
