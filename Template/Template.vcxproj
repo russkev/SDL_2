@@ -143,6 +143,7 @@
     <ClInclude Include="math.hpp" />
     <ClInclude Include="mesh.hpp" />
     <ClInclude Include="obj.hpp" />
+    <ClInclude Include="objload.h" />
     <ClInclude Include="renderContext.hpp" />
     <ClInclude Include="textures.hpp" />
     <ClInclude Include="vertex.hpp" />

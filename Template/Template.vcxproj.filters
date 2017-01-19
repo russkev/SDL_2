@@ -59,10 +59,11 @@
     <ClInclude Include="obj.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="objload.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Object Include="cube_01.obj">
-      <Filter>Source Files</Filter>
-    </Object>
+    <Text Include="cube_01.obj" />
   </ItemGroup>
 </Project>
