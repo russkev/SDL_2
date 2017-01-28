@@ -11,11 +11,29 @@ namespace graphics {
 	public:
 		point_type m_pos;
 		coord_type m_coord;
+		point_type m_normal;
 
 
-		// // Constructors
-		vertex(const point_type& s_pos, const coord_type& s_coord) :m_pos(s_pos), m_coord(s_coord) {}
-		vertex(const point_type& s_pos) : vertex(s_pos, coord_type(0, 0)) {}
+		// // CONSTRUCTORS // //
+		// // Full
+		vertex(const point_type& s_pos, const coord_type& s_coord, const point_type& s_normal) :
+			m_pos(s_pos), m_coord(s_coord), m_normal(s_normal) {}
+
+		// // Full with vec3 for point types
+		vertex(const vec3& s_pos, const coord_type& s_coord, const vec3& s_normal) :
+			m_pos(point_type(s_pos.x, s_pos.y, s_pos.z, s_pos.z)), m_coord(s_coord), m_normal(point_type(s_normal.x, s_normal.y, s_normal.z, s_normal.z)){}
+
+		// // Just position and coordinates
+		vertex(const point_type& s_pos, const coord_type& s_coord) :
+			vertex(s_pos, s_coord, point_type(0, 0, 0, 0)) {}
+
+		// // Just position
+		vertex(const point_type& s_pos) : 
+			vertex(s_pos, coord_type(0, 0), point_type(0,0,0,0)) {}
+
+		// // Empty
+		vertex() : 
+			vertex(point_type(0, 0, 0, 0)) {}
 
 		
 

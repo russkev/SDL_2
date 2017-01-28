@@ -16,14 +16,15 @@ namespace graphics {
 		std::vector<obj_vertex_type> m_vertices;
 		std::vector<obj_vertex_type> m_normals;
 		std::vector<obj_uv_type> m_uvs;
-		std::vector<std::vector<ivec3>> m_faces;
+		std::vector<std::vector<vertex> > m_faces;
 		
 	public:
 		obj(const char* file_name) {
 			std::ifstream file(file_name);
 			std::string line_str;
-			std::stringstream line_ss;
+			std::istringstream line_ss;
 			std::string line_segment;
+			int num_face_elements = 3;
 
 
 			if (!file)
@@ -36,10 +37,25 @@ namespace graphics {
 			//	ss << file.rdbuf();
 			//	file.close();
 			//}
+			//while (file.good()) {
+			//	std::getline(file, line_str);
+			//	std::istringstream line_ss(line_str);
+			//	
+			//	//line_ss << line_str;
+			//	line_ss >> line_segment;
+
+			//	if (line_segment == "v") {
+			//		obj_vertex_type temp_vertex;
+			//		line_ss >> temp_vertex.x >> temp_vertex.y >> temp_vertex.z;
+			//		m_vertices.push_back(temp_vertex);
+			//	}
+			//	//line_ss.str("");
+			//}
+
 			while (file.good()) {
 				std::getline(file, line_str);
-				
-				line_ss << line_str;
+				line_ss.str(line_str);
+				//line_ss.seekg(0);
 				line_ss >> line_segment;
 
 				if (line_segment == "v") {
@@ -47,7 +63,54 @@ namespace graphics {
 					line_ss >> temp_vertex.x >> temp_vertex.y >> temp_vertex.z;
 					m_vertices.push_back(temp_vertex);
 				}
-				line_ss.str("");
+				else if (line_segment == "vt") {
+					obj_uv_type temp_uv;
+					line_ss >> temp_uv.s >> temp_uv.t;
+					m_uvs.push_back(temp_uv);
+				}
+				else if (line_segment == "vn") {
+					obj_vertex_type temp_normal;
+					line_ss >> temp_normal.x >> temp_normal.y >> temp_normal.z;
+					m_normals.push_back(temp_normal);
+				}
+				else if (line_segment == "f") {
+					std::string temp_string, temp_string_ints;
+					std::istringstream temp_ss;
+					//vertex temp_vertex;
+					std::vector<vertex> temp_face;
+					std::vector<int> temp_location;
+					int temp_counter = 0;
+
+					while (line_ss) {
+						line_ss >> temp_string;
+						temp_ss.str(temp_string);
+						while (std::getline(temp_ss, temp_string_ints, '/')) {
+							temp_location.push_back(std::stoi(temp_string));
+						}
+						temp_face.push_back(vertex(
+							m_vertices.at(temp_location.at(0)), 
+							m_uvs.at(temp_location.at(1)), 
+							m_normals.at(temp_location.at(2))
+						));
+					}
+					m_faces.push_back(temp_face);
+
+					//while (std::getline(line_ss, temp_string, '/')) {
+					//	vertex temp_vertex(m_vertices.at(stoi(temp_string)))
+						
+					//}
+
+				}
+
+				/*
+				while (std::getline (yourstream, astring, '\\')) {
+					// do stuff
+				}
+				
+				*/
+				line_ss.str(std::string());
+				line_ss.clear();
+
 			}
 
 
