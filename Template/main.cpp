@@ -14,6 +14,7 @@
 
 #include <fstream>
 #include <string>
+#include <sstream>
 
 #include "view.hpp"
 #include "algorithm.hpp"
@@ -74,7 +75,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	);
 
 	// // TEST // //
-	
+
 	// // END TEST // // 
 
 	// // FPS counter
@@ -91,7 +92,8 @@ int main (int, char**) try {
 	typedef u8vec4 bgra_color_type;
 
 	// // TEST // //
-	obj obj1 = "cube_01.obj";
+	obj obj_1 = "cube_01.obj";
+
 	 
 	// // END TEST // // 
 
