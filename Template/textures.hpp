@@ -48,7 +48,7 @@ namespace graphics {
 		bgra_color_type get_texture(float s, float t) const {
 			int64 s_texture = int64(ceil(s*float(m_width  -1))) ;
 			int64 t_texture = int64(ceil(t*float(m_height -1))) ;
-			return m_out_texture[(t_texture % m_height) * m_width + (s_texture % m_width)]; // Finds correct coord, loops if necessary
+			return m_out_texture[std::abs(t_texture % m_height) * m_width + std::abs(s_texture % m_width)]; // Finds correct coord, loops if necessary
 		}
 
 		int64 width() const		 { return m_width; }

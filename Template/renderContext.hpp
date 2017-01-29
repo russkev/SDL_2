@@ -11,6 +11,7 @@
 #include "edge.hpp"
 #include "gradients.hpp"
 #include "textures.hpp"
+#include "obj.hpp"
 
 #define USE_MULTITHREADING 1
 
@@ -24,6 +25,7 @@ namespace graphics {
 		typedef vec4 point_type;
 		typedef xor_texture texture_type;
 		typedef vec2 coord_type;
+		typedef obj mesh_type;
 
 		renderContext(view_type& s_view) :
 			m_view(s_view),
@@ -61,16 +63,15 @@ namespace graphics {
 
 		}
 
-		//void fill_square(
-		//	const vertex& p1,
-		//	const vertex& p2,
-		//	const vertex& p3,
-		//	const vertex& p4,
-		//	const texture_type& s_texture
-		//)
-		//	fill
-
-		//}
+		void draw_mesh(const obj& mesh, const mat4& transform, const texture_type& texture) {
+			for (int i = 0; i < mesh.size(); ++i) {
+				fill_triangle(
+					transform*mesh.face(i).at(0),
+					transform*mesh.face(i).at(1),
+					transform*mesh.face(i).at(2),
+					texture);
+			}
+		}
 
 
 	private:

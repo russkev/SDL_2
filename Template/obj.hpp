@@ -94,7 +94,9 @@ namespace graphics {
 						temp_ss.clear();
 					}
 					// // Add new face to vector
-					m_faces.push_back(temp_face);
+					if (temp_face.size() > 0) {
+						m_faces.push_back(temp_face);
+					}
 				}
 
 				// // Reset string stream
@@ -105,6 +107,7 @@ namespace graphics {
 		}
 
 		// // GETTER // //
-		face_type get_face(int face) { return m_faces.at(face); }
+		face_type face(int face)	const	{ return m_faces.at(face); }
+		size_t size()				const	{ return int(m_faces.size()); }
 	};
 }

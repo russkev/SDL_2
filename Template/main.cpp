@@ -46,7 +46,10 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	s_canvas.stroke_color(bgra_color_type(0, 0, 255, 255));
 
 	// // Create a square
-	std::vector<vertex> test_square = create_square(point_type(0,0,0,0), 1);
+	//std::vector<vertex> test_square = create_square(point_type(0,0,0,0), 1);\
+
+	// // Load an obj
+	obj obj_1 = "cube_02.obj";
 
 	// // Create a texture
 	xor_texture s_texture(256, 256);
@@ -55,24 +58,29 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	rot_counter+= float(s_delta_time);
 
 	// // Setup triangle transform
-	mat4 translation = translate(mat4(), vec3(0.0f, 0.0f, 13.0f));
+	mat4 translation = translate(mat4(), vec3(0.0f, 0.0f, 5.0f));
 	mat4 rotation    = rotate(mat4(), rot_counter, vec3(0.0f, 1.0f, 0.0f));
 	mat4 transform   = projection*(translation*rotation);
 
 	// // Render triangle
-	s_render.fill_triangle(
-		transform*test_square.at(0),
-		transform*test_square.at(2),
-		transform*test_square.at(3),
-		s_texture
-	);
+	//s_render.fill_triangle(
+	//	transform*test_square.at(0),
+	//	transform*test_square.at(2),
+	//	transform*test_square.at(3),
+	//	s_texture
+	//);
 
-	s_render.fill_triangle(
-		transform*test_square.at(0),
-		transform*test_square.at(1),
-		transform*test_square.at(3),
-		s_texture
-	);
+	//s_render.fill_triangle(
+	//	transform*test_square.at(0),
+	//	transform*test_square.at(1),
+	//	transform*test_square.at(3),
+	//	s_texture
+	//);\
+
+
+	// // Render obj
+	s_render.draw_mesh(obj_1, transform, s_texture);
+
 
 	// // TEST // //
 
@@ -100,7 +108,7 @@ int main (int, char**) try {
     auto s_window = SDL_CreateWindow ("Pretty little lines", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_ALLOW_HIGHDPI);
     auto s_surface = SDL_GetWindowSurface (s_window);
 
-	mat4 projection = perspective<float>(deg_to_rad<float>(15.0f), float(s_surface[0].w) / s_surface[0].h, 0.1f, 1000.0f);
+	mat4 projection = perspective<float>(deg_to_rad<float>(90.0f), float(s_surface[0].w) / s_surface[0].h, 0.1f, 1000.0f);
 
     // High precision clock interval
     static const auto s_freq_multiplier = 1.0 / SDL_GetPerformanceFrequency (); 
