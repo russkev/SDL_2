@@ -66,4 +66,9 @@
   <ItemGroup>
     <Text Include="cube_01.obj" />
   </ItemGroup>
+  <ItemGroup>
+    <Object Include="cube_02.obj">
+      <Filter>Source Files</Filter>
+    </Object>
+  </ItemGroup>
 </Project>

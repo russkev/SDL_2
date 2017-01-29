@@ -92,7 +92,7 @@ int main (int, char**) try {
 	typedef u8vec4 bgra_color_type;
 
 	// // TEST // //
-	obj obj_1 = "cube_01.obj";
+	obj obj_1 = "cube_02.obj";
 
 	 
 	// // END TEST // // 
