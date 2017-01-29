@@ -9,7 +9,6 @@
 
 namespace graphics {
 	struct obj {
-		// // TYPE DEFINITIONS // //
 		typedef vec3 obj_vertex_type;
 		typedef vec2 obj_uv_type;
 		typedef std::vector<vertex> face_type;
@@ -106,5 +105,16 @@ namespace graphics {
 
 		// // GETTER // //
 		face_type get_face(int face) { return m_faces.at(face); }
+
+
+		// // FUNCTIONS // //
+		//template<typename T>
+		//void store_obj_element_3(std::string search_term, const std::vector<T>& storage_vector std::istringstream) {
+		//	if (line_segment == search_term) {
+		//		T temp_vertex;
+		//		line_ss >> temp_vertex.x >> temp_vertex.y >> temp_vertex.z;
+		//		m_vertices.push_back(temp_vertex);
+		//	}
+		//}
 	};
 }
