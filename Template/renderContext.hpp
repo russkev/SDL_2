@@ -54,6 +54,11 @@ namespace graphics {
 			auto mid_y_vert = vertex(perspective_divide(screen_space_transform*p2.m_pos), p2.m_coord);
 			auto max_y_vert = vertex(perspective_divide(screen_space_transform*p3.m_pos), p3.m_coord);
 
+			// // Backface culling
+			if (triangle_area(min_y_vert.m_pos, mid_y_vert.m_pos, max_y_vert.m_pos) >= 0) {
+				return;
+			}
+
 			// // Sort points so min, mid and max contain the correct values.
 			if (max_y_vert.m_pos.y < min_y_vert.m_pos.y) { std::swap(min_y_vert, max_y_vert); }
 			if (mid_y_vert.m_pos.y < min_y_vert.m_pos.y) { std::swap(min_y_vert, mid_y_vert); }

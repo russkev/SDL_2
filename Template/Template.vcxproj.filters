@@ -70,5 +70,8 @@
     <Object Include="cube_02.obj">
       <Filter>Source Files</Filter>
     </Object>
+    <Object Include="sphere_01.obj">
+      <Filter>Source Files</Filter>
+    </Object>
   </ItemGroup>
 </Project>

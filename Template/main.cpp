@@ -28,7 +28,7 @@
 
 float rot_counter = 0;
 
-void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, double s_delta_time, const glm::mat4& projection, graphics::fps& frame_monitor) {
+void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, double s_delta_time, const glm::mat4& projection, graphics::fps& frame_monitor, const graphics::obj& mesh) {
     using namespace graphics;
     typedef u8vec4 bgra_color_type;
     typedef vec4 point_type;
@@ -48,8 +48,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	// // Create a square
 	//std::vector<vertex> test_square = create_square(point_type(0,0,0,0), 1);\
 
-	// // Load an obj
-	obj obj_1 = "cube_02.obj";
+
 
 	// // Create a texture
 	xor_texture s_texture(256, 256);
@@ -58,9 +57,10 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	rot_counter+= float(s_delta_time);
 
 	// // Setup triangle transform
-	mat4 translation = translate(mat4(), vec3(0.0f, 0.0f, 5.0f));
-	mat4 rotation    = rotate(mat4(), rot_counter, vec3(0.0f, 1.0f, 0.0f));
-	mat4 transform   = projection*(translation*rotation);
+	mat4 translation = translate(mat4(), vec3(0.0f, 0.0f, 10.0f));
+	mat4 rotation    = rotate(mat4(), rot_counter, vec3(0.0f, 1.0f, 1.0f));
+	mat4 scale_a     = scale(mat4(), vec3(1.0f, 1.0f, 1.0f));
+	mat4 transform   = projection*(translation*rotation*scale_a);
 
 	// // Render triangle
 	//s_render.fill_triangle(
@@ -79,7 +79,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 
 
 	// // Render obj
-	s_render.draw_mesh(obj_1, transform, s_texture);
+	s_render.draw_mesh(mesh, transform, s_texture);
 
 
 	// // TEST // //
@@ -100,7 +100,6 @@ int main (int, char**) try {
 	typedef u8vec4 bgra_color_type;
 
 	// // TEST // //
-	obj obj_1 = "cube_02.obj";
 
 	 
 	// // END TEST // // 
@@ -120,6 +119,9 @@ int main (int, char**) try {
 	// Initialise fps
 	fps frame_check(s_window);
 
+	// // Load an obj
+	obj obj_1 = "cube_02.obj";
+
 
     while (!SDL_QuitRequested ()) {
         SDL_Event s_event;
@@ -131,7 +133,7 @@ int main (int, char**) try {
         SDL_LockSurface (s_surface);
         
         s_time1 = s_freq_multiplier * SDL_GetPerformanceCounter ();
-        draw_animation_frame (s_surface [0], s_time1, s_time1 - s_time0, projection, frame_check);
+        draw_animation_frame (s_surface [0], s_time1, s_time1 - s_time0, projection, frame_check, obj_1);
         s_time0 = s_time1;
 
         SDL_UnlockSurface (s_surface);

@@ -7,32 +7,32 @@
 // // elements (like colour, lighting, etc. ) at once.
 namespace graphics {
 	struct edge {
+		// // TYPE DEFINITIONS // //
 		typedef vec4 point_type;
 		typedef tvec4<std::uint8_t> bgra_color_type;
 		typedef vec2 coord_type;
 
 	private:
-		float m_x;
-		float m_x_step;
-		int m_y_start;
-		int m_y_end;
-		coord_type m_coord_over_z;
-		coord_type m_coord_over_z_step;
+		// // MEMBER VARIABLES // //
+		float m_x, m_x_step;
+		int m_y_start, m_y_end;
+		coord_type m_coord_over_z, m_coord_over_z_step;
+		float m_one_over_z, m_one_over_z_step;
+		float m_depth, m_depth_step;
 
-		float m_one_over_z;
-		float m_one_over_z_step;
 
 	public:
-		// // Getters:
+		// // GETTERS // //
 		float x()					 { return m_x; }
 		int y_start()				 { return m_y_start; }
 		int y_end()					 { return m_y_end;   }
 		coord_type coord_over_z()    { return m_coord_over_z; }
-		float one_over_z()			 { return m_one_over_z;}
+		float one_over_z()			 { return m_one_over_z; }
+		float depth()				 { return m_depth; }
 
 
 
-		// // Main Function:
+		// // MAIN FUNCTION // //
 		edge(
 			gradients s_gradients,
 			const vertex& start,
@@ -69,6 +69,11 @@ namespace graphics {
 				s_gradients.one_over_z_y_step() * y_prestep;
 			m_one_over_z_step = s_gradients.one_over_z_y_step() + s_gradients.one_over_z_x_step()*m_x_step;
 
+			m_depth =
+				s_gradients.depth(min_y_vert_index) +
+				s_gradients.depth_x_step * x_prestep +
+				s_gradients.depth_y_step * y_prestep;
+
 		}
 
 		void step() {
@@ -76,6 +81,7 @@ namespace graphics {
 			m_one_over_z += m_one_over_z_step;
 			m_x += m_x_step;
 			m_coord_over_z += m_coord_over_z_step;
+			m_depth += m_depth_step;
 		}
 	};
 }
