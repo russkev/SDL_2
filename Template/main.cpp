@@ -45,11 +45,6 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	// // Setup colour of shape
 	s_canvas.stroke_color(bgra_color_type(0, 0, 255, 255));
 
-	// // Create a square
-	//std::vector<vertex> test_square = create_square(point_type(0,0,0,0), 1);\
-
-
-
 	// // Create a texture
 	xor_texture s_texture(256, 256);
 
@@ -62,23 +57,9 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	mat4 scale_a     = scale(mat4(), vec3(1.0f, 1.0f, 1.0f));
 	mat4 transform   = projection*(translation*rotation*scale_a);
 
-	// // Render triangle
-	//s_render.fill_triangle(
-	//	transform*test_square.at(0),
-	//	transform*test_square.at(2),
-	//	transform*test_square.at(3),
-	//	s_texture
-	//);
-
-	//s_render.fill_triangle(
-	//	transform*test_square.at(0),
-	//	transform*test_square.at(1),
-	//	transform*test_square.at(3),
-	//	s_texture
-	//);\
-
 
 	// // Render obj
+	s_render.clear_depth_buffer();
 	s_render.draw_mesh(mesh, transform, s_texture);
 
 
@@ -100,7 +81,18 @@ int main (int, char**) try {
 	typedef u8vec4 bgra_color_type;
 
 	// // TEST // //
-
+	//std::vector<float> test_vector;
+	//test_vector.reserve(20);
+	//test_vector.at(8) = 3;
+	//test_vector.resize(20, 8);
+	//test_vector.clear();
+	//if (test_vector.at(3)) {
+	//	auto test_output = test_vector.at(3);
+	//}
+	//else {
+	//	auto test_output = -1;
+	//}
+	
 	 
 	// // END TEST // // 
 

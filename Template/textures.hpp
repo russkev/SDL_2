@@ -17,8 +17,6 @@ namespace graphics {
 		std::unique_ptr<bgra_color_type[]> m_out_texture; // // unique_pointer is a smart pointer that manages the pointer life time (deletes at right time etc.)
 	public:
 
-		// // QUESTIONS FOR ALEX:
-		// // How come it can access member variables like that
 
 		xor_texture(const xor_texture& other) :
 			m_width(other.m_width),

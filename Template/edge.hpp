@@ -19,6 +19,7 @@ namespace graphics {
 		coord_type m_coord_over_z, m_coord_over_z_step;
 		float m_one_over_z, m_one_over_z_step;
 		float m_depth, m_depth_step;
+		float m_x_prestep, m_y_prestep;
 
 
 	public:
@@ -34,7 +35,7 @@ namespace graphics {
 
 		// // MAIN FUNCTION // //
 		edge(
-			gradients s_gradients,
+			gradients& s_gradients,
 			const vertex& start,
 			const vertex& end,
 			int min_y_vert_index
@@ -47,32 +48,26 @@ namespace graphics {
 
 
 			// // Calculate difference between point on line and the middle of the start pixel
-			float y_prestep = m_y_start - start.m_pos.y;
+			m_y_prestep = m_y_start - start.m_pos.y;
 			// // Every time y is incremented by 1, x is incremented by this amount:
 			m_x_step = x_dist / y_dist;
 			// // m_x is the x component of m_y_start (the ceiling integer value where we are rounding to)
-			m_x = start.m_pos.x + y_prestep * m_x_step;
+			m_x = start.m_pos.x + m_y_prestep * m_x_step;
 			// // x_prestep is just the dustance between the above m_x and the rounded start point.
-			float x_prestep = m_x - start.m_pos.x;
-			// // Colour to start with after prestep offset has been taken into account:
-			m_coord_over_z =
-				coord_type(s_gradients.coord(min_y_vert_index)) +
-				s_gradients.coord_over_z_s_step() * x_prestep +
-				s_gradients.coord_over_z_t_step() * y_prestep;
-			// // This is how much the coord will change by
-			m_coord_over_z_step = s_gradients.coord_over_z_t_step() + s_gradients.coord_over_z_s_step()*m_x_step;
+			m_x_prestep = m_x - start.m_pos.x;
 
+			// // Start positions:
+			m_coord_over_z = step_start(s_gradients.coord(min_y_vert_index), s_gradients.coord_over_z_s_step(), s_gradients.coord_over_z_t_step());
+			m_one_over_z   = step_start(s_gradients.one_over_z(min_y_vert_index), s_gradients.one_over_z_x_step(), s_gradients.one_over_z_y_step());
+			m_depth        = step_start(s_gradients.depth(min_y_vert_index), s_gradients.depth_x_step(), s_gradients.depth_y_step());
+			
 
-			m_one_over_z =
-				s_gradients.one_over_z(min_y_vert_index) +
-				s_gradients.one_over_z_x_step() * x_prestep +
-				s_gradients.one_over_z_y_step() * y_prestep;
-			m_one_over_z_step = s_gradients.one_over_z_y_step() + s_gradients.one_over_z_x_step()*m_x_step;
+			// // Amount to change by
+			m_coord_over_z_step = step_amount(s_gradients.coord_over_z_s_step(), s_gradients.coord_over_z_t_step());
+			m_one_over_z_step   = step_amount(s_gradients.one_over_z_x_step(), s_gradients.one_over_z_y_step());
+			m_depth_step        = step_amount(s_gradients.depth_x_step(), s_gradients.depth_y_step());
 
-			m_depth =
-				s_gradients.depth(min_y_vert_index) +
-				s_gradients.depth_x_step * x_prestep +
-				s_gradients.depth_y_step * y_prestep;
+			
 
 		}
 
@@ -82,6 +77,16 @@ namespace graphics {
 			m_x += m_x_step;
 			m_coord_over_z += m_coord_over_z_step;
 			m_depth += m_depth_step;
+		}
+
+		template<typename T>
+		T step_start(T s_interpolant, T s_x_step, T s_y_step) {
+			return s_interpolant + s_x_step * m_x_prestep + s_y_step * m_y_prestep;
+		}
+
+		template<typename T>
+		T step_amount(T s_x_step, T s_y_step) {
+			return s_y_step + s_x_step*m_x_step;
 		}
 	};
 }
