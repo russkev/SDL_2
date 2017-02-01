@@ -39,8 +39,8 @@ namespace graphics {
 
 
 		coord_type      coord(int index) { return m_coord_over_zs.at(index); }
-		float	   one_over_z(int index) { return m_one_over_zs.at(index); }
-		float			depth(int index) { return m_depth_values.at(index); }
+		float	   one_over_z(int index) { return m_one_over_zs.at(index);   }
+		float			depth(int index) { return m_depth_values.at(index);  }
 
 		// // CONSTRUCTOR // //
 		gradients(
@@ -82,8 +82,10 @@ namespace graphics {
 			m_one_over_z_x_step   = calc_x_step(m_one_over_zs,   min_y_vert, mid_y_vert, max_y_vert);
 			m_one_over_z_y_step   = calc_y_step(m_one_over_zs,   min_y_vert, mid_y_vert, max_y_vert);
 
+			
+			m_depth_x_step        = calc_x_step(m_depth_values,  min_y_vert, mid_y_vert, max_y_vert); 
 			m_depth_y_step        = calc_y_step(m_depth_values,  min_y_vert, mid_y_vert, max_y_vert);
-			m_depth_x_step        = calc_x_step(m_depth_values,  min_y_vert, mid_y_vert, max_y_vert);
+			
 		}
 
 		template <typename interpolant>

@@ -3,6 +3,7 @@
 #include <future>
 #include <cstdint>
 #include <limits>
+#include <array>
 
 #include <glm/glm.hpp>
 #include <glm/matrix.hpp>
@@ -37,7 +38,8 @@ namespace graphics {
 			m_total_pixels(int(s_view.size().x) * int(s_view.size().y))			
 			//m_depth_buffer(std::make_unique<float[]>(s_view.size().x * s_view.size().y))
 		{
-			m_depth_buffer.resize(m_total_pixels, std::numeric_limits<float>::max());
+			m_array_depth_buffer = std::make_unique<float[]>(m_total_pixels);
+			//m_depth_buffer.resize(m_total_pixels, std::numeric_limits<float>::max());
 		}
 
 
@@ -46,20 +48,21 @@ namespace graphics {
 		// // MEMBER VARIABLES // //
 		view_type& m_view;
 		buffer_type m_scan_buffer;
-		//std::unique_ptr<float[]> m_depth_buffer;
+		std::unique_ptr<float[]> m_array_depth_buffer;
 		std::vector<float> m_depth_buffer;
 		int m_total_pixels;
+		//std::array<float> m_array_depth_buffer;
 
 
 	public:
 
 		// // MAIN FUNCTIONS // //
 		void clear_depth_buffer() {
-			m_depth_buffer.clear();
-			m_depth_buffer.resize(m_total_pixels, std::numeric_limits<float>::max());
-			//for (int i = 0; i < m_total_pixels; ++i) {
-			//	m_depth_buffer.at(i) = std::numeric_limits<float>::max();
-			//}
+			//m_depth_buffer.clear();
+			//m_depth_buffer.resize(m_total_pixels, std::numeric_limits<float>::max());
+			for (int i = 0; i < m_total_pixels; ++i) {
+				m_array_depth_buffer[i] = std::numeric_limits<float>::min();
+			}
 		}
 
 		void fill_triangle(
@@ -176,32 +179,36 @@ namespace graphics {
 			float x_dist            = right.x() - left.x();
 			
 			// // Work out what the next step for each calculation to reduce errors to do with precision
-			coord_type coord_over_z_x_step = (right.coord_over_z() - left.coord_over_z()) / x_dist;
-			float one_over_z_x_step = (right.one_over_z() - left.one_over_z()) / x_dist;
-			float depth_step = (right.depth() - left.depth()) / x_dist;
+			coord_type coord_over_z_x_step = ( right.coord_over_z() - left.coord_over_z() ) / x_dist;
+			float one_over_z_x_step        = ( right.one_over_z()   - left.one_over_z()   ) / x_dist;
+			float depth_x_step             = ( right.depth()        - left.depth()        ) / x_dist;
 			// // Calculate start coordinate
 			coord_type coord_over_z = left.coord_over_z() + coord_over_z_x_step * x_prestep;
-			float one_over_z = left.one_over_z() + one_over_z_x_step * x_prestep;
-			float depth = left.depth() + depth_step * x_prestep;
+			float one_over_z        = left.one_over_z()   + one_over_z_x_step   * x_prestep;
+			float depth             = left.depth()        + depth_x_step        * x_prestep;
 			
 
 
 
 			for (int i = x_min; i < x_max; ++i) {
 				int index = i + j * int(m_view.size().x);
-				float depth_existing = m_depth_buffer.at(index);
+				float depth_existing = m_array_depth_buffer[index];
 				if (depth < depth_existing) {
+					__debugbreak;
+				}
+				if (depth > depth_existing) {
+					m_array_depth_buffer[index] = depth;
 					float z = 1 / one_over_z;
 					vec2 source = {
 						(coord_over_z.s * z + 0.5),
 						(coord_over_z.t * z + 0.5)
 					};
-					m_view[j][i] = s_texture.get_texture(source.x, source.y);
-					m_depth_buffer.at(index) = depth;
+					m_view[j][i] = s_texture.get_texture(source.x, source.y); // // j = y, i = x
+					
 				}
 				coord_over_z += coord_over_z_x_step;
 				one_over_z += one_over_z_x_step;
-				depth += depth_step;
+				depth += depth_x_step;
 			}
 		}
 	};

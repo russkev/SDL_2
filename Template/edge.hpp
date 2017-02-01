@@ -18,8 +18,9 @@ namespace graphics {
 		int m_y_start, m_y_end;
 		coord_type m_coord_over_z, m_coord_over_z_step;
 		float m_one_over_z, m_one_over_z_step;
-		float m_depth, m_depth_step;
 		float m_x_prestep, m_y_prestep;
+		float m_depth, m_depth_step;
+
 
 
 	public:
