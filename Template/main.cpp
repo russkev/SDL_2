@@ -81,18 +81,6 @@ int main (int, char**) try {
 	typedef u8vec4 bgra_color_type;
 
 	// // TEST // //
-	//std::vector<float> test_vector;
-	//test_vector.reserve(20);
-	//test_vector.at(8) = 3;
-	//test_vector.resize(20, 8);
-	//test_vector.clear();
-	//if (test_vector.at(3)) {
-	//	auto test_output = test_vector.at(3);
-	//}
-	//else {
-	//	auto test_output = -1;
-	//}
-	
 	 
 	// // END TEST // // 
 

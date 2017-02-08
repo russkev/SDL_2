@@ -72,6 +72,14 @@ namespace graphics {
 			const texture_type& s_texture
 		) {
 
+			if (
+				!is_inside_view_frustrum(p1) ||
+				!is_inside_view_frustrum(p2) ||
+				!is_inside_view_frustrum(p3)) {
+				std::cout << "outside of clipping area";
+				__debugbreak();
+			}
+
 			mat4 screen_space_transform = init_screen_space_transform(float(m_view.size().x), float(m_view.size().y));
 
 			// // Assign max, mid and min y vert arbitrarily, they will be sorted in next step
@@ -193,9 +201,6 @@ namespace graphics {
 			for (int i = x_min; i < x_max; ++i) {
 				int index = i + j * int(m_view.size().x);
 				float depth_existing = m_array_depth_buffer[index];
-				//if (depth < depth_existing) {
-				//	__debugbreak;
-				//}
 				if (depth > depth_existing) {
 					m_array_depth_buffer[index] = depth;
 					float z = 1 / one_over_z;
