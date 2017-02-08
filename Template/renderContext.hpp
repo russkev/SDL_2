@@ -193,9 +193,9 @@ namespace graphics {
 			for (int i = x_min; i < x_max; ++i) {
 				int index = i + j * int(m_view.size().x);
 				float depth_existing = m_array_depth_buffer[index];
-				if (depth < depth_existing) {
-					__debugbreak;
-				}
+				//if (depth < depth_existing) {
+				//	__debugbreak;
+				//}
 				if (depth > depth_existing) {
 					m_array_depth_buffer[index] = depth;
 					float z = 1 / one_over_z;

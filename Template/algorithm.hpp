@@ -402,4 +402,11 @@ namespace graphics {
 	point_type perspective_divide(const point_type& a) {
 		return point_type(a.x / a.w, a.y / a.w, a.z / a.w, a.w);
 	}
+
+	bool is_inside_view_frustrum(const vertex& a) {
+		return(
+			abs(a.m_pos.x) <= abs(a.m_pos.w) &&
+			abs(a.m_pos.x) <= abs(a.m_pos.w) &&
+			abs(a.m_pos.x) <= abs(a.m_pos.w));
+	}
 }
