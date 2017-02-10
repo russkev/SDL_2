@@ -40,12 +40,20 @@ namespace graphics {
 	};
 	template <typename multiplier>
 	vertex operator * (multiplier const& a, vertex const& b) {
-		return vertex(a*b.m_pos, b.m_coord);
+		return vertex(a*b.m_pos, b.m_coord, b.m_normal);
 	}
 
 	template <typename multiplier>
 	vertex operator * (vertex const& a, multiplier const& b) {
-		return vertex(a.m_pos*b, b.m_coord);
+		return vertex(point_type(a.m_pos*b), a.m_coord, a.m_normal);
+	}
+
+	vertex operator + (vertex const& a, vertex const& b) {
+		return vertex(a.m_pos + b.m_pos, a.m_coord, a.m_normal);
+	}
+
+	vertex operator - (vertex const& a, vertex const& b) {
+		return vertex(a.m_pos - b.m_pos, a.m_coord, a.m_normal);
 	}
 
 }

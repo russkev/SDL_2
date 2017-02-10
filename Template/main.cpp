@@ -52,7 +52,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	rot_counter+= float(s_delta_time);
 
 	// // Setup triangle transform
-	mat4 translation = translate(mat4(), vec3(0.0f, 0.0f, 10.0f));
+	mat4 translation = translate(mat4(), vec3(0.0f, 0.0f, 5.0f));
 	mat4 rotation    = rotate(mat4(), rot_counter, vec3(0.0f, 1.0f, 1.0f));
 	mat4 scale_a     = scale(mat4(), vec3(1.0f, 1.0f, 1.0f));
 	mat4 transform   = projection*(translation*rotation*scale_a);
@@ -81,7 +81,9 @@ int main (int, char**) try {
 	typedef u8vec4 bgra_color_type;
 
 	// // TEST // //
-	 
+	vertex test_a(point_type(1, 1, 2, 2));
+	vertex test_b(point_type(2, 2, 4, 4));
+	vertex test_c = lerp(test_a, test_b, 0.5f);
 	// // END TEST // // 
 
     auto s_window = SDL_CreateWindow ("Pretty little lines", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_ALLOW_HIGHDPI);

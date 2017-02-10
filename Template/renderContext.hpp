@@ -98,7 +98,6 @@ namespace graphics {
 			if (mid_y_vert.m_pos.y > max_y_vert.m_pos.y) { std::swap(max_y_vert, mid_y_vert); }
 
 			scan_triangle(min_y_vert, mid_y_vert, max_y_vert, s_texture);
-
 		}
 
 		void draw_mesh(const obj& mesh, const mat4& transform, const texture_type& texture) {
