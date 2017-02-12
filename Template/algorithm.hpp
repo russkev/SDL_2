@@ -53,8 +53,6 @@ namespace graphics {
 		return std::common_type_t<_Atype, _Btype>(a*(_Qtype(1) - q) + q*b);
 	}
 
-	//vertex vertex_lerp(const vertex)
-
     // Blend source element with destination element depending on source element alpha channel
     template <typename _View, typename _Coord>
     auto blend_element ( // Takes view, pixel coordinate and color
@@ -408,7 +406,7 @@ namespace graphics {
 	bool is_inside_view_frustrum(const vertex& a) {
 		return(
 			abs(a.m_pos.x) <= abs(a.m_pos.w) &&
-			abs(a.m_pos.y) <= abs(a.m_pos.w)); //&&
+			abs(a.m_pos.y) <= abs(a.m_pos.w));// &&
 			//abs(a.m_pos.z) <= abs(a.m_pos.w));
 	}
 

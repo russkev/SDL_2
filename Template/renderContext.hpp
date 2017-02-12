@@ -64,7 +64,38 @@ namespace graphics {
 				m_array_depth_buffer[i] = std::numeric_limits<float>::min();
 			}
 		}
+		
+	private:
+		// !!! Need to test this !!!
+		void clip_polygon_component(const std::vector<vertex>& vertex_list, int component, float factor, std::vector<vertex>& result) {
+			vertex previous_vertex = vertex_list.back();
+			float previous_component = previous_vertex.get(component) * factor;
+			bool previous_inside = (previous_component <= previous_vertex.m_pos.w);
 
+			for (auto& vertex_a : vertex_list) {
+				vertex current_vertex = vertex_a;
+				float current_component = vertex_a.get(component) * factor;
+				bool current_inside = (current_component <= current_vertex.m_pos.w);
+
+				if (current_inside != previous_inside) {
+					float lerp_factor =
+						(previous_vertex.m_pos.w - previous_component) /
+						((previous_vertex.m_pos.w - previous_component) -
+						(current_vertex.m_pos.w - current_component));
+					result.push_back(previous_vertex.vertex_lerp(current_vertex, lerp_factor))
+				}
+
+				if (current_inside) {
+					result.push_back(current_vertex);
+				}
+				
+				previous_vertex = current_vertex;
+				previous_component = current_component;
+				previous_inside = current_inside;
+			}
+		}
+		
+	public:
 		void fill_triangle(
 			const vertex& p1, 
 			const vertex& p2, 
@@ -208,7 +239,6 @@ namespace graphics {
 						(coord_over_z.t * z + 0.5)
 					};
 					m_view[j][i] = s_texture.get_texture(source.x, source.y); // // j = y, i = x
-					
 				}
 				coord_over_z += coord_over_z_x_step;
 				one_over_z += one_over_z_x_step;
