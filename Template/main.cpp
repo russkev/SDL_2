@@ -64,7 +64,16 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 
 
 	// // TEST // //
+	point_type p1(0.3, 0.6, 0.8, 1);
+	point_type p2(1.2, 0.2, 0.4, 1);
+	point_type p3(1.5, 0.5, 0.6, 1);
 
+	vertex test_a(p1), test_b(p2), test_c(p3);
+
+	std::vector<vertex> test_vector = { p1, p2, p3 };
+	std::vector<vertex> test_aux_vector;
+
+	s_render.clip_polygon_axis(test_vector, 0, test_aux_vector);
 	// // END TEST // // 
 
 	// // FPS counter
@@ -81,16 +90,7 @@ int main (int, char**) try {
 	typedef u8vec4 bgra_color_type;
 
 	// // TEST // //
-	point_type p1 = point_type(1, 1, 2, 2);
-	point_type p2 = point_type(2, 2, 4, 4);
 
-	vertex test_a(p1);
-	vertex test_b(p2);
-	
-	std::vector<vertex> test_vector = { p1, p2 };
-	for (auto & test_vertex : test_vector) {
-		std::cout << test_vertex.m_pos.x << std::endl;
-	}
 	// // END TEST // // 
 
     auto s_window = SDL_CreateWindow ("Pretty little lines", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 768, SDL_WINDOW_ALLOW_HIGHDPI);

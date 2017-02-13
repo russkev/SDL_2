@@ -65,8 +65,18 @@ namespace graphics {
 			}
 		}
 		
-	private:
-		// !!! Need to test this !!!
+	public:
+		bool clip_polygon_axis(std::vector<vertex>& vertex_list, int component, std::vector<vertex>& aux_vector) {
+			clip_polygon_component(vertex_list, component, 1.0, aux_vector);
+			if (aux_vector.empty()) {
+				return false;
+			}
+			clip_polygon_component(aux_vector, component, -1.0, vertex_list);
+			aux_vector.clear();
+
+			return !vertex_list.empty();
+		}
+
 		void clip_polygon_component(const std::vector<vertex>& vertex_list, int component, float factor, std::vector<vertex>& result) {
 			vertex previous_vertex = vertex_list.back();
 			float previous_component = previous_vertex.get(component) * factor;
@@ -74,7 +84,7 @@ namespace graphics {
 
 			for (auto& vertex_a : vertex_list) {
 				vertex current_vertex = vertex_a;
-				float current_component = vertex_a.get(component) * factor;
+				float current_component = float(vertex_a.get(component)) * factor;
 				bool current_inside = (current_component <= current_vertex.m_pos.w);
 
 				if (current_inside != previous_inside) {
@@ -82,7 +92,7 @@ namespace graphics {
 						(previous_vertex.m_pos.w - previous_component) /
 						((previous_vertex.m_pos.w - previous_component) -
 						(current_vertex.m_pos.w - current_component));
-					result.push_back(previous_vertex.vertex_lerp(current_vertex, lerp_factor))
+					result.push_back(previous_vertex.vertex_lerp(current_vertex, lerp_factor));
 				}
 
 				if (current_inside) {

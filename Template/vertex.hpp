@@ -16,7 +16,7 @@ namespace graphics {
 		point_type m_normal;
 
 		// // GETTERS // //
-		float get(const int index) {
+		float get(int index) const {
 			switch (index) {
 			case 0: return m_pos.x; 
 				break;
