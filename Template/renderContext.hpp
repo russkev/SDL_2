@@ -65,9 +65,11 @@ namespace graphics {
 			}
 		}
 		
-	public:
+	private:
 		bool clip_polygon_axis(std::vector<vertex>& vertex_list, int component, std::vector<vertex>& aux_vector) {
 			clip_polygon_component(vertex_list, component, 1.0, aux_vector);
+			vertex_list.clear();
+
 			if (aux_vector.empty()) {
 				return false;
 			}
@@ -105,7 +107,6 @@ namespace graphics {
 			}
 		}
 		
-	public:
 		void fill_triangle(
 			const vertex& p1, 
 			const vertex& p2, 
@@ -141,9 +142,43 @@ namespace graphics {
 			scan_triangle(min_y_vert, mid_y_vert, max_y_vert, s_texture);
 		}
 
+	public:
+		void draw_triangle(
+			const vertex& p1,
+			const vertex& p2,
+			const vertex& p3,
+			const texture_type& s_texture
+		) {
+			if (is_inside_view_frustrum(p1) && is_inside_view_frustrum(p2) && is_inside_view_frustrum(p3)) {
+				fill_triangle(p1, p2, p3, s_texture);
+				return;
+			}
+
+			if (!is_inside_view_frustrum(p1) && !is_inside_view_frustrum(p2) && !is_inside_view_frustrum(p3)) {
+				return;
+			}
+
+
+			std::vector<vertex> vertices = { p1, p2, p3 };
+			std::vector<vertex> aux_vector;
+
+			bool x_clip = clip_polygon_axis(vertices, 0, aux_vector);
+			bool y_clip = clip_polygon_axis(vertices, 1, aux_vector);
+			bool z_clip = clip_polygon_axis(vertices, 2, aux_vector);
+
+			if (x_clip && y_clip && z_clip) {
+
+				for (int i = 1; i < vertices.size() - 1; ++i) {
+					fill_triangle(vertices.at(0), vertices.at(i), vertices.at(i + 1), s_texture);
+				}
+			}
+		}
+
+
 		void draw_mesh(const obj& mesh, const mat4& transform, const texture_type& texture) {
 			for (int i = 0; i < mesh.size(); ++i) {
-				fill_triangle(
+
+				draw_triangle(
 					transform*mesh.face(i).at(0),
 					transform*mesh.face(i).at(1),
 					transform*mesh.face(i).at(2),

@@ -392,10 +392,10 @@ namespace graphics {
 		auto hh = h*0.5f;
 		const auto out_mat =
 			transpose(mat4(
-				vec4(hw,  0,  0,  hw ),
-				vec4(0, -hh,  0,  hh ),
-				vec4(0,  0,   1,  0 ),
-				vec4(0,  0,   0,  1 )));
+				vec4(hw,  0,  0,  hw - 0.5f),
+				vec4(0, -hh,  0,  hh - 0.5f),
+				vec4(0,  0,   1,  0        ),
+				vec4(0,  0,   0,  1        )));
 		return out_mat;
 	}
 

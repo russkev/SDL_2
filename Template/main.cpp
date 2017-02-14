@@ -52,7 +52,7 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 	rot_counter+= float(s_delta_time);
 
 	// // Setup triangle transform
-	mat4 translation = translate(mat4(), vec3(0.0f, 0.0f, 12.0f));
+	mat4 translation = translate(mat4(), vec3(0.0f, 0.0f, 5.0f));
 	mat4 rotation    = rotate(mat4(), rot_counter, vec3(0.0f, 1.0f, 1.0f));
 	mat4 scale_a     = scale(mat4(), vec3(1.0f, 1.0f, 1.0f));
 	mat4 transform   = projection*(translation*rotation*scale_a);
@@ -64,16 +64,16 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 
 
 	// // TEST // //
-	point_type p1(0.3, 0.6, 0.8, 1);
-	point_type p2(1.2, 0.2, 0.4, 1);
-	point_type p3(1.5, 0.5, 0.6, 1);
+	//point_type p1(0.3, 0.6, 0.8, 1);
+	//point_type p2(1.2, 0.2, 0.4, 1);
+	//point_type p3(1.5, 0.5, 0.6, 1);
 
-	vertex test_a(p1), test_b(p2), test_c(p3);
+	//vertex test_a(p1), test_b(p2), test_c(p3);
 
-	std::vector<vertex> test_vector = { p1, p2, p3 };
-	std::vector<vertex> test_aux_vector;
+	//std::vector<vertex> test_vector = { p1, p2, p3 };
+	//std::vector<vertex> test_aux_vector;
 
-	s_render.clip_polygon_axis(test_vector, 0, test_aux_vector);
+	//s_render.clip_polygon_axis(test_vector, 0, test_aux_vector);
 	// // END TEST // // 
 
 	// // FPS counter
