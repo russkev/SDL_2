@@ -64,13 +64,13 @@ void draw_animation_frame (SDL_Surface& s_surface, double s_absolute_time, doubl
 
 
 	// // TEST // //
-	//point_type p1(0.3, 0.6, 0.8, 1);
-	//point_type p2(1.2, 0.2, 0.4, 1);
-	//point_type p3(1.5, 0.5, 0.6, 1);
+	//point_type p1(0.8, -0.4, 0.8, 1);
+	//point_type p2(1.4, 0.6, 0.8, 1);
+	//point_type p3(-1.2, 0.4, 0.8, 1);
 
 	//vertex test_a(p1), test_b(p2), test_c(p3);
 
-	//std::vector<vertex> test_vector = { p1, p2, p3 };
+	//std::vector<vertex> test_vector = { test_a, test_b, test_c };
 	//std::vector<vertex> test_aux_vector;
 
 	//s_render.clip_polygon_axis(test_vector, 0, test_aux_vector);
