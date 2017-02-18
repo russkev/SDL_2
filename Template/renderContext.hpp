@@ -67,16 +67,14 @@ namespace graphics {
 		
 	public: // Should be private
 		bool clip_polygon_axis(std::vector<vertex>& vertex_list, int component, std::vector<vertex>& aux_vector) {
-			clip_polygon_component(vertex_list, component, 1.0, aux_vector);
-			vertex_list = aux_vector;
-			aux_vector.clear();
-			//vertex_list.clear();
+			clip_polygon_component(vertex_list, component, -1.0, aux_vector);
+			vertex_list.clear();
 
-			//if (aux_vector.empty()) {
-			//	return false;
-			//}
-			//clip_polygon_component(aux_vector, component, -1.0, vertex_list);
-			//aux_vector.clear();
+			if (aux_vector.empty()) {
+				return false;
+			}
+			clip_polygon_component(aux_vector, component, 1.0, vertex_list);
+			aux_vector.clear();
 
 			return !vertex_list.empty();
 		}
@@ -89,7 +87,7 @@ namespace graphics {
 			for (auto& vertex_a : vertex_list) {
 				vertex current_vertex = vertex_a;
 				float current_component = float(vertex_a.get(component)) * factor;
-				bool current_inside = (abs(current_component) <= abs(current_vertex.m_pos.w));
+				bool current_inside = (current_component <= current_vertex.m_pos.w);
 
 				if (current_inside != previous_inside) {
 					float lerp_factor =
@@ -164,11 +162,11 @@ namespace graphics {
 			std::vector<vertex> vertices = { p1, p2, p3 };
 			std::vector<vertex> aux_vector;
 
-			//bool x_clip = clip_polygon_axis(vertices, 0, aux_vector);
+			bool x_clip = clip_polygon_axis(vertices, 0, aux_vector);
 			bool y_clip = clip_polygon_axis(vertices, 1, aux_vector);
 			bool z_clip = clip_polygon_axis(vertices, 2, aux_vector);
 
-			if (/*x_clip &&*/ y_clip && z_clip) {
+			if (x_clip && y_clip && z_clip) {
 
 				for (int i = 1; i < vertices.size() - 1; ++i) {
 					fill_triangle(vertices.at(0), vertices.at(i), vertices.at(i + 1), s_texture);
