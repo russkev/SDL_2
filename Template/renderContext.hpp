@@ -34,12 +34,9 @@ namespace graphics {
 		// // CONSTRUCTOR // //
 		renderContext(view_type& s_view) :
 			m_view(s_view),
-			m_scan_buffer (int(s_view.size().y) * 2, { 0, 0 }),
 			m_total_pixels(int(s_view.size().x) * int(s_view.size().y))			
-			//m_depth_buffer(std::make_unique<float[]>(s_view.size().x * s_view.size().y))
 		{
 			m_array_depth_buffer = std::make_unique<float[]>(m_total_pixels);
-			//m_depth_buffer.resize(m_total_pixels, std::numeric_limits<float>::max());
 		}
 
 
@@ -47,39 +44,33 @@ namespace graphics {
 	private:
 		// // MEMBER VARIABLES // //
 		view_type& m_view;
-		buffer_type m_scan_buffer;
 		std::unique_ptr<float[]> m_array_depth_buffer;
 		std::vector<float> m_depth_buffer;
 		int m_total_pixels;
-		//std::array<float> m_array_depth_buffer;
 
 
 	public:
 
 		// // MAIN FUNCTIONS // //
 		void clear_depth_buffer() {
-			//m_depth_buffer.clear();
-			//m_depth_buffer.resize(m_total_pixels, std::numeric_limits<float>::max());
-			for (int i = 0; i < m_total_pixels; ++i) {
-				m_array_depth_buffer[i] = std::numeric_limits<float>::min();
-			}
+			std::fill(m_array_depth_buffer.get(), m_array_depth_buffer.get() + m_total_pixels, std::numeric_limits<float>::max());
 		}
 		
 	public: // Should be private
 		bool clip_polygon_axis(std::vector<vertex>& vertex_list, int component, std::vector<vertex>& aux_vector) {
-			clip_polygon_component(vertex_list, component, -1.0, aux_vector);
-			vertex_list.clear();
-
+			clip_polygon_component(vertex_list, component, 1.0, aux_vector);
 			if (aux_vector.empty()) {
 				return false;
 			}
-			clip_polygon_component(aux_vector, component, 1.0, vertex_list);
+			vertex_list.clear();
+			clip_polygon_component(aux_vector, component, -1.0, vertex_list);
 			aux_vector.clear();
-
 			return !vertex_list.empty();
 		}
 
 		void clip_polygon_component(const std::vector<vertex>& vertex_list, int component, float factor, std::vector<vertex>& result) {
+			if (vertex_list.empty())
+				return;
 			vertex previous_vertex = vertex_list.back();
 			float previous_component = previous_vertex.get(component) * factor;
 			bool previous_inside = (previous_component >= previous_vertex.m_pos.w);
@@ -149,24 +140,23 @@ namespace graphics {
 			const vertex& p3,
 			const texture_type& s_texture
 		) {
-			if (is_inside_view_frustrum(p1) && is_inside_view_frustrum(p2) && is_inside_view_frustrum(p3)) {
+			   if (is_inside_view_frustrum(p1)
+				&& is_inside_view_frustrum(p2)
+				&& is_inside_view_frustrum(p3)) 
+			{
+
 				fill_triangle(p1, p2, p3, s_texture);
 				return;
 			}
-
-			if (!is_inside_view_frustrum(p1) && !is_inside_view_frustrum(p2) && !is_inside_view_frustrum(p3)) {
-				return;
-			}
-
 
 			std::vector<vertex> vertices = { p1, p2, p3 };
 			std::vector<vertex> aux_vector;
 
 			bool x_clip = clip_polygon_axis(vertices, 0, aux_vector);
 			bool y_clip = clip_polygon_axis(vertices, 1, aux_vector);
-			//bool z_clip = clip_polygon_axis(vertices, 2, aux_vector);
+			bool z_clip = clip_polygon_axis(vertices, 2, aux_vector);
 
-			if (x_clip && y_clip /*&& z_clip*/) {
+			if (x_clip && y_clip && z_clip) {
 
 				for (int i = 1; i < vertices.size() - 1; ++i) {
 					fill_triangle(vertices.at(0), vertices.at(i), vertices.at(i + 1), s_texture);
@@ -276,7 +266,7 @@ namespace graphics {
 			for (int i = x_min; i < x_max; ++i) {
 				int index = i + j * int(m_view.size().x);
 				float depth_existing = m_array_depth_buffer[index];
-				if (depth > depth_existing) {
+				if (depth < depth_existing) {
 					m_array_depth_buffer[index] = depth;
 					float z = 1 / one_over_z;
 					vec2 source = {

@@ -404,10 +404,17 @@ namespace graphics {
 	}
 
 	bool is_inside_view_frustrum(const vertex& a) {
+		if (abs(a.m_pos.z) > abs(a.m_pos.w)) {
+			return false;
+		}
 		return(
 			abs(a.m_pos.x) <= abs(a.m_pos.w) &&
-			abs(a.m_pos.y) <= abs(a.m_pos.w));// &&
-			//abs(a.m_pos.z) <= abs(a.m_pos.w));
+			abs(a.m_pos.y) <= abs(a.m_pos.w));
+
+		//return(
+		//	abs(a.m_pos.x) <= abs(a.m_pos.w) &&
+		//	abs(a.m_pos.y) <= abs(a.m_pos.w) &&
+		//	abs(a.m_pos.z) <= abs(a.m_pos.w));
 	}
 
 	
