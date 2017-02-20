@@ -52,13 +52,14 @@ namespace graphics {
 	public:
 
 		// // MAIN FUNCTIONS // //
-		void draw_mesh(const obj& mesh, const mat4& transform, const texture_type& texture) {
-			for (int i = 0; i < mesh.size(); ++i) {
+		void draw_mesh(const obj& mesh, const mat4& view_projection, const mat4& transform, const texture_type& texture) {
 
+			mat4 mvp = view_projection * transform;
+			for (int i = 0; i < mesh.size(); ++i) {
 				draw_triangle(
-					transform*mesh.face(i).at(0),
-					transform*mesh.face(i).at(1),
-					transform*mesh.face(i).at(2),
+					vertex(mvp*mesh.face(i).at(0).m_pos, mesh.face(i).at(0).m_coord, transform * mesh.face(i).at(0).m_normal),
+					vertex(mvp*mesh.face(i).at(1).m_pos, mesh.face(i).at(1).m_coord, transform * mesh.face(i).at(1).m_normal),
+					vertex(mvp*mesh.face(i).at(2).m_pos, mesh.face(i).at(2).m_coord, transform * mesh.face(i).at(2).m_normal),
 					texture);
 			}
 		}

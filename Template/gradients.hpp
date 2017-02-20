@@ -72,7 +72,7 @@ namespace graphics {
 			m_depth_values.push_back(mid_y_vert.m_pos.z);
 			m_depth_values.push_back(max_y_vert.m_pos.z);
 
-			vec4 light_direction = { 0,0,1,0 };
+			vec4 light_direction = { 0,-1,0,0 };
 			float min_light = dot(min_y_vert.m_normal, light_direction);
 			float mid_light = dot(mid_y_vert.m_normal, light_direction);
 			float max_light = dot(max_y_vert.m_normal, light_direction);
