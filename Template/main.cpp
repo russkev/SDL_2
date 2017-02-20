@@ -100,7 +100,7 @@ int main (int, char**) try {
 	fps frame_check(s_window);
 
 	// // Load an obj
-	obj obj_1 = "sphere_01.obj";
+	obj obj_1 = "sphere_02.obj";
 
 
     while (!SDL_QuitRequested ()) {

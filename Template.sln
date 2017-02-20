@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CAD63700-1500-46C7-AC53-34ADCE4E9EF6}"
 	ProjectSection(SolutionItems) = preProject
 		Performance3.psess = Performance3.psess
+		Template\sphere_02.obj = Template\sphere_02.obj
 	EndProjectSection
 EndProject
 Global

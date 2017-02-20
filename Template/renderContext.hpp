@@ -235,6 +235,8 @@ namespace graphics {
 
 		void draw_scan_line(edge& left, edge& right, int j, const texture_type& s_texture) {
 
+			vec4 light_col = { 1.0f, 0.0f, 1.0f, 1.0f };
+
 			auto x_min  = int(ceil(left.x()));
 			auto x_max  = int(ceil(right.x()));
 			if (x_min > x_max) std::swap(x_min, x_max);
@@ -255,6 +257,7 @@ namespace graphics {
 			float depth             = left.depth()        + depth_x_step        * x_prestep;
 			float light_amt         = left.light_amt()    + light_x_step        * x_prestep;
 			
+			
 
 
 
@@ -268,8 +271,9 @@ namespace graphics {
 						(coord_over_z.s * z + 0.5),
 						(coord_over_z.t * z + 0.5)
 					};
+
 					// // j = y, i = x
-					m_view[j][i] = s_texture.get_texture(source.x, source.y, light_amt); // // j = y, i = x
+					m_view[j][i] = s_texture.get_texture(source.x, source.y, light_amt, light_col); // // j = y, i = x
 				}
 				coord_over_z	+= coord_over_z_x_step;
 				one_over_z		+= one_over_z_x_step;

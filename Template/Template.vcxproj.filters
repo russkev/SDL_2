@@ -65,13 +65,10 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="cube_01.obj" />
+    <Text Include="cube_02.obj" />
+    <Text Include="sphere_01.obj" />
   </ItemGroup>
   <ItemGroup>
-    <Object Include="cube_02.obj">
-      <Filter>Source Files</Filter>
-    </Object>
-    <Object Include="sphere_01.obj">
-      <Filter>Source Files</Filter>
-    </Object>
+    <Object Include="sphere_02.obj" />
   </ItemGroup>
 </Project>
