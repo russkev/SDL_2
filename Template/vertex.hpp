@@ -29,6 +29,7 @@ namespace graphics {
 			default: 
 				std::cout << "Invalid get value" << std::endl;
 				__debugbreak();
+				return -1;
 			}
 		}
 
@@ -40,7 +41,7 @@ namespace graphics {
 
 		// // Full with vec3 for point types
 		vertex(const vec3& s_pos, const coord_type& s_coord, const vec3& s_normal) :
-			m_pos(point_type(s_pos.x, s_pos.y, s_pos.z, 1)), m_coord(s_coord), m_normal(point_type(s_normal.x, s_normal.y, s_normal.z, s_normal.z)){}
+			m_pos(point_type(s_pos.x, s_pos.y, s_pos.z, 1)), m_coord(s_coord), m_normal(point_type(s_normal.x, s_normal.y, s_normal.z, 0.0f)){}
 
 		// // Just position and coordinates
 		vertex(const point_type& s_pos, const coord_type& s_coord) :

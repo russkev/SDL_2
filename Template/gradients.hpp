@@ -17,10 +17,12 @@ namespace graphics {
 		coord_type m_coord_over_z_s_step, m_coord_over_z_t_step;
 		float m_one_over_z_x_step, m_one_over_z_y_step;
 		float m_depth_x_step, m_depth_y_step;
+		float m_light_x_step, m_light_y_step;
 
 		std::vector<coord_type> m_coord_over_zs;
 		std::vector<float> m_one_over_zs;
 		std::vector<float> m_depth_values;
+		std::vector<float> m_light_values;
 
 		float	m_one_over_dx, m_one_over_dy;
 
@@ -37,10 +39,15 @@ namespace graphics {
 		float depth_x_step() { return m_depth_x_step; }
 		float depth_y_step() { return m_depth_y_step; }
 
+		float light_x_step() { return m_light_x_step; }
+		float light_y_step() { return m_light_y_step; }
+
+
 
 		coord_type      coord(int index) { return m_coord_over_zs.at(index); }
 		float	   one_over_z(int index) { return m_one_over_zs.at(index);   }
 		float			depth(int index) { return m_depth_values.at(index);  }
+		float       light_amt(int index) { return m_light_values.at(index);  }
 
 		// // CONSTRUCTOR // //
 		gradients(
@@ -65,6 +72,15 @@ namespace graphics {
 			m_depth_values.push_back(mid_y_vert.m_pos.z);
 			m_depth_values.push_back(max_y_vert.m_pos.z);
 
+			vec4 light_direction = { 0,0,1,0 };
+			float min_light = dot(min_y_vert.m_normal, light_direction);
+			float mid_light = dot(mid_y_vert.m_normal, light_direction);
+			float max_light = dot(max_y_vert.m_normal, light_direction);
+
+			m_light_values.push_back(clamp(dot(min_y_vert.m_normal, light_direction), 0.0f, 1.0f));
+			m_light_values.push_back(clamp(dot(mid_y_vert.m_normal, light_direction), 0.0f, 1.0f));
+			m_light_values.push_back(clamp(dot(max_y_vert.m_normal, light_direction), 0.0f, 1.0f));
+
 
 			// // Interpolation equation
 			// // Basically the x and y steps can be pre-calculated so that you don't have to calculate it every time for every edge
@@ -85,6 +101,9 @@ namespace graphics {
 			
 			m_depth_x_step        = calc_x_step(m_depth_values,  min_y_vert, mid_y_vert, max_y_vert); 
 			m_depth_y_step        = calc_y_step(m_depth_values,  min_y_vert, mid_y_vert, max_y_vert);
+
+			m_light_x_step		  = calc_x_step(m_light_values, min_y_vert, mid_y_vert, max_y_vert);
+			m_light_y_step		  = calc_y_step(m_light_values, min_y_vert, mid_y_vert, max_y_vert);
 			
 		}
 

@@ -52,11 +52,53 @@ namespace graphics {
 	public:
 
 		// // MAIN FUNCTIONS // //
+		void draw_mesh(const obj& mesh, const mat4& transform, const texture_type& texture) {
+			for (int i = 0; i < mesh.size(); ++i) {
+
+				draw_triangle(
+					transform*mesh.face(i).at(0),
+					transform*mesh.face(i).at(1),
+					transform*mesh.face(i).at(2),
+					texture);
+			}
+		}
+
+
+		void draw_triangle(
+			const vertex& p1,
+			const vertex& p2,
+			const vertex& p3,
+			const texture_type& s_texture
+		) {
+			if (is_inside_view_frustrum(p1)
+				&& is_inside_view_frustrum(p2)
+				&& is_inside_view_frustrum(p3))
+			{
+
+				fill_triangle(p1, p2, p3, s_texture);
+				return;
+			}
+
+			std::vector<vertex> vertices = { p1, p2, p3 };
+			std::vector<vertex> aux_vector;
+
+			bool x_clip = clip_polygon_axis(vertices, 0, aux_vector);
+			bool y_clip = clip_polygon_axis(vertices, 1, aux_vector);
+			bool z_clip = clip_polygon_axis(vertices, 2, aux_vector);
+
+			if (x_clip && y_clip && z_clip) {
+
+				for (int i = 1; i < vertices.size() - 1; ++i) {
+					fill_triangle(vertices.at(0), vertices.at(i), vertices.at(i + 1), s_texture);
+				}
+			}
+		}
+
 		void clear_depth_buffer() {
 			std::fill(m_array_depth_buffer.get(), m_array_depth_buffer.get() + m_total_pixels, std::numeric_limits<float>::max());
 		}
 		
-	public: // Should be private
+	private:
 		bool clip_polygon_axis(std::vector<vertex>& vertex_list, int component, std::vector<vertex>& aux_vector) {
 			clip_polygon_component(vertex_list, component, 1.0, aux_vector);
 			if (aux_vector.empty()) {
@@ -105,20 +147,12 @@ namespace graphics {
 			const texture_type& s_texture
 		) {
 
-			//if (
-			//	!is_inside_view_frustrum(p1) ||
-			//	!is_inside_view_frustrum(p2) ||
-			//	!is_inside_view_frustrum(p3)) {
-			//	std::cout << "outside of clipping area";
-			//	__debugbreak();
-			//}
-
 			mat4 screen_space_transform = init_screen_space_transform(float(m_view.size().x), float(m_view.size().y));
 
 			// // Assign max, mid and min y vert arbitrarily, they will be sorted in next step
-			auto min_y_vert = vertex(perspective_divide(screen_space_transform*p1.m_pos), p1.m_coord);
-			auto mid_y_vert = vertex(perspective_divide(screen_space_transform*p2.m_pos), p2.m_coord);
-			auto max_y_vert = vertex(perspective_divide(screen_space_transform*p3.m_pos), p3.m_coord);
+			auto min_y_vert = vertex(perspective_divide(screen_space_transform*p1.m_pos), p1.m_coord, p1.m_normal);
+			auto mid_y_vert = vertex(perspective_divide(screen_space_transform*p2.m_pos), p2.m_coord, p2.m_normal);
+			auto max_y_vert = vertex(perspective_divide(screen_space_transform*p3.m_pos), p3.m_coord, p3.m_normal);
 
 			// // Backface culling
 			if (triangle_area(min_y_vert.m_pos, mid_y_vert.m_pos, max_y_vert.m_pos) >= 0) {
@@ -132,50 +166,6 @@ namespace graphics {
 
 			scan_triangle(min_y_vert, mid_y_vert, max_y_vert, s_texture);
 		}
-
-	public:
-		void draw_triangle(
-			const vertex& p1,
-			const vertex& p2,
-			const vertex& p3,
-			const texture_type& s_texture
-		) {
-			   if (is_inside_view_frustrum(p1)
-				&& is_inside_view_frustrum(p2)
-				&& is_inside_view_frustrum(p3)) 
-			{
-
-				fill_triangle(p1, p2, p3, s_texture);
-				return;
-			}
-
-			std::vector<vertex> vertices = { p1, p2, p3 };
-			std::vector<vertex> aux_vector;
-
-			bool x_clip = clip_polygon_axis(vertices, 0, aux_vector);
-			bool y_clip = clip_polygon_axis(vertices, 1, aux_vector);
-			bool z_clip = clip_polygon_axis(vertices, 2, aux_vector);
-
-			if (x_clip && y_clip && z_clip) {
-
-				for (int i = 1; i < vertices.size() - 1; ++i) {
-					fill_triangle(vertices.at(0), vertices.at(i), vertices.at(i + 1), s_texture);
-				}
-			}
-		}
-
-
-		void draw_mesh(const obj& mesh, const mat4& transform, const texture_type& texture) {
-			for (int i = 0; i < mesh.size(); ++i) {
-
-				draw_triangle(
-					transform*mesh.face(i).at(0),
-					transform*mesh.face(i).at(1),
-					transform*mesh.face(i).at(2),
-					texture);
-			}
-		}
-
 
 	private:
 		void scan_triangle(const vertex& min_y_vert, const vertex& mid_y_vert, const vertex& max_y_vert, const texture_type& s_texture) {
@@ -255,10 +245,14 @@ namespace graphics {
 			coord_type coord_over_z_x_step = ( right.coord_over_z() - left.coord_over_z() ) / x_dist;
 			float one_over_z_x_step        = ( right.one_over_z()   - left.one_over_z()   ) / x_dist;
 			float depth_x_step             = ( right.depth()        - left.depth()        ) / x_dist;
+			float light_x_step             = ( right.light_amt()    - left.light_amt()    ) / x_dist;
+
+
 			// // Calculate start coordinate
 			coord_type coord_over_z = left.coord_over_z() + coord_over_z_x_step * x_prestep;
 			float one_over_z        = left.one_over_z()   + one_over_z_x_step   * x_prestep;
 			float depth             = left.depth()        + depth_x_step        * x_prestep;
+			float light_amt         = left.light_amt()    + light_x_step        * x_prestep;
 			
 
 
@@ -273,11 +267,15 @@ namespace graphics {
 						(coord_over_z.s * z + 0.5),
 						(coord_over_z.t * z + 0.5)
 					};
-					m_view[j][i] = s_texture.get_texture(source.x, source.y); // // j = y, i = x
+
+					auto light = uint8_t(light_amt * 255.0f + 0.5f);
+					m_view[j][i] = { light, light, light, light };
+					//m_view[j][i] = s_texture.get_texture(source.x, source.y); // // j = y, i = x
 				}
-				coord_over_z += coord_over_z_x_step;
-				one_over_z += one_over_z_x_step;
-				depth += depth_x_step;
+				coord_over_z	+= coord_over_z_x_step;
+				one_over_z		+= one_over_z_x_step;
+				depth			+= depth_x_step;
+				light_amt		+= light_x_step;
 			}
 		}
 	};

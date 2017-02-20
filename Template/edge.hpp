@@ -20,6 +20,7 @@ namespace graphics {
 		float m_one_over_z, m_one_over_z_step;
 		float m_x_prestep, m_y_prestep;
 		float m_depth, m_depth_step;
+		float m_light_amt, m_light_step;
 
 
 
@@ -31,6 +32,7 @@ namespace graphics {
 		coord_type coord_over_z()    { return m_coord_over_z; }
 		float one_over_z()			 { return m_one_over_z; }
 		float depth()				 { return m_depth; }
+		float light_amt()			 { return m_light_amt; }
 
 
 
@@ -61,12 +63,14 @@ namespace graphics {
 			m_coord_over_z = step_start(s_gradients.coord(min_y_vert_index), s_gradients.coord_over_z_s_step(), s_gradients.coord_over_z_t_step());
 			m_one_over_z   = step_start(s_gradients.one_over_z(min_y_vert_index), s_gradients.one_over_z_x_step(), s_gradients.one_over_z_y_step());
 			m_depth        = step_start(s_gradients.depth(min_y_vert_index), s_gradients.depth_x_step(), s_gradients.depth_y_step());
+			m_light_amt    = step_start(s_gradients.light_amt(min_y_vert_index), s_gradients.light_x_step(), s_gradients.light_y_step());
 			
 
 			// // Amount to change by
 			m_coord_over_z_step = step_amount(s_gradients.coord_over_z_s_step(), s_gradients.coord_over_z_t_step());
 			m_one_over_z_step   = step_amount(s_gradients.one_over_z_x_step(), s_gradients.one_over_z_y_step());
 			m_depth_step        = step_amount(s_gradients.depth_x_step(), s_gradients.depth_y_step());
+			m_light_step        = step_amount(s_gradients.light_x_step(), s_gradients.light_y_step());
 
 			
 
@@ -78,6 +82,7 @@ namespace graphics {
 			m_x += m_x_step;
 			m_coord_over_z += m_coord_over_z_step;
 			m_depth += m_depth_step;
+			m_light_amt += m_light_step;
 		}
 
 		template<typename T>
