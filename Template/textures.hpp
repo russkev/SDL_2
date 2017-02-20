@@ -43,10 +43,17 @@ namespace graphics {
 			};
 		}
 		// // Getter // //
-		bgra_color_type get_texture(float s, float t) const {
+		bgra_color_type get_texture(float s, float t, float light) const {
 			int64 s_texture = int64(ceil(s*float(m_width  -1))) ;
 			int64 t_texture = int64(ceil(t*float(m_height -1))) ;
-			return m_out_texture[std::abs(t_texture % m_height) * m_width + std::abs(s_texture % m_width)]; // Finds correct coord, loops if necessary
+
+			// // Find correct coord, loops if necessary
+			return{
+				uint8_t(m_out_texture[std::abs(t_texture % m_height) * m_width + std::abs(s_texture % m_width)].x * light),
+				uint8_t(m_out_texture[std::abs(t_texture % m_height) * m_width + std::abs(s_texture % m_width)].y * light),
+				uint8_t(m_out_texture[std::abs(t_texture % m_height) * m_width + std::abs(s_texture % m_width)].z * light),
+				uint8_t(m_out_texture[std::abs(t_texture % m_height) * m_width + std::abs(s_texture % m_width)].w)
+			}; 
 		}
 
 		int64 width() const		 { return m_width; }

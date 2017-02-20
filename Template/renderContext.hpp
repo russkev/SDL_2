@@ -268,10 +268,8 @@ namespace graphics {
 						(coord_over_z.s * z + 0.5),
 						(coord_over_z.t * z + 0.5)
 					};
-
-					auto light = uint8_t(light_amt * 255.0f + 0.5f);
-					m_view[j][i] = { light, light, light, light };
-					//m_view[j][i] = s_texture.get_texture(source.x, source.y); // // j = y, i = x
+					// // j = y, i = x
+					m_view[j][i] = s_texture.get_texture(source.x, source.y, light_amt); // // j = y, i = x
 				}
 				coord_over_z	+= coord_over_z_x_step;
 				one_over_z		+= one_over_z_x_step;
